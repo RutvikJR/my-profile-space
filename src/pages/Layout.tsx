@@ -13,7 +13,17 @@ const Layout = () => {
           <li className="px-3 text-xl">
             <Link to="/contact">Contact</Link>
           </li>
+          <li className="px-3 text-xl">
+            <Link to="/login">Login</Link>
+          </li>
+          <li className="px-3 text-xl">
+            <Link to="/signup">SignUp</Link>
+          </li>
+          {/* <li className="px-3 text-xl">
+            <Link to="/forgot-password">Forgot Password</Link>
+          </li> */}
         </ul>
+        
         <div className='flex mx-8'>
           <button className="bg-theme1 text-theme3 my-4 px-6 rounded flex items-center space-x-1">
           <i className="fas fa-plus"></i>

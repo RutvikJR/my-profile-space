@@ -1,10 +1,13 @@
 import "./App.css";
 import AppRoutes from "./AppRoutes";
-
+import AppWrapper from "./pages/AppWrapper";
 function App() {
   return (
     <>
-      <AppRoutes></AppRoutes>
+      <AppWrapper>
+        <AppRoutes>
+        </AppRoutes>
+      </AppWrapper>
     </>
   );
 }
