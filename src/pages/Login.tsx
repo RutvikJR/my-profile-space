@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useFormik } from 'formik';
 import { supabaseClient } from "../config/supabaseConfig";
 import { LoginSchema } from '../utils/LoginScheme';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from '../utils/AuthContext'; 
 
 interface LoginFormValues {
   email: string;
@@ -12,8 +13,8 @@ interface LoginFormValues {
 }
 
 const Login: React.FC = () => {
-
   const navigate = useNavigate();
+  const { setUserId } = useContext(AuthContext) || {};
   const initialValues: LoginFormValues = {
     email: '',
     password: '',
@@ -24,24 +25,43 @@ const Login: React.FC = () => {
     validationSchema: LoginSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        const { error } = await supabaseClient.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
           email: values.email,
           password: values.password,
         });
 
         if (error) {
-          toast.error(error.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme:'colored' });
+          toast.error(error.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored'
+          });
           console.log('Error:', error);
         } else {
-          toast.success('Login successful!', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme:'colored' });
+          toast.success('Login successful!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored'
+          });
           console.log('Login successful');
+          setUserId(data.user?.id);
           navigate("/");
         }
       } catch (error) {
         console.log('Error:', error);
+      } finally {
+        resetForm();
       }
-
-      resetForm();
     },
   });
 
