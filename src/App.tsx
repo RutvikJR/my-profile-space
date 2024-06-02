@@ -1,10 +1,16 @@
 import "./App.css";
 import AppRoutes from "./AppRoutes";
-
+import AppWrapper from "./pages/AppWrapper";
+import { AuthProvider } from "./utils/AuthContext"
 function App() {
   return (
     <>
-      <AppRoutes></AppRoutes>
+      <AuthProvider>
+      <AppWrapper>
+        <AppRoutes>
+        </AppRoutes>
+      </AppWrapper>
+      </AuthProvider>
     </>
   );
 }

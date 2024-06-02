@@ -1,36 +1,31 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../redux/store";
-import { setCount } from "../redux/slice/counter";
+import { useContext } from 'react';
+import { AuthContext } from '../utils/AuthContext';
+import { useNavigate } from 'react-router-dom'; 
 
 const Home = () => {
-  const dispatch = useDispatch<AppDispatch>();
 
-  const count = useSelector((state: RootState) => state.counter.count);
+  const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const onCountIncrement = () => {
-    dispatch(setCount(count + 1));
+
+
+  const handleLoginRedirect = () => {
+    navigate('/login'); 
   };
 
-  const onCountDecrement = () => {
-    dispatch(setCount(count - 1));
-  };
   return (
     <div>
-      <div className="m-2 text-xl font-semibold">Page: home</div>
-      <div className="m-2 text-xl font-semibold">counter</div>
-      <div className="m-2 text-xl font-semibold">{count}</div>
-      <button
-        className="p-4 bg-cyan-600 text-white m-2 rounded-lg"
-        onClick={onCountIncrement}
-      >
-        increment
-      </button>
-      <button
-        className="p-4 bg-cyan-600 text-white m-2 rounded-lg"
-        onClick={onCountDecrement}
-      >
-        decrement
-      </button>
+      <div className="m-2 text-xl font-semibold">Home</div>
+      {authContext?.userId ? (
+        <div className="m-2 text-xl font-semibold">User ID: {authContext.userId}</div>
+      ) : (
+        <button
+          className="p-4 bg-cyan-600 text-white m-2 rounded-lg"
+          onClick={handleLoginRedirect}
+        >
+          Login
+        </button>
+      )}
     </div>
   );
 };
