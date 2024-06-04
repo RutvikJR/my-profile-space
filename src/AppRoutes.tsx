@@ -89,9 +89,9 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-        <Route path="login" element={<Login />} />
-        <Route path="*" element={<NoPage />} />
       </Route>
+      <Route path="login" element={<Login />} />
+      <Route path="*" element={<NoPage />} />
     </Routes>
   );
 };

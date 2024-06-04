@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
+import { showToast } from "../utils/toast";
 // import { useDispatch } from "react-redux";
 // import { setUser } from "../../redux/slice/user";
 // import { AppDispatch } from "../../redux/store";
@@ -28,29 +28,11 @@ function Login() {
     console.log(error);
 
     if (data?.user) {
-      toast.success("Login successfull!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      showToast("Login successfull!", "success");
       setUserId(data?.user?.id);
       navigate("/");
     } else if (error) {
-      toast.error("Invalid login credentials", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      showToast("Invalid login credentials", "error");
     }
   };
 

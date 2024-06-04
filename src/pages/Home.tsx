@@ -26,17 +26,6 @@ const Home = () => {
       >
         decrement
       </button>
-      <div className="my-4">
-        {/* <!-- Google Calendar Appointment Scheduling begin --> */}
-        <iframe
-          src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3HvLSAPD2RMncpfe3rtLSbTMfd9_g1IaOukmd04oaDFgSHclpy4gqMEAcrq4-MUjV4vmZ4BEjS?gv=true"
-          style={{ border: 0 }}
-          width="100%"
-          height={600}
-          frameBorder={0}
-        />
-        {/* <!-- end Google Calendar Appointment Scheduling --> */}
-      </div>
     </div>
   );
 };
