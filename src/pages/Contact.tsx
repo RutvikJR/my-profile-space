@@ -1,8 +1,7 @@
-import { RootState } from "../redux/store";
-import { useSelector } from "react-redux";
+import counterStore from "../store/couterStore";
 
 const Contact = () => {
-  const count = useSelector((state: RootState) => state.counter.count);
+  const { count } = counterStore();
   return (
     <div>
       <div>Contact Page</div>

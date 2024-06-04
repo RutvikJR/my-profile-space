@@ -9,7 +9,249 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      education: {
+        Row: {
+          created_at: string
+          degree: string | null
+          description: string | null
+          end_date: string | null
+          id: number
+          school: string | null
+          start_date: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          degree?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: number
+          school?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          degree?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: number
+          school?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience: {
+        Row: {
+          company: string | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: number
+          position: string | null
+          start_date: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: number
+          position?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: number
+          position?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faqs: {
+        Row: {
+          answer: string | null
+          created_at: string
+          id: number
+          question: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          answer?: string | null
+          created_at?: string
+          id?: number
+          question?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          answer?: string | null
+          created_at?: string
+          id?: number
+          question?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faqs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      skills: {
+        Row: {
+          created_at: string
+          id: number
+          name: string | null
+          rating: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name?: string | null
+          rating?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string | null
+          rating?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skills_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimonials: {
+        Row: {
+          created_at: string
+          id: number
+          is_male: boolean | null
+          name: string | null
+          position: string | null
+          review: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          is_male?: boolean | null
+          name?: string | null
+          position?: string | null
+          review?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          is_male?: boolean | null
+          name?: string | null
+          position?: string | null
+          review?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_detail: {
+        Row: {
+          city: string | null
+          contactno: number | null
+          country: string | null
+          created_at: string
+          domaindetails: string | null
+          linkedid: string | null
+          Name: string | null
+          profile_image_url: string | null
+          state: string | null
+          user_id: string
+          Username: string | null
+        }
+        Insert: {
+          city?: string | null
+          contactno?: number | null
+          country?: string | null
+          created_at?: string
+          domaindetails?: string | null
+          linkedid?: string | null
+          Name?: string | null
+          profile_image_url?: string | null
+          state?: string | null
+          user_id: string
+          Username?: string | null
+        }
+        Update: {
+          city?: string | null
+          contactno?: number | null
+          country?: string | null
+          created_at?: string
+          domaindetails?: string | null
+          linkedid?: string | null
+          Name?: string | null
+          profile_image_url?: string | null
+          state?: string | null
+          user_id?: string
+          Username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_detail_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
