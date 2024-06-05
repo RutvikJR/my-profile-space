@@ -130,7 +130,7 @@ const FAQs = () => {
   return(
     <>
      <Box>
-      <Text size="xl" weight={700} mb="md">Experience</Text>
+      <Text size="xl"mb="md">Experience</Text>
       <Box mb="xl">
         <form
           onSubmit={form.onSubmit((values) => {
