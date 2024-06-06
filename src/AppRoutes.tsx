@@ -34,7 +34,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="services"
+          path="/services"
           element={
             <AuthGuard>
               <Services />
@@ -58,7 +58,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="skills"
+          path="/skills"
           element={
             <AuthGuard>
               <Skills />
