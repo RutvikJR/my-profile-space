@@ -11,7 +11,7 @@ const FAQs = () => {
 
   const userId = userStore((store)=> store.id);
 
-  const [ FAQs, setFAQs ] = useState<FAQs[]|null>(null);
+  const [faqsList, setFaqsList] = useState<FAQs[] | null>(null);
   const [ editFAQId, setEditFAQId] = useState<string | null>(null);
 
   const form = useForm({
@@ -45,8 +45,10 @@ const FAQs = () => {
        console.log(`Error fetching FAQs : ${error}`);
      }
      else{
-       setFAQs(data);
+       setFaqsList(data);
      }
+     form.reset();
+     setEditFAQId(null);
    } catch (error) {
     console.log(`Error in Load FAQs part : ${error}`);
    }
@@ -66,7 +68,7 @@ const FAQs = () => {
           console.log(`Error fetching FAQs : ${error}`)
         }
         else{
-          setFAQs((prev) => (prev ? [...prev, data[0]] : [data[0]]));
+          setFaqsList((prev) => (prev ? [...prev, data[0]] : [data[0]]));
           form.reset();
         }
     } catch (error) {
@@ -89,7 +91,7 @@ const FAQs = () => {
           console.log(`Error editing FAQ : ${error}`)
         }
         else{
-          setFAQs((prev) => prev ? prev.map((exp) => (exp.id === data[0].id ? data[0] : exp)) : [data[0]]);
+          setFaqsList((prev) => prev ? prev.map((exp) => (exp.id === data[0].id ? data[0] : exp)) : [data[0]]);
           setEditFAQId(null);
           form.reset();
         }
@@ -160,21 +162,43 @@ const FAQs = () => {
       </Box>
     </Box>
 
-    {FAQs?.length === 0 ? (
-      <Text>There are no FAQs added by you.</Text>
-    ) : (
-      <ul>
-        {FAQs?.map((FAQ) =>(
-          <li key={FAQ.id} style={{ marginBottom: '1rem' }} className="flex">
-            <div><strong>Question : </strong> { FAQ.question } </div>
-            <div><strong>Answer : </strong> { FAQ.answer } </div>
-            <Button onClick={() => handleEditClick(FAQ)} className="mr-2 ml-2 rounded-full">Edit</Button>
-            <Button color='red' className="mr-2 ml-2 rounded-full" onClick={() => handleDeleteFAQs(FAQ.id.toString())}>Delete</Button>
-          </li>
-        ))}
-      </ul>
-    )
-    }
+    {faqsList?.length === 0 ? (
+  <Text>There are no FAQs added by you.</Text>
+) : (
+  <ul>
+  {faqsList?.map((faq) => (
+    <div className="group">
+      <li
+        key={faq.id}
+        className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 h-20 overflow-hidden hover:shadow-lg transition duration-300 hover:h-28"
+      >
+        <div>
+          <strong>Question : </strong> {faq.question}
+        </div>
+        <div>
+          <strong>Answer : </strong> {faq.answer}
+        </div>
+        <div className=" opacity-0 group-hover:opacity-100 transition duration-300 h-12">
+          <Button
+            onClick={() => handleEditClick(faq)}
+            className="mr-2 mt-2 rounded-full"
+          >
+            Edit
+          </Button>
+          <Button
+            color="red"
+            className="ml-2 mt-2  rounded-full"
+            onClick={() => handleDeleteFAQs(faq.id.toString())}
+          >
+            Delete
+          </Button>
+        </div>
+      </li>
+    </div>
+  ))}
+</ul>
+)}
+
     </>
   );
 };

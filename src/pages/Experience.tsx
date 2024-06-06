@@ -41,15 +41,17 @@ const Experience = () => {
 
     try {
       const { data, error } = await supabaseClient
-        .from('experience')
-        .select()
-        .eq('user_id', userId);
-  
+      .from('experience')
+      .select()
+      .eq('user_id', userId);
+      
       if (error) {
         console.log(`Error fetching Experience : ${error}`);
       } else {
         setExperiences(data);
       }
+      form.reset();
+      setEditExperienceId(null);
     } catch (error) {
       console.log(`Error in Load Experience part : ${error}`)
     }
@@ -178,20 +180,50 @@ try {
         <Text>There are no experiences you added</Text>
       ) : (
         <ul>
-          {experiences?.map((experience) => (
-            <li key={experience.id} style={{ marginBottom: '1rem' }} className="flex">
-              <div><strong>Job Title : </strong> {experience.position}</div>
-              <div><strong>Job Location : </strong> {experience.company}</div>
-              <div><strong>Start Year : </strong> {experience.start_date}</div>
-              <div><strong>End Year : </strong> {experience.end_date}</div>
-              <div><strong>Description : </strong> {experience.description}</div>
-              <Button onClick={() => handleEditClick(experience)} className="mr-2 ml-2 rounded-full">Edit</Button>
-              <Button color="red" className="mr-2 ml-2 rounded-full" onClick={() => handleDeleteExperience(experience.id.toString())}>
-                Delete
-              </Button>
+        {experiences?.map((experience) => (
+          <div className="group">
+            <li
+              key={experience.id}
+              className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 h-36 overflow-hidden hover:shadow-lg transition duration-300 hover:h-48"
+            >
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 md:mb-0">
+                <div>
+                  <div className="mr-4">
+                    <strong>Job Title : </strong> {experience.position}
+                  </div>
+                  <div className="mr-4">
+                    <strong>Job Location : </strong> {experience.company}
+                  </div>
+                  <div className="mr-4">
+                    <strong>Start Year : </strong> {experience.start_date}
+                  </div>
+                  <div className="mr-4">
+                    <strong>End Year : </strong> {experience.end_date}
+                  </div>
+                  <div>
+                    <strong>Description : </strong> {experience.description}
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-0 group-hover:opacity-100 transition duration-300 ">
+                <Button
+                  onClick={() => handleEditClick(experience)}
+                  className="mr-2 rounded-full"
+                >
+                  Edit
+                </Button>
+                <Button
+                  color="red"
+                  className="rounded-full"
+                  onClick={() => handleDeleteExperience(experience.id.toString())}
+                >
+                  Delete
+                </Button>
+              </div>
             </li>
-          ))}
-        </ul>
+          </div>
+        ))}
+      </ul>
       )}
     </>
   );
