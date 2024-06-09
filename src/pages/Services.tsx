@@ -13,6 +13,8 @@ const Services = () => {
 
   const [services, setServices] = useState<Service[] | null>(null);
   const [editServiceId, setEditServiceId] = useState<string | null>(null);
+  const [addOn,setAddOn]=useState(false);
+  const [editOn,setEditOn]=useState(false);
 
   const form = useForm({
     initialValues: {
@@ -101,7 +103,10 @@ const Services = () => {
       <td className="pl-4 truncate max-w-xs">{service.name}</td>
       <td className="pl-4 truncate max-w-xs">{service.description}</td>
       <td className="pl-4">
-        <FaEdit onClick={() => handleEditClick(service)} className="cursor-pointer text-blue-500" />
+        <FaEdit onClick={() =>{ handleEditClick(service)
+          setEditOn(true);
+          setAddOn(false);
+        }} className="cursor-pointer text-blue-500" />
       </td>
       <td className="pl-4">
         <FaTrashAlt onClick={() => handleDeleteService(service.id.toString())} className="cursor-pointer text-red-500" />
@@ -121,7 +126,7 @@ const Services = () => {
   return (
     <div>
       <Text>Services</Text>
-      <Box>
+      {addOn||editOn?(<Box>
         <form
           onSubmit={form.onSubmit((values) => {
             if (editServiceId) {
@@ -142,11 +147,22 @@ const Services = () => {
             {...form.getInputProps('description')}
           />
           <Button type="submit" color="cyan" mt="md">
-            {editServiceId ? 'Save Changes' : 'Add Service'}
+            {editServiceId ? 'Save' : 'Add'}
           </Button>
         </form>
       </Box>
-
+):<></>}
+{
+  addOn?<></>:(<Button onClick={()=>{
+    setAddOn(true);
+    if(editOn)
+      {
+        setEditOn(false);
+        form.reset();
+      }
+  }}>Add Services</Button> )
+}
+     
       {services == null || services.length === 0 ? (
         <Text>There are no services you added</Text>
       ) : (

@@ -13,6 +13,8 @@ const Skills = () => {
 
   const [skills, setSkills] = useState<Skill[] | null>(null);
   const [editSkillId, setEditSkillId] = useState<string | null>(null);
+  const [addOn,setAddOn]=useState(false);
+  const [editOn,setEditOn]=useState(false);
 
   const form = useForm({
     initialValues: {
@@ -101,7 +103,11 @@ const Skills = () => {
       <td className="px-4 truncate max-w-xs">{skill.name}</td>
       <td className="px-4 truncate max-w-xs">{skill.rating}</td>
       <td className="px-4">
-        <FaEdit onClick={() => handleEditClick(skill)} className="cursor-pointer text-blue-500" />
+        <FaEdit onClick={() => {handleEditClick(skill);
+          setEditOn(true);
+          setAddOn(false);
+        }
+        } className="cursor-pointer text-blue-500" />
       </td>
       <td className="px-4">
         <FaTrashAlt onClick={() => handleDeleteSkill(skill.id.toString())} className="cursor-pointer text-red-500" />
@@ -121,7 +127,7 @@ const Skills = () => {
   return (
     <div>
       <Text>Skills</Text>
-      <Box>
+      {addOn||editOn?(<Box>
         <form
           onSubmit={form.onSubmit((values) => {
             if (editSkillId) {
@@ -142,11 +148,20 @@ const Skills = () => {
             onChange={(value) => form.setFieldValue('rating', value || 0)}
           />
           <Button type="submit" color="cyan" mt="md" className="mb-4">
-            {editSkillId ? 'Save Changes' : 'Add Skill'}
+            {editSkillId&&editOn ? 'Save' : 'Add'}
           </Button>
+          
         </form>
-      </Box>
-
+      </Box>):<></>}
+      {addOn?<></>:<Button onClick={()=>{
+        setAddOn(true);
+        if(editOn)
+          {
+            setEditOn(false);
+            form.reset();
+          } 
+      }}>Add skill</Button>}
+      
       {skills == null || skills.length === 0 ? (
         <Text>There are no skills you added</Text>
       ) : (
