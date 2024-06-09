@@ -1,7 +1,8 @@
-import { Button, Text, TextInput, Box, Textarea } from "@mantine/core";
+import { Button, Text, Box, Textarea, Modal, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import userStore from "../store/userStore";
+import { MonthPickerInput } from '@mantine/dates';
 import { useEffect, useState } from "react";
+import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
 
@@ -12,20 +13,21 @@ const Experience = () => {
 
   const [experiences, setExperiences] = useState<Experience[] | null>(null);
   const [editExperienceId, setEditExperienceId] = useState<string | null>(null);
+  const [modalOpened, setModalOpened] = useState(false);
 
   const form = useForm({
     initialValues: {
       position: '',
       company: '',
-      start_date: '',
-      end_date: '',
+      start_date: null,
+      end_date: null,
       description: '',
     },
     validate: {
       position: (value) => (value.length > 0 ? null : 'Job title is required'),
       company: (value) => (value.length > 0 ? null : 'Job location is required'),
-      start_date: (value) => (value.length > 0 ? null : 'Start year is required'),
-      end_date: (value) => (value.length > 0 ? null : 'End year is required'),
+      start_date: (value) => (value ? null : 'Start date is required'),
+      end_date: (value) => (value ? null : 'End date is required'),
       description: (value) => (value.length > 0 ? null : 'Description is required'),
     },
   });
@@ -41,10 +43,10 @@ const Experience = () => {
 
     try {
       const { data, error } = await supabaseClient
-      .from('experience')
-      .select()
-      .eq('user_id', userId);
-      
+        .from('experience')
+        .select()
+        .eq('user_id', userId);
+
       if (error) {
         console.log(`Error fetching Experience : ${error}`);
       } else {
@@ -57,13 +59,20 @@ const Experience = () => {
     }
   };
 
-  const handleAddExperience = async (values: { position: string; company: string; start_date: string; end_date: string; description: string }) => {
+  const handleAddExperience = async (values: { position: string; company: string; start_date: Date | null; end_date: Date | null; description: string }) => {
     if (!userId) return;
-
+  
     try {
+      const adjustedValues = {
+        ...values,
+        // Adjust the end date by adding one month to ensure it matches the user input
+        start_date: values.start_date ? new Date(values.start_date.setMonth(values.start_date.getMonth() + 1)) : null,
+        end_date: values.end_date ? new Date(values.end_date.setMonth(values.end_date.getMonth() + 1)) : null
+      };
+  
       const { data, error } = await supabaseClient
         .from('experience')
-        .insert([{ ...values, user_id: userId }])
+        .insert([{ ...adjustedValues, user_id: userId }])
         .select();
   
       if (error) {
@@ -71,19 +80,27 @@ const Experience = () => {
       } else {
         setExperiences((prev) => (prev ? [...prev, data[0]] : [data[0]]));
         form.reset();
+        setModalOpened(false);
       }
     } catch (error) {
       console.log(`Error in Add Experience part : ${error}`)
     }
   };
-
-  const handleEditExperience = async (values: { position: string; company: string; start_date: string; end_date: string; description: string }) => {
+  
+  const handleEditExperience = async (values: { position: string; company: string; start_date: Date | null; end_date: Date | null; description: string }) => {
     if (!userId || !editExperienceId) return;
-try {
+  
+    try {
+      const adjustedValues = {
+        ...values,
+        // Adjust the end date by adding one month to ensure it matches the user input
+        start_date: values.start_date ? new Date(values.start_date.setMonth(values.start_date.getMonth() + 1)) : null,
+        end_date: values.end_date ? new Date(values.end_date.setMonth(values.end_date.getMonth() + 1)) : null
+      };
   
       const { data, error } = await supabaseClient
         .from('experience')
-        .update(values)
+        .update(adjustedValues)
         .eq('id', editExperienceId)
         .select();
   
@@ -93,11 +110,13 @@ try {
         setExperiences((prev) => prev ? prev.map((exp) => (exp.id === data[0].id ? data[0] : exp)) : [data[0]]);
         setEditExperienceId(null);
         form.reset();
+        setModalOpened(false);
       }
-} catch (error) {
-  console.log(`Error in Edit Experience part : ${error}`)
-}
+    } catch (error) {
+      console.log(`Error in Edit Experience part : ${error}`)
+    }
   };
+  
 
   const handleDeleteExperience = async (id: string) => {
     try {
@@ -105,7 +124,7 @@ try {
         .from('experience')
         .delete()
         .eq('id', id);
-  
+
       if (error) {
         console.log(`Error deleting experience : ${error}`);
       } else {
@@ -120,17 +139,36 @@ try {
     form.setValues({
       position: experience.position,
       company: experience.company,
-      start_date: experience.start_date,
-      end_date: experience.end_date,
+      start_date: experience.start_date ? new Date(experience.start_date) : null,
+      end_date: experience.end_date ? new Date(experience.end_date) : null,
       description: experience.description
     });
     setEditExperienceId(experience.id.toString());
+    setModalOpened(true);
+  };
+
+  const openAddExperienceModal = () => {
+    form.reset();
+    setEditExperienceId(null);
+    setModalOpened(true);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   };
 
   return (
     <>
       <Text size="xl" mb="md">Experience</Text>
-      <Box mb="xl">
+      <Button onClick={openAddExperienceModal} color="cyan" mb="xl">
+        Add Experience
+      </Button>
+      <Modal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        title={editExperienceId ? 'Edit Experience' : 'Add Experience'}
+      >
         <form
           onSubmit={form.onSubmit((values) => {
             if (editExperienceId) {
@@ -152,16 +190,20 @@ try {
             {...form.getInputProps('company')}
             mb="md"
           />
-          <TextInput
-            label="Start Year"
-            placeholder="Start Year"
-            {...form.getInputProps('start_date')}
+          <MonthPickerInput
+            label="Start Date"
+            placeholder="Pick start date"
+            value={form.values.start_date}
+            onChange={(date) => form.setFieldValue('start_date', date)}
+            maxDate={new Date()}
             mb="md"
           />
-          <TextInput
-            label="End Year"
-            placeholder="End Year"
-            {...form.getInputProps('end_date')}
+          <MonthPickerInput
+            label="End Date"
+            placeholder="Pick end date"
+            value={form.values.end_date}
+            onChange={(date) => form.setFieldValue('end_date', date)}
+            maxDate={new Date()}
             mb="md"
           />
           <Textarea
@@ -174,17 +216,16 @@ try {
             {editExperienceId ? 'Save Changes' : 'Add Experience'}
           </Button>
         </form>
-      </Box>
+      </Modal>
 
       {experiences?.length === 0 ? (
         <Text>There are no experiences you added</Text>
       ) : (
         <ul>
-        {experiences?.map((experience) => (
-          <div className="group">
+          {experiences?.map((experience) => (
             <li
               key={experience.id}
-              className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 h-36 overflow-hidden hover:shadow-lg transition duration-300 hover:h-48"
+              className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4"
             >
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 md:mb-0">
                 <div>
@@ -195,17 +236,17 @@ try {
                     <strong>Job Location : </strong> {experience.company}
                   </div>
                   <div className="mr-4">
-                    <strong>Start Year : </strong> {experience.start_date}
+                    <strong>Start Date : </strong> {formatDate(experience.start_date)}
                   </div>
                   <div className="mr-4">
-                    <strong>End Year : </strong> {experience.end_date}
+                    <strong>End Date : </strong> {formatDate(experience.end_date)}
                   </div>
                   <div>
                     <strong>Description : </strong> {experience.description}
                   </div>
                 </div>
               </div>
-              <div className="opacity-0 group-hover:opacity-100 transition duration-300 ">
+              <div>
                 <Button
                   onClick={() => handleEditClick(experience)}
                   className="mr-2 rounded-full"
@@ -221,9 +262,8 @@ try {
                 </Button>
               </div>
             </li>
-          </div>
-        ))}
-      </ul>
+          ))}
+        </ul>
       )}
     </>
   );
