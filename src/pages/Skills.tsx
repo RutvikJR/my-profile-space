@@ -1,8 +1,9 @@
-import { Button, Text, TextInput, Rating, Box, Table } from "@mantine/core";
+
+import { Button, Text, TextInput, Rating, Box, Table, Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import userStore from "../store/userStore";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../config/supabaseConfig";
+import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from 'react-icons/fa'; // Importing icons from react-icons
 
@@ -13,8 +14,7 @@ const Skills = () => {
 
   const [skills, setSkills] = useState<Skill[] | null>(null);
   const [editSkillId, setEditSkillId] = useState<string | null>(null);
-  const [addOn,setAddOn]=useState(false);
-  const [editOn,setEditOn]=useState(false);
+  const [modalOpened, setModalOpened] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -60,6 +60,7 @@ const Skills = () => {
     } else {
       form.reset();
       loadSkills();
+      setModalOpened(false);
     }
   };
 
@@ -77,6 +78,7 @@ const Skills = () => {
       form.reset();
       setEditSkillId(null);
       loadSkills();
+      setModalOpened(false);
     }
   };
 
@@ -96,38 +98,47 @@ const Skills = () => {
   const handleEditClick = (skill: Skill) => {
     form.setValues({ name: skill.name || '', rating: skill.rating || 0 });
     setEditSkillId(skill.id.toString());
+    setModalOpened(true);
+  };
+
+  const openAddSkillModal = () => {
+    form.reset();
+    setEditSkillId(null);
+    setModalOpened(true);
   };
 
   const rows = skills?.map((skill) => (
-    <tr key={skill.id} className="text-center">
-      <td className="px-4 truncate max-w-xs">{skill.name}</td>
-      <td className="px-4 truncate max-w-xs">{skill.rating}</td>
-      <td className="px-4">
-        <FaEdit onClick={() => {handleEditClick(skill);
-          setEditOn(true);
-          setAddOn(false);
-        }
-        } className="cursor-pointer text-blue-500" />
-      </td>
-      <td className="px-4">
-        <FaTrashAlt onClick={() => handleDeleteSkill(skill.id.toString())} className="cursor-pointer text-red-500" />
-      </td>
-    </tr>
+    <Table.Tr key={skill.id} className="text-center">
+      <Table.Td className="px-4 truncate max-w-xs">{skill.name}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{skill.rating}</Table.Td>
+      <Table.Td className="px-4">
+        <div className="flex justify-end mx-3">
+          <FaEdit onClick={() => handleEditClick(skill)} className="cursor-pointer text-blue-500 mx-3" />
+          <FaTrashAlt onClick={() => handleDeleteSkill(skill.id.toString())} className="cursor-pointer text-red-500 mx-3" />
+        </div>
+      </Table.Td>
+    </Table.Tr>
   )) || [];
 
   const ths = (
-    <tr className="text-center">
-      <th className="px-4">Skill Name</th>
-      <th className="px-4">Skill Rating</th>
-      <th className="px-4"></th>
-      <th className="px-4"></th>
-    </tr>
+    <Table.Tr className="text-center">
+      <Table.Th className="px-4 text-center">Skill Name</Table.Th>
+      <Table.Th className="px-4 text-center">Skill Rating</Table.Th>
+      <Table.Th className="px-4 text-center"></Table.Th>
+    </Table.Tr>
   );
 
   return (
     <div>
       <Text>Skills</Text>
-      {addOn||editOn?(<Box>
+      <Button onClick={openAddSkillModal} color="cyan" mb="xl">
+        Add Skill
+      </Button>
+      <Modal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        title={editSkillId ? 'Edit Skill' : 'Add Skill'}
+      >
         <form
           onSubmit={form.onSubmit((values) => {
             if (editSkillId) {
@@ -141,33 +152,26 @@ const Skills = () => {
             label="Skill Name"
             placeholder="Skill Name"
             {...form.getInputProps('name')}
+            mb="md"
           />
           <Text>Rating</Text>
           <Rating
             value={form.values.rating}
             onChange={(value) => form.setFieldValue('rating', value || 0)}
+            mb="md"
           />
-          <Button type="submit" color="cyan" mt="md" className="mb-4">
-            {editSkillId&&editOn ? 'Save' : 'Add'}
+          <Button type="submit" color="cyan" mt="md">
+            {editSkillId ? 'Save Changes' : 'Add Skill'}
           </Button>
-          
         </form>
-      </Box>):<></>}
-      {addOn?<></>:<Button onClick={()=>{
-        setAddOn(true);
-        if(editOn)
-          {
-            setEditOn(false);
-            form.reset();
-          } 
-      }}>Add skill</Button>}
-      
+      </Modal>
+
       {skills == null || skills.length === 0 ? (
         <Text>There are no skills you added</Text>
       ) : (
-        <Table striped highlightOnHover withTableBorder withColumnBorders>
-          <thead>{ths}</thead>
-          <tbody>{rows}</tbody>
+        <Table striped highlightOnHover withTableBorder >
+          <Table.Thead >{ths}</Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       )}
     </div>
