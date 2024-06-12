@@ -5,7 +5,7 @@ import userStore from "../store/userStore";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
-import { FaEdit, FaTrashAlt, FaPlus, FaTimes } from 'react-icons/fa'; // Importing icons from react-icons
+import { FaEdit, FaTrashAlt, FaPlus, FaTimes } from 'react-icons/fa'; 
 
 type Project = Database['public']['Tables']['projects']['Row'];
 
@@ -131,7 +131,7 @@ const Projects = () => {
       client_name: project.client_name || '',
       industry: project.industry || '',
       technology: project.technology || [],
-      date: project.date ? new Date(project.date) : new Date(), // Ensure date is a valid Date object
+      date: project.date ? new Date(project.date) : new Date(), 
       url: project.url || '',
       image: null,
     });
