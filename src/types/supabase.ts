@@ -135,6 +135,56 @@ export type Database = {
           },
         ]
       }
+      projects: {
+        Row: {
+          client_name: string | null
+          created_at: string
+          date: string | null
+          description: string | null
+          id: number
+          images: string[] | null
+          industry: string | null
+          technology: string[] | null
+          title: string | null
+          url: string | null
+          user_id: string | null
+        }
+        Insert: {
+          client_name?: string | null
+          created_at?: string
+          date?: string | null
+          description?: string | null
+          id?: number
+          images?: string[] | null
+          industry?: string | null
+          technology?: string[] | null
+          title?: string | null
+          url?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          client_name?: string | null
+          created_at?: string
+          date?: string | null
+          description?: string | null
+          id?: number
+          images?: string[] | null
+          industry?: string | null
+          technology?: string[] | null
+          title?: string | null
+          url?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           created_at: string

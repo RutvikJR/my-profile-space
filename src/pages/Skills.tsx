@@ -1,5 +1,4 @@
-
-import { Button, Text, TextInput, Rating, Box, Table, Modal } from "@mantine/core";
+import { Button, Text, TextInput, Rating,  Table, Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../config/supabaseConfig";
@@ -160,6 +159,7 @@ const Skills = () => {
             onChange={(value) => form.setFieldValue('rating', value || 0)}
             mb="md"
           />
+          {form.errors.rating && <Text color="red">{form.errors.rating}</Text>}
           <Button type="submit" color="cyan" mt="md">
             {editSkillId ? 'Save Changes' : 'Add Skill'}
           </Button>
