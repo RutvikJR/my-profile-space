@@ -12,8 +12,8 @@ type Education = Database["public"]["Tables"]["education"]["Row"];
 
 const Education = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const [startDate, setStartDate] = useState<Date | undefined>();
-  const [endDate, setEndDate] = useState<Date | undefined>();
+  const [educations,setEducation]=useState<Education[] | null>(null);
+ 
 
   const form = useForm({
     mode: "uncontrolled",
@@ -21,8 +21,8 @@ const Education = () => {
       schoolName: "",
       degree: "",
       fieldOfStudy: "",
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: null as Date | null,
+      endDate: null as Date | null,
     },
 
     validate: {
@@ -30,7 +30,12 @@ const Education = () => {
       degree: (value) => (value ? null : "Degree is required"),
       fieldOfStudy: (value) => (value ? null : "Field of study is required"),
       startDate: (value) => (value ? null : "Start date is required"),
-      endDate: (value) => (value ? null : "End date is required"),
+      endDate: (value, values) => {
+        if (value && values.startDate && value <= values.startDate) {
+          return "End date must be greater than start date";
+        }
+        return value ? null : "End date is required";
+      },
     },
   });
 
@@ -53,7 +58,7 @@ const Education = () => {
             <TextInput
               withAsterisk
               label="School/University Name"
-              placeholder="Enter school name"
+              placeholder="Enter name"
               {...form.getInputProps("schoolName")}
             />
             <TextInput
@@ -69,21 +74,27 @@ const Education = () => {
               {...form.getInputProps("fieldOfStudy")}
             />
             <MonthPickerInput
-              label="Start date"
-              placeholder="Start date"
-              value={startDate}
-              maxDate={endDate || new Date()}
-              onChange={(date) =>
-                setStartDate(date === null ? undefined : date)
-              }
-            />
-            <MonthPickerInput
-              label="End date"
-              placeholder="End date"
-              value={endDate}
-              minDate={startDate}
-              onChange={(date) => setEndDate(date === null ? undefined : date)}
-            />
+            label="Start date"
+            placeholder="Start date"
+            value={form.values.startDate ?
+              new Date(form.values.startDate) :
+              undefined
+            }
+            maxDate={new Date()}
+            onChange={(date) => form.setFieldValue("startDate", date)}
+            error={form.errors.startDate}
+          />
+           <MonthPickerInput
+            label="End date"
+            placeholder="End date"
+            value={form.values.endDate ?
+              new Date(form.values.endDate) :
+              undefined
+            }
+            maxDate={new Date()}
+            onChange={(date) => form.setFieldValue("endDate", date)}
+            error={form.errors.endDate}
+          />
             <Group justify="flex-end" mt="md">
               <Button type="submit">Submit</Button>
             </Group>
