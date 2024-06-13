@@ -7,13 +7,15 @@ import { Modal, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Group, TextInput, Textarea } from "@mantine/core";
 import { MonthPickerInput } from "@mantine/dates";
+import { Card, Text, Title } from "@mantine/core";
 
 type Education = Database["public"]["Tables"]["education"]["Row"];
 
 const Education = () => {
-  const [opened, { open, close }] = useDisclosure(false);
-  const [educations,setEducation]=useState<Education[] | null>(null);
- 
+  const userId = userStore((store) => store.id);
+  const [educations, setEducations] = useState<Education[] | null>(null);
+  const [editeducationId, setEditEducationId] = useState<string | null>(null);
+  const [modalOpened, setModalOpened] = useState(false);
 
   const form = useForm({
     mode: "uncontrolled",
@@ -39,22 +41,189 @@ const Education = () => {
     },
   });
 
-  const handleSubmit = (values: typeof form.values) => {
+  useEffect(() => {
+    if (userId) {
+      loadEducations();
+    }
+  }, [userId]);
+
+  const loadEducations = async()=>{
+    if(!userId) return;
+
+    try {
+      const {data,error} = await supabaseClient
+      .from('education')
+      .select()
+      .eq('user_id',userId);
+
+      if(error){
+        console.log(`Error in Fetching Education : ${error}`)
+      }
+      else{
+        setEducations(data);
+      }
+      form.reset();
+      setEditEducationId(null);
+    } catch (error) {
+      console.log(`Error in Load Education part : ${error}`)
+    }
+  }
+
+  const handleAddEducation = async (values: {
+    schoolName: string;
+    degree: string;
+    fieldOfStudy: string;
+    startDate: Date | null;
+    endDate: Date | null;
+  }) => {
+    if (!userId) return;
+
     if (form.validate().hasErrors) return;
+
     console.log(values);
-    // Add your form submission logic here
+
+    try {
+      const adjustedValues = {
+        school: values.schoolName,
+        degree: values.degree,
+        field_of_study: values.fieldOfStudy,
+        start_date: values.startDate
+          ? new Date(
+              values.startDate.setMonth(values.startDate.getMonth() + 1)
+            ).toISOString()
+          : " ",
+        end_date: values.endDate
+          ? new Date(
+              values.endDate.setMonth(values.endDate.getMonth() + 1)
+            ).toISOString()
+          : " ",
+        user_id: userId,
+      };
+
+      const { data, error } = await supabaseClient
+        .from("education")
+        .insert([adjustedValues])
+        .select();
+
+      if (error) {
+        console.log(`Error adding education:${error}`);
+      } else {
+        setEducations((prev) => (prev ? [...prev, data[0]] : [data[0]]));
+        form.reset();
+        setModalOpened(false);
+      }
+    } catch (error) {
+      console.log(`Error in Add Education part:${error}`);
+    }
   };
+
+  const handleEditEducation = async (values: {
+    schoolName: string;
+    degree: string;
+    fieldOfStudy: string;
+    startDate: Date | null;
+    endDate: Date | null;
+  }) => {
+    if(!userId || !editeducationId) return;
+
+    try {
+      const adjustedValues = {
+        school: values.schoolName,
+        degree: values.degree,
+        field_of_study: values.fieldOfStudy,
+        start_date: values.startDate
+          ? new Date(
+              values.startDate.setMonth(values.startDate.getMonth() + 1)
+            ).toISOString()
+          : " ",
+        end_date: values.endDate
+          ? new Date(
+              values.endDate.setMonth(values.endDate.getMonth() + 1)
+            ).toISOString()
+          : " ",
+      };
+
+      const {data,error}= await supabaseClient
+      .from('education')
+      .update(adjustedValues)
+      .eq('id',editeducationId)
+      .select();
+
+      if(error){
+        console.log(`Error in editing Educatin:${error}`);
+      }
+      else{
+        setEducations((prev)=>prev ? prev.map((edu)=>(edu.id === data[0].id ? data[0] : edu)):[data[0]]);
+        setEditEducationId(null);
+        form.reset();
+        setModalOpened(false);
+      }
+
+    } catch (error) {
+      console.log(`Error in Edit Experience part : ${error}`);
+    }
+
+  };
+
+  function openAddEducationModal() {
+    form.reset();
+    setEditEducationId(null);
+    setModalOpened(true);
+  }
+
+  async function handleDeleteEducation(id:string){
+    try {
+      const {error} = await supabaseClient
+      .from('education')
+      .delete()
+      .eq('id',id);
+
+      if(error){
+        console.log(`Error in deleting education:${error}`);
+      }
+      else{
+        loadEducations();
+      }
+    } catch (error) {
+      console.log(`Error in Delete Education part : ${error}`)
+    }
+  }
+
+  async function handleEditClick(education:Education){
+      form.setValues({
+        schoolName:education.school,
+        degree:education.degree,
+        fieldOfStudy:education.field_of_study,
+        startDate:education.start_date ? new Date(education.start_date):null,
+        endDate:education.end_date ? new Date(education.end_date):null,
+      });
+      setEditEducationId(education.id.toString());
+      setModalOpened(true);
+  }
 
   return (
     <>
       <div className="flex flex-col">
         <h1 className="text-2xl font-bold text-gray-800">Education</h1>
-        <Button onClick={open} size="md" className="mt-4 w-40">
+        <Button onClick={openAddEducationModal} size="md" className="mt-4 w-40">
           Add Education
         </Button>
-        <Modal opened={opened} onClose={close} title="Add Education" centered>
+        <Modal
+          opened={modalOpened}
+          onClose={() => setModalOpened(false)}
+          title={editeducationId ? "Edit Education" : "Add Education"}
+          centered
+        >
           {/* Modal content */}
-          <form onSubmit={form.onSubmit(handleSubmit)}>
+          <form
+            onSubmit={form.onSubmit((values) => {
+              if (editeducationId) {
+                handleEditEducation(values);
+              } else {
+                handleAddEducation(values);
+              }
+            })}
+          >
             <TextInput
               withAsterisk
               label="School/University Name"
@@ -74,32 +243,72 @@ const Education = () => {
               {...form.getInputProps("fieldOfStudy")}
             />
             <MonthPickerInput
-            label="Start date"
-            placeholder="Start date"
-            value={form.values.startDate ?
-              new Date(form.values.startDate) :
-              undefined
-            }
-            maxDate={new Date()}
-            onChange={(date) => form.setFieldValue("startDate", date)}
-            error={form.errors.startDate}
-          />
-           <MonthPickerInput
-            label="End date"
-            placeholder="End date"
-            value={form.values.endDate ?
-              new Date(form.values.endDate) :
-              undefined
-            }
-            maxDate={new Date()}
-            onChange={(date) => form.setFieldValue("endDate", date)}
-            error={form.errors.endDate}
-          />
+              label="Start date"
+              placeholder="Start date"
+              value={
+                form.values.startDate
+                  ? new Date(form.values.startDate)
+                  : undefined
+              }
+              maxDate={new Date()}
+              onChange={(date) => form.setFieldValue("startDate", date)}
+              error={form.errors.startDate}
+            />
+            <MonthPickerInput
+              label="End date"
+              placeholder="End date"
+              value={
+                form.values.endDate ? new Date(form.values.endDate) : undefined
+              }
+              maxDate={new Date()}
+              onChange={(date) => form.setFieldValue("endDate", date)}
+              error={form.errors.endDate}
+            />
             <Group justify="flex-end" mt="md">
-              <Button type="submit">Submit</Button>
+              <Button type="submit">
+                {editeducationId ? "Save Changes" : "Submit"}
+              </Button>
             </Group>
           </form>
         </Modal>
+
+        {educations?.length === 0 ? (
+          <h4 className="text-2xl font-bold text-gray-800 mt-4">
+            There is no Education you added
+          </h4>
+        ) : (
+          <ul>
+  {educations?.map((education) => (
+    <li
+      key={education.id}
+      style={{ listStyleType: "none", marginBottom: "1rem" }}
+    >
+      <div className="border rounded-lg shadow-md p-4 mt-4">
+        <h4 className="text-xl font-bold mb-2">{education.school}</h4>
+        <p className="mb-2">
+          <strong>Degree:</strong> {education.degree}
+        </p>
+        <p className="mb-2">
+          <strong>Field of Study:</strong> {education.field_of_study}
+        </p>
+        <p className="mb-2">
+          <strong>Start Date:</strong>{" "}
+          {new Date(education.start_date).toLocaleDateString()}
+        </p>
+        <p className="mb-2">
+          <strong>End Date:</strong>{" "}
+          {education.end_date
+            ? new Date(education.end_date).toLocaleDateString()
+            : "Present"}
+        </p>
+        <Button onClick={()=>handleEditClick(education)}  variant="filled" size="md" className="mt-4 w-24">Edit</Button>
+        <Button onClick={()=>handleDeleteEducation(education.id.toString())}  variant="filled" size="md" className="mt-4 w-24 left-1" color="rgba(255, 0, 0, 1)">Delete</Button>
+      </div>
+    </li>
+  ))}
+</ul>
+
+        )}
       </div>
     </>
   );

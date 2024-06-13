@@ -13,7 +13,7 @@ export type Database = {
         Row: {
           created_at: string
           degree: string
-          description: string
+          field_of_study: string
           end_date: string
           id: number
           school: string
@@ -24,7 +24,7 @@ export type Database = {
         Insert: {
           created_at?: string
           degree: string
-          description: string
+          field_of_study?: string
           end_date: string
           id?: number
           school: string
@@ -35,7 +35,7 @@ export type Database = {
         Update: {
           created_at?: string
           degree?: string
-          description?: string
+          field_of_study?: string
           end_date?: string
           id?: number
           school?: string
