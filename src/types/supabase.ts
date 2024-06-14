@@ -12,36 +12,36 @@ export type Database = {
       education: {
         Row: {
           created_at: string
-          degree: string | null
-          description: string | null
-          end_date: string | null
+          degree: string
+          end_date: string
+          field_of_study: string
           id: number
-          school: string | null
-          start_date: string | null
+          school: string
+          start_date: string
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
-          degree?: string | null
-          description?: string | null
-          end_date?: string | null
+          degree: string
+          end_date: string
+          field_of_study: string
           id?: number
-          school?: string | null
-          start_date?: string | null
+          school: string
+          start_date: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
-          degree?: string | null
-          description?: string | null
-          end_date?: string | null
+          degree?: string
+          end_date?: string
+          field_of_study?: string
           id?: number
-          school?: string | null
-          start_date?: string | null
+          school?: string
+          start_date?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -57,35 +57,38 @@ export type Database = {
         Row: {
           company: string | null
           created_at: string
-          description: string | null
+          description: string
           end_date: string | null
           id: number
-          position: string | null
-          start_date: string | null
+          is_present: boolean
+          position: string
+          start_date: string
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           company?: string | null
           created_at?: string
-          description?: string | null
+          description: string
           end_date?: string | null
           id?: number
-          position?: string | null
-          start_date?: string | null
+          is_present?: boolean
+          position: string
+          start_date: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           company?: string | null
           created_at?: string
-          description?: string | null
+          description?: string
           end_date?: string | null
           id?: number
-          position?: string | null
-          start_date?: string | null
+          is_present?: boolean
+          position?: string
+          start_date?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -99,26 +102,26 @@ export type Database = {
       }
       faqs: {
         Row: {
-          answer: string | null
+          answer: string
           created_at: string
           id: number
-          question: string | null
+          question: string
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
-          answer?: string | null
+          answer: string
           created_at?: string
           id?: number
-          question?: string | null
+          question: string
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
-          answer?: string | null
+          answer?: string
           created_at?: string
           id?: number
-          question?: string | null
+          question?: string
           updated_at?: string | null
           user_id?: string | null
         }
@@ -132,27 +135,77 @@ export type Database = {
           },
         ]
       }
-      services: {
+      projects: {
         Row: {
+          client_name: string | null
           created_at: string
+          date: string | null
           description: string | null
           id: number
-          name: string | null
+          images: string[] | null
+          industry: string | null
+          technology: string[] | null
+          title: string | null
+          url: string | null
           user_id: string | null
         }
         Insert: {
+          client_name?: string | null
           created_at?: string
+          date?: string | null
           description?: string | null
           id?: number
-          name?: string | null
+          images?: string[] | null
+          industry?: string | null
+          technology?: string[] | null
+          title?: string | null
+          url?: string | null
           user_id?: string | null
         }
         Update: {
+          client_name?: string | null
           created_at?: string
+          date?: string | null
           description?: string | null
           id?: number
-          name?: string | null
+          images?: string[] | null
+          industry?: string | null
+          technology?: string[] | null
+          title?: string | null
+          url?: string | null
           user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          created_at: string
+          description: string
+          id: number
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: number
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: number
+          name?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -168,23 +221,23 @@ export type Database = {
         Row: {
           created_at: string
           id: number
-          name: string | null
-          rating: number | null
-          user_id: string | null
+          name: string
+          rating: number
+          user_id: string
         }
         Insert: {
           created_at?: string
           id?: number
-          name?: string | null
-          rating?: number | null
-          user_id?: string | null
+          name: string
+          rating: number
+          user_id: string
         }
         Update: {
           created_at?: string
           id?: number
-          name?: string | null
-          rating?: number | null
-          user_id?: string | null
+          name?: string
+          rating?: number
+          user_id?: string
         }
         Relationships: [
           {
@@ -200,29 +253,29 @@ export type Database = {
         Row: {
           created_at: string
           id: number
-          is_male: boolean | null
-          name: string | null
-          position: string | null
-          review: string | null
-          user_id: string | null
+          is_male: boolean
+          name: string
+          position: string
+          review: string
+          user_id: string
         }
         Insert: {
           created_at?: string
           id?: number
-          is_male?: boolean | null
-          name?: string | null
-          position?: string | null
-          review?: string | null
-          user_id?: string | null
+          is_male?: boolean
+          name: string
+          position: string
+          review: string
+          user_id: string
         }
         Update: {
           created_at?: string
           id?: number
-          is_male?: boolean | null
-          name?: string | null
-          position?: string | null
-          review?: string | null
-          user_id?: string | null
+          is_male?: boolean
+          name?: string
+          position?: string
+          review?: string
+          user_id?: string
         }
         Relationships: [
           {
