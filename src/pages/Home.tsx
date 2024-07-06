@@ -1,7 +1,10 @@
+import { useEffect } from "react";
 import counterStore from "../store/couterStore";
+import userStore from "../store/userStore";
 
 const Home = () => {
   const { count, decrement, increment } = counterStore();
+  const { loadFaqs } = userStore();
   const onCountIncrement = () => {
     increment();
   };
@@ -9,6 +12,11 @@ const Home = () => {
   const onCountDecrement = () => {
     decrement();
   };
+
+  useEffect(() => {
+    loadFaqs();
+  }, []);
+
   return (
     <div>
       <div className="m-2 text-xl font-semibold">Page: home</div>
@@ -26,6 +34,7 @@ const Home = () => {
       >
         decrement
       </button>
+      <h3>test</h3>
     </div>
   );
 };

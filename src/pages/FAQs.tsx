@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, TextInput, Text } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
-import { Modal } from '@mantine/core';
-import { supabaseClient } from '../config/supabaseConfig';
-import userStore from '../store/userStore';
-import { Database } from '../types/supabase';
+import React, { useEffect, useState } from "react";
+import { Box, Button, TextInput, Text } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { Modal } from "@mantine/core";
+import { supabaseClient } from "../config/supabaseConfig";
+import userStore from "../store/userStore";
+import { Database } from "../types/supabase";
 
-type FAQs = Database['public']['Tables']['faqs']['Row'];
+type FAQs = Database["public"]["Tables"]["faqs"]["Row"];
 
 const FAQs = () => {
   const userId = userStore((store) => store.id);
-  const [faqsList, setFaqsList] = useState<FAQs[] | null>(null);
   const [editFAQId, setEditFAQId] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
+  const { faqs, setFaqs } = userStore();
+
   const form = useForm({
     initialValues: {
-      question: '',
-      answer: '',
+      question: "",
+      answer: "",
     },
     validate: {
-      question: (value) => (value.length > 0 ? null : 'Please enter Question'),
-      answer: (value) => (value.length > 0 ? null : 'Please enter Answer'),
+      question: (value) => (value.length > 0 ? null : "Please enter Question"),
+      answer: (value) => (value.length > 0 ? null : "Please enter Answer"),
     },
   });
 
@@ -37,14 +38,14 @@ const FAQs = () => {
 
     try {
       const { data, error } = await supabaseClient
-        .from('faqs')
+        .from("faqs")
         .select()
-        .eq('user_id', userId);
+        .eq("user_id", userId);
 
       if (error) {
         console.log(`Error fetching FAQs: ${error}`);
       } else {
-        setFaqsList(data);
+        setFaqs(data);
       }
       form.reset();
       setEditFAQId(null);
@@ -53,46 +54,54 @@ const FAQs = () => {
     }
   };
 
-  const handleAddFAQs = async (values: { question: string; answer: string }) => {
+  const handleAddFAQs = async (values: {
+    question: string;
+    answer: string;
+  }) => {
     if (!userId) return;
 
     try {
       const { data, error } = await supabaseClient
-        .from('faqs')
+        .from("faqs")
         .insert([{ ...values, user_id: userId }])
         .select();
 
       if (error) {
         console.log(`Error adding FAQ: ${error}`);
       } else {
-        setFaqsList((prev) => (prev ? [...prev, data[0]] : [data[0]]));
+        setFaqs(faqs ? [...faqs, data[0]] : [data[0]]);
         form.reset();
-        close();  // Close the modal after adding FAQ
+        close(); // Close the modal after adding FAQ
       }
     } catch (error) {
       console.log(`Error in Add FAQs part: ${error}`);
     }
   };
 
-  const handleEditFAQs = async (values: { question: string; answer: string }) => {
+  const handleEditFAQs = async (values: {
+    question: string;
+    answer: string;
+  }) => {
     if (!userId || !editFAQId) return;
 
     try {
       const { data, error } = await supabaseClient
-        .from('faqs')
+        .from("faqs")
         .update(values)
-        .eq('id', editFAQId)
+        .eq("id", editFAQId)
         .select();
 
       if (error) {
         console.log(`Error editing FAQ: ${error}`);
       } else {
-        setFaqsList((prev) =>
-          prev ? prev.map((exp) => (exp.id === data[0].id ? data[0] : exp)) : [data[0]]
+        setFaqs(
+          faqs
+            ? faqs.map((exp) => (exp.id === data[0].id ? data[0] : exp))
+            : [data[0]]
         );
         setEditFAQId(null);
         form.reset();
-        close();  // Close the modal after editing FAQ
+        close(); // Close the modal after editing FAQ
       }
     } catch (error) {
       console.log(`Error in Edit FAQ part: ${error}`);
@@ -101,10 +110,7 @@ const FAQs = () => {
 
   const handleDeleteFAQs = async (id: string) => {
     try {
-      const { error } = await supabaseClient
-        .from('faqs')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabaseClient.from("faqs").delete().eq("id", id);
 
       if (error) {
         console.log(`Error deleting FAQ: ${error}`);
@@ -126,7 +132,7 @@ const FAQs = () => {
   };
 
   const handleAddClick = () => {
-    form.reset();  // Reset form values for adding a new FAQ
+    form.reset(); // Reset form values for adding a new FAQ
     setEditFAQId(null);
     open();
   };
@@ -134,20 +140,20 @@ const FAQs = () => {
   return (
     <>
       <Box>
-        <Text size="xl" mb="md">FAQs</Text>
+        <Text size="xl" mb="md">
+          FAQs
+        </Text>
         <Button onClick={handleAddClick} color="cyan" mb="md">
           Add FAQ
         </Button>
 
-        {faqsList?.length === 0 ? (
+        {faqs?.length === 0 ? (
           <Text>There are no FAQs added by you.</Text>
         ) : (
           <ul>
-            {faqsList?.map((faq) => (
+            {faqs?.map((faq) => (
               <div className="group" key={faq.id}>
-                <li
-                  className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 overflow-hidden h-28"
-                >
+                <li className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 overflow-hidden h-28">
                   <div>
                     <strong>Question: </strong> {faq.question}
                   </div>
@@ -190,17 +196,17 @@ const FAQs = () => {
             <TextInput
               label="Question"
               placeholder="Question"
-              {...form.getInputProps('question')}
+              {...form.getInputProps("question")}
               mb="md"
             />
             <TextInput
               label="Answer"
               placeholder="Answer"
-              {...form.getInputProps('answer')}
+              {...form.getInputProps("answer")}
               mb="md"
             />
             <Button type="submit" color="cyan" mt="md">
-              {editFAQId ? 'Save Changes' : 'Add FAQ'}
+              {editFAQId ? "Save Changes" : "Add FAQ"}
             </Button>
           </form>
         </Box>
