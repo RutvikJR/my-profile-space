@@ -13,12 +13,16 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@mantine/core": "^7.10.1",
+    "@mantine/dates": "^7.10.1",
+    "@mantine/form": "^7.10.1",
     "@mantine/hooks": "^7.10.1",
+    "@mantine/modals": "^7.10.1",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.43.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.2.1",
     "react-router-dom": "^6.18.0",
     "react-toastify": "^10.0.5",
     "zustand": "^4.5.2"
