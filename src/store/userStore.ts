@@ -13,6 +13,8 @@ interface userStoreInterface {
   user_detail: Tables<"user_detail"> | null;
   setUserId: (userId: string) => void;
   initializeUser: () => Promise<void>;
+  setFaqs: (faqs: Tables<"faqs">[]) => void;
+  loadFaqs: () => Promise<void>;
 }
 
 const userStore = create<userStoreInterface>((set) => ({
@@ -34,6 +36,19 @@ const userStore = create<userStoreInterface>((set) => ({
       set({ id: data.user.id, isInitializing: false });
     } else {
       set({ isInitializing: false });
+    }
+  },
+  setFaqs: (faqs: Tables<"faqs">[]) => set({ faqs }),
+  loadFaqs: async () => {
+    const { data, error } = await supabaseClient
+      .from("faqs")
+      .select()
+      .eq("user_id", userStore.getState().id ?? "");
+
+    if (error) {
+      console.log(`Error fetching FAQs: ${error}`);
+    } else {
+      userStore.getState().setFaqs(data);
     }
   },
   // add your other state properties here
