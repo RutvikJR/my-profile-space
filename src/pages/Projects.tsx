@@ -12,9 +12,11 @@ type Project = Database['public']['Tables']['projects']['Row'];
 const Projects = () => {
   const userId = userStore((store) => store.id);
 
-  const [projects, setProjects] = useState<Project[] | null>(null);
+  // const [projects, setProjects] = useState<Project[] | null>(null);
   const [editProjectId, setEditProjectId] = useState<number | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
+
+  const {projects,setProjects}=userStore();
 
   const form = useForm({
     initialValues: {

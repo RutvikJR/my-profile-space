@@ -11,9 +11,11 @@ type Experience = Database['public']['Tables']['experience']['Row'];
 const Experience = () => {
   const userId = userStore((store) => store.id);
 
-  const [experiences, setExperiences] = useState<Experience[] | null>(null);
+  // const [experiences, setExperiences] = useState<Experience[] | null>(null);
   const [editExperienceId, setEditExperienceId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
+
+  const {experience,setExperience}=userStore();
 
   const form = useForm({
     initialValues: {
@@ -50,7 +52,7 @@ const Experience = () => {
       if (error) {
         console.log(`Error fetching Experience : ${error}`);
       } else {
-        setExperiences(data);
+        setExperience(data);
       }
       form.reset();
       setEditExperienceId(null);
@@ -78,7 +80,7 @@ const Experience = () => {
       if (error) {
         console.log(`Error adding experience : ${error}`);
       } else {
-        setExperiences((prev) => (prev ? [...prev, data[0]] : [data[0]]));
+        setExperience((prev) => (prev ? [...prev, data[0]] : [data[0]]));
         form.reset();
         setModalOpened(false);
       }
@@ -107,7 +109,7 @@ const Experience = () => {
       if (error) {
         console.log(`Error editing experience : ${error}`);
       } else {
-        setExperiences((prev) => prev ? prev.map((exp) => (exp.id === data[0].id ? data[0] : exp)) : [data[0]]);
+        setExperience((prev) => prev ? prev.map((exp) => (exp.id === data[0].id ? data[0] : exp)) : [data[0]]);
         setEditExperienceId(null);
         form.reset();
         setModalOpened(false);
@@ -218,11 +220,11 @@ const Experience = () => {
         </form>
       </Modal>
 
-      {experiences?.length === 0 ? (
+      {experience?.length === 0 ? (
         <Text>There are no experiences you added</Text>
       ) : (
         <ul>
-          {experiences?.map((experience) => (
+          {experience?.map((experience) => (
             <li
               key={experience.id}
               className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4"

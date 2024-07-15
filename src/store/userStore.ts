@@ -9,12 +9,26 @@ interface userStoreInterface {
   experience: Tables<"experience">[];
   education: Tables<"education">[];
   faqs: Tables<"faqs">[];
+  services: Tables<"services">[];
   testimonials: Tables<"testimonials">[];
+  projects: Tables<"projects">[];
   user_detail: Tables<"user_detail"> | null;
   setUserId: (userId: string) => void;
   initializeUser: () => Promise<void>;
+  setSkills:(skills:Tables<"skills">[])=> void;
+  loadSkills: ()=>Promise<void>;
+  setExperience:(experience:Tables<"experience">[])=> void;
+  loadExperience: ()=>Promise<void>;
+  setEducation:(education:Tables<"education">[])=> void;
+  loadEducation: ()=>Promise<void>;
   setFaqs: (faqs: Tables<"faqs">[]) => void;
   loadFaqs: () => Promise<void>;
+  setServices:(services:Tables<"services">[]) => void;
+  loadServices: () => Promise<void>;
+  setTestimonials: (testimonials: Tables<"testimonials">[]) => void;
+  loadTestimonials:()=>Promise<void>;
+  setProjects: (projects: Tables<"projects">[]) => void;
+  loadProjects: ()=>Promise<void>;
 }
 
 const userStore = create<userStoreInterface>((set) => ({
@@ -24,7 +38,9 @@ const userStore = create<userStoreInterface>((set) => ({
   experience: [],
   education: [],
   faqs: [],
+  services:[],
   testimonials: [],
+  projects: [],
   user_detail: null,
   setUserId: (userId: string) => set((state) => ({ id: userId })),
   initializeUser: async () => {
@@ -51,6 +67,91 @@ const userStore = create<userStoreInterface>((set) => ({
       userStore.getState().setFaqs(data);
     }
   },
+  setServices:(services: Tables<"services">[])=>set({ services }),
+  loadServices: async()=>{
+    const {data,error} =await supabaseClient
+      .from("services")
+      .select()
+      .eq("user_id",userStore.getState().id ?? "");
+
+      if(error){
+        console.log("Error fetching Services: "+error);        
+      }
+      else{
+        userStore.getState().setServices(data);
+      }
+  },
+  setSkills:(skills: Tables<"skills">[])=>set({ skills }),
+  loadSkills: async()=>{
+    const {data,error} =await supabaseClient
+      .from("skills")
+      .select()
+      .eq("user_id",userStore.getState().id ?? "");
+
+      if(error){
+        console.log("Error fetching skills: "+error);        
+      }
+      else{
+        userStore.getState().setSkills(data);
+      }
+  },
+  setEducation:(education: Tables<"education">[])=>set({ education }),
+  loadEducation: async()=>{
+    const {data,error} =await supabaseClient
+      .from("education")
+      .select()
+      .eq("user_id",userStore.getState().id ?? "");
+
+      if(error){
+        console.log("Error fetching education: "+error);        
+      }
+      else{
+        userStore.getState().setEducation(data);
+      }
+  },
+  setExperience:(experience: Tables<"experience">[])=>set({ experience }),
+  loadExperience: async()=>{
+    const {data,error} =await supabaseClient
+      .from("experience")
+      .select()
+      .eq("user_id",userStore.getState().id ?? "");
+
+      if(error){
+        console.log("Error fetching experience: "+error);        
+      }
+      else{
+        userStore.getState().setExperience(data);
+      }
+  },
+  setTestimonials:(testimonials: Tables<"testimonials">[])=>set({ testimonials }),
+  loadTestimonials: async()=>{
+    const {data,error} =await supabaseClient
+      .from("testimonials")
+      .select()
+      .eq("user_id",userStore.getState().id ?? "");
+
+      if(error){
+        console.log("Error fetching testimonials: "+error);        
+      }
+      else{
+        userStore.getState().setTestimonials(data);
+      }
+  },
+  setProjects:(projects: Tables<"projects">[])=>set({ projects }),
+  loadProjects: async()=>{
+    const {data,error} =await supabaseClient
+      .from("projects")
+      .select()
+      .eq("user_id",userStore.getState().id ?? "");
+
+      if(error){
+        console.log("Error fetching projects: "+error);        
+      }
+      else{
+        userStore.getState().setProjects(data);
+      }
+  },
+  
   // add your other state properties here
 }));
 

@@ -4,7 +4,7 @@ import userStore from "../store/userStore";
 
 const Home = () => {
   const { count, decrement, increment } = counterStore();
-  const { loadFaqs } = userStore();
+  const { loadFaqs,loadServices,loadSkills,loadExperience,loadEducation,loadProjects,loadTestimonials } = userStore();
   const onCountIncrement = () => {
     increment();
   };
@@ -13,8 +13,16 @@ const Home = () => {
     decrement();
   };
 
+ 
+
   useEffect(() => {
+    loadSkills();
+    loadExperience();
+    loadEducation();
     loadFaqs();
+    loadServices();
+    loadTestimonials();
+    loadProjects();
   }, []);
 
   return (
