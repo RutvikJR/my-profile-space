@@ -1,22 +1,25 @@
-import { Button, Text, TextInput, Box, Card, Textarea, Modal, Group, FileInput, Badge } from "@mantine/core";
+import React, { useState, useEffect } from "react";
+import { Button, Text, TextInput, Box, Card, Textarea, Modal, Group, Badge, Image } from "@mantine/core";
 import { MonthPickerInput } from '@mantine/dates';
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
-import { useEffect, useState } from "react";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
-import { FaEdit, FaTrashAlt, FaPlus, FaTimes } from 'react-icons/fa'; 
+import { FaEdit, FaTrashAlt, FaPlus, FaTimes } from 'react-icons/fa';
 
 type Project = Database['public']['Tables']['projects']['Row'];
 
+declare global {
+  interface Window {
+    AWS: any;
+  }
+}
+
 const Projects = () => {
   const userId = userStore((store) => store.id);
-
-  // const [projects, setProjects] = useState<Project[] | null>(null);
+  const { projects, setProjects } = userStore();
   const [editProjectId, setEditProjectId] = useState<number | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
-
-  const {projects,setProjects}=userStore();
 
   const form = useForm({
     initialValues: {
@@ -25,9 +28,10 @@ const Projects = () => {
       client_name: '',
       industry: '',
       technology: [] as string[],
-      date: new Date(), // Initialize with a valid Date object
+      date: new Date(),
       url: '',
-      image: null as File | null,
+      images: [] as File[],
+      imagePreviews: [] as string[],
     },
     validate: {
       title: (value) => (value.length > 0 ? null : 'Title is required'),
@@ -56,60 +60,115 @@ const Projects = () => {
     }
   }, [userId]);
 
+  const uploadFilesToS3 = async (files: File[]): Promise<string[]> => {
+    const S3_BUCKET = "rutvikjr-bucket";
+    const REGION = "ap-south-1";
+
+    window.AWS.config.update({
+      accessKeyId: "AKIAU6GDZUMEVOJSCS6Q",
+      secretAccessKey: "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",
+    });
+
+    const s3 = new window.AWS.S3({
+      params: { Bucket: S3_BUCKET },
+      region: REGION,
+    });
+
+    const urls: string[] = [];
+
+    for (const file of files) {
+      const params = {
+        Bucket: S3_BUCKET,
+        Key: `project/${file.name}`,
+        Body: file,
+      };
+
+      try {
+        const upload = s3.putObject(params).promise();
+        await upload;
+
+        const url = s3.getSignedUrl('getObject', {
+          Bucket: S3_BUCKET,
+          Key: `project/${file.name}`
+
+        });
+
+        urls.push(url);
+      } catch (err) {
+        console.error("Error uploading file", err);
+        throw err;
+      }
+    }
+
+    return urls;
+  };
+
   const handleAddProject = async (values: typeof form.values) => {
     if (!userId) return;
 
-    const { title, description, client_name, industry, technology, date, url } = values;
+    const { title, description, client_name, industry, technology, date, url, images } = values;
 
-    const { error } = await supabaseClient
-      .from('projects')
-      .insert([{ 
-        title, 
-        description, 
-        client_name, 
-        industry, 
-        technology, 
-        date: (date instanceof Date) ? date.toISOString() : date, 
-        url, 
-        images: [], 
-        user_id: userId 
-      }]);
+    try {
+      const imageUrls = await uploadFilesToS3(images);
 
-    if (error) {
-      console.log("Error adding project", error);
-    } else {
-      form.reset();
-      loadProjects();
-      setModalOpened(false);
+      const { error } = await supabaseClient
+        .from('projects')
+        .insert([{
+          title,
+          description,
+          client_name,
+          industry,
+          technology,
+          date: (date instanceof Date) ? date.toISOString() : date,
+          url,
+          images: imageUrls,
+          user_id: userId
+        }]);
+
+      if (error) {
+        console.log("Error adding project", error);
+      } else {
+        form.reset();
+        loadProjects();
+        setModalOpened(false);
+      }
+    } catch (err) {
+      console.error("Error uploading files or adding project", err);
     }
   };
 
   const handleEditProject = async (values: typeof form.values) => {
     if (!userId || !editProjectId) return;
 
-    const { title, description, client_name, industry, technology, date, url } = values;
+    const { title, description, client_name, industry, technology, date, url, images } = values;
 
-    const { error } = await supabaseClient
-      .from('projects')
-      .update({
-        title, 
-        description, 
-        client_name, 
-        industry, 
-        technology, 
-        date: (date instanceof Date) ? date.toISOString() : date, 
-        url, 
-        images: [],
-      })
-      .eq('id', editProjectId);
+    try {
+      const imageUrls = await uploadFilesToS3(images);
 
-    if (error) {
-      console.log("Error updating project", error);
-    } else {
-      form.reset();
-      setEditProjectId(null);
-      loadProjects();
-      setModalOpened(false);
+      const { error } = await supabaseClient
+        .from('projects')
+        .update({
+          title,
+          description,
+          client_name,
+          industry,
+          technology,
+          date: (date instanceof Date) ? date.toISOString() : date,
+          url,
+          images: imageUrls,
+        })
+        .eq('id', editProjectId);
+
+      if (error) {
+        console.log("Error updating project", error);
+      } else {
+        form.reset();
+        setEditProjectId(null);
+        loadProjects();
+        setModalOpened(false);
+      }
+    } catch (err) {
+      console.error("Error uploading files or updating project", err);
     }
   };
 
@@ -127,15 +186,16 @@ const Projects = () => {
   };
 
   const handleEditClick = (project: Project) => {
-    form.setValues({ 
-      title: project.title || '', 
+    form.setValues({
+      title: project.title || '',
       description: project.description || '',
       client_name: project.client_name || '',
       industry: project.industry || '',
       technology: project.technology || [],
-      date: project.date ? new Date(project.date) : new Date(), 
+      date: project.date ? new Date(project.date) : new Date(),
       url: project.url || '',
-      image: null,
+      images: [],
+      imagePreviews: project.images || [], // Load existing images for editing
     });
     setEditProjectId(project.id);
     setModalOpened(true);
@@ -155,6 +215,20 @@ const Projects = () => {
     form.setFieldValue('technology', form.values.technology.filter((_, i) => i !== index));
   };
 
+  const handleImageUpload = (file: File) => {
+    form.setFieldValue('images', [...form.values.images, file]);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      form.setFieldValue('imagePreviews', [...form.values.imagePreviews, e.target?.result as string]);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    form.setFieldValue('images', form.values.images.filter((_, i) => i !== index));
+    form.setFieldValue('imagePreviews', form.values.imagePreviews.filter((_, i) => i !== index));
+  };
+
   const projectCards = projects?.map((project) => (
     <Card key={project.id} shadow="sm" padding="lg" style={{ marginBottom: '20px' }}>
       <Text fw={500}>{project.title}</Text>
@@ -165,7 +239,7 @@ const Projects = () => {
       </Group>
     </Card>
   )) || [];
-  
+
   return (
     <div>
       <Text>Projects</Text>
@@ -222,11 +296,42 @@ const Projects = () => {
               placeholder="URL"
               {...form.getInputProps('url')}
             />
-            <FileInput
-              label="Project Image"
-              placeholder="Upload image"
-              onChange={(file) => form.setFieldValue('image', file)}
-            />
+            <div>
+              <Text>Images</Text>
+              <Group mt="xs">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      handleImageUpload(e.target.files[0]);
+                    }
+                  }}
+                />
+                {/* <Button onClick={() => {
+                  const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+                  if (input?.files && input.files.length > 0) {
+                    handleImageUpload(input.files[0]);
+                    input.value = ''; // Reset the file input
+                  }
+                }}>
+                  <FaPlus />
+                </Button> */}
+              </Group>
+              <div style={{ marginTop: '10px' }}>
+                {form.values.imagePreviews.map((preview, index) => (
+                  <Badge
+                    key={index}
+                    variant="filled"
+                    color="blue"
+                    
+                    rightSection={<FaTimes onClick={() => handleRemoveImage(index)} className="cursor-pointer" />}
+                  >
+                    <Image src={preview} width={100} height={100} />
+                  </Badge>
+                ))}
+              </div>
+            </div>
             <div>
               <Text>Technologies</Text>
               {form.values.technology.map((tech, index) => (

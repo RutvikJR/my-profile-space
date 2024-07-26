@@ -12,6 +12,7 @@ import Skills from "./pages/Skills";
 import Projects from "./pages/Projects";
 import FAQs from "./pages/FAQs";
 import Testimonials from "./pages/Testimonials";
+import Upload from "./pages/upload";
 
 const AppRoutes = () => {
   return (
@@ -86,6 +87,14 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <Testimonials />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="upload"
+          element={
+            <AuthGuard>
+              <Upload />
             </AuthGuard>
           }
         />
