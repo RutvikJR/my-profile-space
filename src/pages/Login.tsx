@@ -36,6 +36,26 @@ function Login() {
     }
   };
 
+  const onSignInWithGoogle = async () => {
+    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+      provider: "google",
+    });
+
+    console.log(data);
+    console.log(error);
+
+    if (error) {
+      showToast("Invalid login credentials", "error");
+    }
+    // if (data?.user) {
+    //   showToast("Login successfull!", "success");
+    //   setUserId(data?.user?.id);
+    //   navigate("/");
+    // } else if (error) {
+    //   showToast("Invalid login credentials", "error");
+    // }
+  };
+
   return (
     <div className="bg-green-400 h-screen overflow-hidden flex items-center justify-center">
       <div className="bg-white lg:w-5/12 md:6/12 w-10/12 shadow-3xl">
@@ -84,6 +104,13 @@ function Login() {
             className="bg-gradient-to-b from-gray-700 to-gray-900 font-medium p-2 md:p-4 text-white uppercase w-full"
           >
             Login
+          </button>
+
+          <button
+            onClick={onSignInWithGoogle}
+            className="mt-4 bg-gradient-to-b from-gray-700 to-gray-900 font-medium p-2 md:p-4 text-white uppercase w-full"
+          >
+            Sign In With Google
           </button>
         </form>
       </div>
