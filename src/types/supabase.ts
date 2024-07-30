@@ -287,51 +287,60 @@ export type Database = {
           },
         ]
       }
-      user_detail: {
+      user_details: {
         Row: {
-          city: string | null
-          contactno: number | null
-          country: string | null
+          business_email: string | null
+          contact: number | null
           created_at: string
-          domaindetails: string | null
-          linkedid: string | null
-          Name: string | null
-          profile_image_url: string | null
-          state: string | null
-          user_id: string
-          Username: string | null
+          date_of_birth: string | null
+          description: string | null
+          designations: string | null
+          first_name: string | null
+          id: number
+          last_name: string | null
+          location: string | null
+          profile_image: string | null
+          resume: string | null
+          user_id: string | null
+          years_of_experience: number | null
         }
         Insert: {
-          city?: string | null
-          contactno?: number | null
-          country?: string | null
+          business_email?: string | null
+          contact?: number | null
           created_at?: string
-          domaindetails?: string | null
-          linkedid?: string | null
-          Name?: string | null
-          profile_image_url?: string | null
-          state?: string | null
-          user_id: string
-          Username?: string | null
+          date_of_birth?: string | null
+          description?: string | null
+          designations?: string | null
+          first_name?: string | null
+          id?: number
+          last_name?: string | null
+          location?: string | null
+          profile_image?: string | null
+          resume?: string | null
+          user_id?: string | null
+          years_of_experience?: number | null
         }
         Update: {
-          city?: string | null
-          contactno?: number | null
-          country?: string | null
+          business_email?: string | null
+          contact?: number | null
           created_at?: string
-          domaindetails?: string | null
-          linkedid?: string | null
-          Name?: string | null
-          profile_image_url?: string | null
-          state?: string | null
-          user_id?: string
-          Username?: string | null
+          date_of_birth?: string | null
+          description?: string | null
+          designations?: string | null
+          first_name?: string | null
+          id?: number
+          last_name?: string | null
+          location?: string | null
+          profile_image?: string | null
+          resume?: string | null
+          user_id?: string | null
+          years_of_experience?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "users_detail_user_id_fkey"
+            foreignKeyName: "user_details_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },

@@ -12,6 +12,7 @@ import Skills from "./pages/Skills";
 import Projects from "./pages/Projects";
 import FAQs from "./pages/FAQs";
 import Testimonials from "./pages/Testimonials";
+import UserDetails from "./pages/UserDetails";
 
 
 const AppRoutes = () => {
@@ -87,6 +88,14 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <Testimonials />
+            </AuthGuard>
+          }
+        />
+         <Route
+          path="userdetails"
+          element={
+            <AuthGuard>
+              <UserDetails />
             </AuthGuard>
           }
         />

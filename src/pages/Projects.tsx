@@ -180,87 +180,7 @@ const Projects = () => {
       console.error("Error uploading files or updating project", err);
     }
   };
-  // const handleAddProject = async (values: typeof form.values) => {
-  //   if (!userId) return;
-  
-  //   const { title, description, client_name, industry, technology, date, url, images } = values;
-  
-  //   try {
-  //     const imageUrls = await uploadFilesToS3(images);
-  
-  //     // Create a new date object and add 1 to the month
-  //     const adjustedDate = new Date(date);
-  //     adjustedDate.setMonth(date.getMonth() + 1);
-  
-  //     const { error } = await supabaseClient
-  //       .from('projects')
-  //       .insert([{
-  //         title,
-  //         description,
-  //         client_name,
-  //         industry,
-  //         technology,
-  //         date: adjustedDate.toISOString(),
-  //         url,
-  //         images: imageUrls,
-  //         user_id: userId
-  //       }]);
-  
-  //     if (error) {
-  //       console.log("Error adding project", error);
-  //     } else {
-  //       form.reset();
-  //       loadProjects();
-  //       setModalOpened(false);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error uploading files or adding project", err);
-  //   }
-  // };
-  
-  // const handleEditProject = async (values: typeof form.values) => {
-  //   if (!userId || !editProjectId) return;
-  
-  //   const { title, description, client_name, industry, technology, date, url, images } = values;
-  
-  //   try {
-  //     let imageUrls: string[] = values.imagePreviews;
-  //     if (images.length > 0) {
-  //       const newUrls = await uploadFilesToS3(images);
-  //       imageUrls = imageUrls.concat(newUrls);
-  //     }
-  
-  //     // Create a new date object and add 1 to the month
-  //     const adjustedDate = new Date(date);
-  //     adjustedDate.setMonth(date.getMonth() + 1);
-  
-  //     const { error } = await supabaseClient
-  //       .from('projects')
-  //       .update({
-  //         title,
-  //         description,
-  //         client_name,
-  //         industry,
-  //         technology,
-  //         date: adjustedDate.toISOString(),
-  //         url,
-  //         images: imageUrls,
-  //       })
-  //       .eq('id', editProjectId);
-  
-  //     if (error) {
-  //       console.log("Error updating project", error);
-  //     } else {
-  //       form.reset();
-  //       setEditProjectId(null);
-  //       loadProjects();
-  //       setModalOpened(false);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error uploading files or updating project", err);
-  //   }
-  // };
-  
+ 
 
   const handleDeleteProject = async (id: number) => {
     const { error } = await supabaseClient
@@ -290,27 +210,7 @@ const Projects = () => {
     setEditProjectId(project.id);
     setModalOpened(true);
   };
-  // const handleEditClick = (project: Project) => {
-  //   let projectDate = new Date();
-  //   if (project.date) {
-  //     projectDate = new Date(project.date);
-  //     projectDate.setMonth(projectDate.getMonth() - 1);
-  //   }
-  //   form.setValues({
-  //     title: project.title || '',
-  //     description: project.description || '',
-  //     client_name: project.client_name || '',
-  //     industry: project.industry || '',
-  //     technology: project.technology || [],
-  //     date: projectDate,
-  //     url: project.url || '',
-  //     images: [],
-  //     imagePreviews: project.images || [], // Load existing images for editing
-  //   });
-  //   setEditProjectId(project.id);
-  //   setModalOpened(true);
-  // };
-  
+ 
   const openAddProjectModal = () => {
     form.reset();
     setEditProjectId(null);
@@ -418,15 +318,7 @@ const Projects = () => {
                     }
                   }}
                 />
-                {/* <Button onClick={() => {
-                  const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-                  if (input?.files && input.files.length > 0) {
-                    handleImageUpload(input.files[0]);
-                    input.value = ''; // Reset the file input
-                  }
-                }}>
-                  <FaPlus />
-                </Button> */}
+                
               </Group>
               <div style={{ marginTop: '10px' }}>
                 {form.values.imagePreviews.map((preview, index) => (
