@@ -13,8 +13,8 @@ export type Database = {
         Row: {
           created_at: string
           degree: string
-          description: string
           end_date: string
+          field_of_study: string
           id: number
           school: string
           start_date: string
@@ -24,8 +24,8 @@ export type Database = {
         Insert: {
           created_at?: string
           degree: string
-          description: string
           end_date: string
+          field_of_study: string
           id?: number
           school: string
           start_date: string
@@ -35,8 +35,8 @@ export type Database = {
         Update: {
           created_at?: string
           degree?: string
-          description?: string
           end_date?: string
+          field_of_study?: string
           id?: number
           school?: string
           start_date?: string
@@ -60,7 +60,7 @@ export type Database = {
           description: string
           end_date: string | null
           id: number
-          isPresent: boolean
+          is_present: boolean
           position: string
           start_date: string
           updated_at: string | null
@@ -72,7 +72,7 @@ export type Database = {
           description: string
           end_date?: string | null
           id?: number
-          isPresent?: boolean
+          is_present?: boolean
           position: string
           start_date: string
           updated_at?: string | null
@@ -84,7 +84,7 @@ export type Database = {
           description?: string
           end_date?: string | null
           id?: number
-          isPresent?: boolean
+          is_present?: boolean
           position?: string
           start_date?: string
           updated_at?: string | null

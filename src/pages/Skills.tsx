@@ -11,9 +11,11 @@ type Skill = Database['public']['Tables']['skills']['Row'];
 const Skills = () => {
   const userId = userStore((store) => store.id);
 
-  const [skills, setSkills] = useState<Skill[] | null>(null);
+  // const [skills, setSkills] = useState<Skill[] | null>(null);
   const [editSkillId, setEditSkillId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
+
+  const {skills,setSkills}=userStore();
 
   const form = useForm({
     initialValues: {
