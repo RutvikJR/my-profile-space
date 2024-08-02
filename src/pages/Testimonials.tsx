@@ -242,8 +242,6 @@ const Testimonials = () => {
   );
   };
   
-<<<<<<< HEAD
+
   export default Testimonials;
-=======
-  export default Testimonials;
->>>>>>> 49ba5db912f8a293f3f9c2a436ce4ef23a4012f9
+

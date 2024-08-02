@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           created_at: string
           degree: string
+          description: string | null
           end_date: string
           field_of_study: string
           id: number
@@ -24,6 +25,7 @@ export type Database = {
         Insert: {
           created_at?: string
           degree: string
+          description?: string | null
           end_date: string
           field_of_study: string
           id?: number
@@ -35,6 +37,7 @@ export type Database = {
         Update: {
           created_at?: string
           degree?: string
+          description?: string | null
           end_date?: string
           field_of_study?: string
           id?: number
@@ -134,6 +137,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      platform_socials: {
+        Row: {
+          created_at: string
+          fa_class: string | null
+          id: string
+          li_class: string | null
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          fa_class?: string | null
+          id?: string
+          li_class?: string | null
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          fa_class?: string | null
+          id?: string
+          li_class?: string | null
+          name?: string | null
+        }
+        Relationships: []
       }
       projects: {
         Row: {
@@ -287,51 +314,99 @@ export type Database = {
           },
         ]
       }
-      user_detail: {
+      user_details: {
         Row: {
-          city: string | null
-          contactno: number | null
-          country: string | null
+          business_email: string | null
+          contact: number | null
           created_at: string
-          domaindetails: string | null
-          linkedid: string | null
-          Name: string | null
-          profile_image_url: string | null
-          state: string | null
-          user_id: string
-          Username: string | null
+          date_of_birth: string | null
+          description: string | null
+          designations: string | null
+          first_name: string | null
+          id: number
+          last_name: string | null
+          location: string | null
+          profile_image: string | null
+          resume: string | null
+          user_id: string | null
+          years_of_experience: number | null
         }
         Insert: {
-          city?: string | null
-          contactno?: number | null
-          country?: string | null
+          business_email?: string | null
+          contact?: number | null
           created_at?: string
-          domaindetails?: string | null
-          linkedid?: string | null
-          Name?: string | null
-          profile_image_url?: string | null
-          state?: string | null
-          user_id: string
-          Username?: string | null
+          date_of_birth?: string | null
+          description?: string | null
+          designations?: string | null
+          first_name?: string | null
+          id?: number
+          last_name?: string | null
+          location?: string | null
+          profile_image?: string | null
+          resume?: string | null
+          user_id?: string | null
+          years_of_experience?: number | null
         }
         Update: {
-          city?: string | null
-          contactno?: number | null
-          country?: string | null
+          business_email?: string | null
+          contact?: number | null
           created_at?: string
-          domaindetails?: string | null
-          linkedid?: string | null
-          Name?: string | null
-          profile_image_url?: string | null
-          state?: string | null
-          user_id?: string
-          Username?: string | null
+          date_of_birth?: string | null
+          description?: string | null
+          designations?: string | null
+          first_name?: string | null
+          id?: number
+          last_name?: string | null
+          location?: string | null
+          profile_image?: string | null
+          resume?: string | null
+          user_id?: string | null
+          years_of_experience?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "users_detail_user_id_fkey"
+            foreignKeyName: "user_details_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: true
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_socials: {
+        Row: {
+          created_at: string
+          id: string
+          social_id: string | null
+          url: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          social_id?: string | null
+          url?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          social_id?: string | null
+          url?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_socials_social_id_fkey"
+            columns: ["social_id"]
+            isOneToOne: false
+            referencedRelation: "platform_socials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_socials_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
