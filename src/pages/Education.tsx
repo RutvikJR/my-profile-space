@@ -15,7 +15,6 @@ const Education = () => {
   const [modalOpened, setModalOpened] = useState(false);
 
   const form = useForm({
-    mode: "uncontrolled",
     initialValues: {
       schoolName: "",
       degree: "",
@@ -250,11 +249,7 @@ const Education = () => {
             <MonthPickerInput
               label="Start date"
               placeholder="Start date"
-              value={
-                form.values.startDate
-                  ? new Date(form.values.startDate)
-                  : undefined
-              }
+              value={form.values.startDate}
               maxDate={new Date()}
               onChange={(date) => form.setFieldValue("startDate", date)}
               error={form.errors.startDate}
@@ -262,9 +257,7 @@ const Education = () => {
             <MonthPickerInput
               label="End date"
               placeholder="End date"
-              value={
-                form.values.endDate ? new Date(form.values.endDate) : undefined
-              }
+              value={form.values.endDate}
               maxDate={new Date()}
               onChange={(date) => form.setFieldValue("endDate", date)}
               error={form.errors.endDate}
@@ -275,14 +268,13 @@ const Education = () => {
               placeholder="Enter description"
               {...form.getInputProps("description")}
             />
-            <Group justify="flex-end" mt="md">
-              <Button type="submit">
-                {editeducationId ? "Save Changes" : "Submit"}
+            <Group position="right" className="mt-4">
+              <Button type="submit" color="cyan">
+                {editeducationId ? "Save Changes" : "Add Education"}
               </Button>
             </Group>
           </form>
         </Modal>
-
         {educations?.length === 0 ? (
           <h4 className="text-2xl font-bold text-gray-800 mt-4">
             There is no Education you added
@@ -292,7 +284,7 @@ const Education = () => {
             {educations?.map((education) => (
               <li
                 key={education.id}
-                style={{ listStyleType: "none", marginBottom: "1rem" }}
+                className="list-none mb-4"
               >
                 <div className="border rounded-lg shadow-md p-4 mt-4">
                   <h4 className="text-xl font-bold mb-2">{education.school}</h4>
@@ -311,8 +303,23 @@ const Education = () => {
                   <p className="mb-2">
                     <strong>Description:</strong> {education.description}
                   </p>
-                  <Button onClick={() => handleEditClick(education)} variant="filled" size="md" className="mt-4 w-24">Edit</Button>
-                  <Button onClick={() => handleDeleteEducation(education.id.toString())} variant="filled" size="md" className="mt-4 w-24 left-1" color="rgba(255, 0, 0, 1)">Delete</Button>
+                  <Button
+                    onClick={() => handleEditClick(education)}
+                    variant="filled"
+                    size="md"
+                    className="mt-4 w-24"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteEducation(education.id.toString())}
+                    variant="filled"
+                    size="md"
+                    className="mt-4 w-24 ml-2"
+                    color="red"
+                  >
+                    Delete
+                  </Button>
                 </div>
               </li>
             ))}
