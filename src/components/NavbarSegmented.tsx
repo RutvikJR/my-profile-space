@@ -14,6 +14,7 @@ const navLinks = [
   { link: "/testimonials", label: "Testimonials" },
   { link: "/faqs", label: "FAQs" },
   { link: "/services", label: "Services" },
+  { link: "/social-media", label: "Social Media" },
 ];
 
 export function NavbarSegmented() {

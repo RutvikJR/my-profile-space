@@ -12,6 +12,7 @@ import Skills from "./pages/Skills";
 import Projects from "./pages/Projects";
 import FAQs from "./pages/FAQs";
 import Testimonials from "./pages/Testimonials";
+import SocialMediaDetails from "./pages/SocialMediaDetails";
 
 const AppRoutes = () => {
   return (
@@ -89,7 +90,16 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
+        <Route
+          path="social-media"
+          element={
+            <AuthGuard>
+              <SocialMediaDetails />
+            </AuthGuard>
+          }
+        />
       </Route>
+      
       <Route path="login" element={<Login />} />
       <Route path="*" element={<NoPage />} />
     </Routes>

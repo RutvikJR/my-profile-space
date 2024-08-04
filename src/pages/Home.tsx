@@ -17,6 +17,8 @@ const Home = () => {
     loadEducation,
     loadProjects,
     loadTestimonials,
+    loadUserSocials,
+    loadPlatformSocials
   } = userStore();
 
   useEffect(() => {
@@ -27,6 +29,8 @@ const Home = () => {
     loadServices();
     loadTestimonials();
     loadProjects();
+    loadUserSocials();
+    loadPlatformSocials();
   }, []);
 
   return (

@@ -12,7 +12,9 @@ interface userStoreInterface {
   services: Tables<"services">[];
   testimonials: Tables<"testimonials">[];
   projects: Tables<"projects">[];
-  user_detail: Tables<"user_detail"> | null;
+  userSocials: Tables<"user_socials">[];
+  user_detail: Tables<"user_details"> | null;
+  platformSocials: Tables<"platform_socials">[]; // Add this line
   setUserId: (userId: string) => void;
   initializeUser: () => Promise<void>;
   setSkills:(skills:Tables<"skills">[])=> void;
@@ -29,6 +31,10 @@ interface userStoreInterface {
   loadTestimonials:()=>Promise<void>;
   setProjects: (projects: Tables<"projects">[]) => void;
   loadProjects: ()=>Promise<void>;
+  setUserSocials: (userSocials: Tables<"user_socials">[]) => void;
+  loadUserSocials: ()=>Promise<void>;
+  setPlatformSocials: (platformSocials: Tables<"platform_socials">[]) => void; // Add this line
+  loadPlatformSocials: () => Promise<void>; // Add this line
 }
 
 const userStore = create<userStoreInterface>((set) => ({
@@ -41,7 +47,9 @@ const userStore = create<userStoreInterface>((set) => ({
   services:[],
   testimonials: [],
   projects: [],
+  userSocials:[],
   user_detail: null,
+  platformSocials: [], // Add this line
   setUserId: (userId: string) => set((state) => ({ id: userId })),
   initializeUser: async () => {
     const { data, error } = await supabaseClient.auth.getUser();
@@ -151,7 +159,30 @@ const userStore = create<userStoreInterface>((set) => ({
         userStore.getState().setProjects(data);
       }
   },
-  
+  setUserSocials: (userSocials: Tables<"user_socials">[]) => set({ userSocials }),
+  loadUserSocials: async () => {
+    const { data, error } = await supabaseClient
+      .from("user_socials")
+      .select()
+      .eq("user_id", userStore.getState().id ?? "");
+
+    if (error) {
+      console.log(`Error fetching User Social Media Details: ${error}`);
+    } else {
+      userStore.getState().setUserSocials(data);
+    }
+  },
+  setPlatformSocials: (platformSocials: Tables<"platform_socials">[]) => set({ platformSocials }), // Add this line
+  loadPlatformSocials: async () => { 
+    const { data, error } = await supabaseClient
+      .from("platform_socials")
+      .select("*");
+    if (error) {
+      console.log(`Error fetching Platform Socials: ${error}`);
+    } else {
+      userStore.getState().setPlatformSocials(data);
+    }
+  },
   // add your other state properties here
 }));
 
