@@ -53,8 +53,16 @@ const SocialMediaDetails = () => {
     },
     validate: {
       social_id: (value) => (value ? null : "Please select a platform"),
-      url: (value) => (value ? null : "Please enter URL"),
-    },
+      url: (value) => {
+        if (!value) return "Please enter URL";
+        try {
+          new URL(value);
+          return null;
+        } catch (_) {
+          return "Please enter a valid URL";
+        }
+      },
+    }
   });
 
   const handleAddSocialMediaDetail = async (values: {
