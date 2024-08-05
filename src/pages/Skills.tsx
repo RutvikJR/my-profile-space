@@ -1,4 +1,4 @@
-import { Button, Text, TextInput, Rating,  Table, Modal } from "@mantine/core";
+import { Button, Text, TextInput, Slider, Table, Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../config/supabaseConfig";
@@ -20,11 +20,11 @@ const Skills = () => {
   const form = useForm({
     initialValues: {
       name: '',
-      rating: 0,
+      rating: 1, // Default rating is now set to 1
     },
     validate: {
       name: (value) => (value.length > 0 ? null : 'Name is required'),
-      rating: (value) => (value > 0 ? null : 'Rating is required'),
+      rating: (value) => (value > 0 ? null : 'Rating is required more than 1'),
     },
   });
 
@@ -97,7 +97,7 @@ const Skills = () => {
   };
 
   const handleEditClick = (skill: Skill) => {
-    form.setValues({ name: skill.name || '', rating: skill.rating || 0 });
+    form.setValues({ name: skill.name || '', rating: skill.rating || 1 });
     setEditSkillId(skill.id.toString());
     setModalOpened(true);
   };
@@ -156,9 +156,24 @@ const Skills = () => {
             mb="md"
           />
           <Text>Rating</Text>
-          <Rating
+          <Slider
             value={form.values.rating}
-            onChange={(value) => form.setFieldValue('rating', value || 0)}
+            onChange={(value) => form.setFieldValue('rating', value)}
+            min={1}
+            max={10}
+            marks={[
+              { value: 1, label: '1' },
+              { value: 2, label: '2' },
+              { value: 3, label: '3' },
+              { value: 4, label: '4' },
+              { value: 5, label: '5' },
+              { value: 6, label: '6' },
+              { value: 7, label: '7' },
+              { value: 8, label: '8' },
+              { value: 9, label: '9' },
+              { value: 10, label: '10' },
+            ]}
+            step={1}
             mb="md"
           />
           {form.errors.rating && <Text color="red">{form.errors.rating}</Text>}
@@ -171,8 +186,8 @@ const Skills = () => {
       {skills == null || skills.length === 0 ? (
         <Text>There are no skills you added</Text>
       ) : (
-        <Table striped highlightOnHover withTableBorder >
-          <Table.Thead >{ths}</Table.Thead>
+        <Table striped highlightOnHover withTableBorder>
+          <Table.Thead>{ths}</Table.Thead>
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       )}

@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { link: "/education", label: "Education" },
+  { link: "/userdetails", label: "User" },
   { link: "/experience", label: "Experience" },
   { link: "/skills", label: "Skills" },
   { link: "/projects", label: "Projects" },

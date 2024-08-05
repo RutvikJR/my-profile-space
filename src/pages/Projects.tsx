@@ -119,7 +119,7 @@ const Projects = () => {
           client_name,
           industry,
           technology,
-          date: (date instanceof Date) ? date.toISOString() : date,
+          date: (date instanceof Date) ? new Date(new Date(date).setMonth(new Date(date).getMonth()+1)).toISOString() : null,
           url,
           images: imageUrls,
           user_id: userId
@@ -162,7 +162,7 @@ const Projects = () => {
           client_name,
           industry,
           technology,
-          date: (date instanceof Date) ? date.toISOString() : date,
+          date: (date instanceof Date) ? new Date(new Date(date).setMonth(new Date(date).getMonth()+1)).toISOString() : null,
           url,
           images: imageUrls,
         })

@@ -34,52 +34,50 @@ const UserDetailsForm = () => {
   });
 
   useEffect(() => {
-    
     const loadUserDetails = async () => {
-        if (!userId) return;
-      
-        const { data, error } = await supabaseClient
-          .from('user_details')
-          .select()
-          .eq('user_id', userId)
-          .single();
-      
-        if (error) {
-          console.log("Error fetching user details", error);
-        } else if (data) {
-          const fetchedData: UserDetails = {
-            first_name: data.first_name || '',
-            last_name: data.last_name || '',
-            location: data.location || '',
-            designations: data.designations || '',
-            description: data.description || '',
-            business_email: data.business_email || '',
-            date_of_birth: data.date_of_birth || '',
-            years_of_experience: data.years_of_experience || 0,
-            contact: data.contact || 0,
-            resume: data.resume,
-            profile_image: data.profile_image,
-            created_at: data.created_at || '',
-            id: data.id || 0,
-            user_id: data.user_id || ''
-          };
-          setUserDetails(fetchedData);
-          form.setValues({
-            first_name: fetchedData.first_name || '',
-            last_name: fetchedData.last_name || '',
-            location: fetchedData.location || '',
-            designations: fetchedData.designations || '',
-            description: fetchedData.description || '',
-            business_email: fetchedData.business_email || '',
-            date_of_birth: fetchedData.date_of_birth || '',
-            years_of_experience: fetchedData.years_of_experience || 0,
-            contact: fetchedData.contact || 0, 
-            resume_preview: data.resume ? await fetchFilePreview(data.resume) : '',
-            profile_image_preview: data.profile_image ? await fetchFilePreview(data.profile_image) : '',
-          });
-        }
-      };
-      
+      if (!userId) return;
+
+      const { data, error } = await supabaseClient
+        .from('user_details')
+        .select()
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.log("Error fetching user details", error);
+      } else if (data) {
+        const fetchedData: UserDetails = {
+          first_name: data.first_name || '',
+          last_name: data.last_name || '',
+          location: data.location || '',
+          designations: data.designations || '',
+          description: data.description || '',
+          business_email: data.business_email || '',
+          date_of_birth: data.date_of_birth || '',
+          years_of_experience: data.years_of_experience || 0,
+          contact: data.contact || 0,
+          resume: data.resume,
+          profile_image: data.profile_image,
+          created_at: data.created_at || '',
+          id: data.id || 0,
+          user_id: data.user_id || ''
+        };
+        setUserDetails(fetchedData);
+        form.setValues({
+          first_name: fetchedData.first_name || '',
+          last_name: fetchedData.last_name || '',
+          location: fetchedData.location || '',
+          designations: fetchedData.designations || '',
+          description: fetchedData.description || '',
+          business_email: fetchedData.business_email || '',
+          date_of_birth: fetchedData.date_of_birth || '',
+          years_of_experience: fetchedData.years_of_experience || 0,
+          contact: fetchedData.contact || 0,
+          resume_preview: data.resume ? await fetchFilePreview(data.resume) : '',
+          profile_image_preview: data.profile_image ? await fetchFilePreview(data.profile_image) : '',
+        });
+      }
+    };
 
     loadUserDetails();
   }, [userId]);
@@ -112,84 +110,85 @@ const UserDetailsForm = () => {
     }
   };
 
-
-const handleFileUpload = async (file: File, path: string) => {
+  const handleFileUpload = async (file: File, path: string) => {
     const S3_BUCKET = "rutvikjr-bucket";
     const REGION = "ap-south-1";
-  
+
     window.AWS.config.update({
       accessKeyId: "AKIAU6GDZUMEVOJSCS6Q",
       secretAccessKey: "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",
     });
-  
+
     const s3 = new window.AWS.S3({
       params: { Bucket: S3_BUCKET },
       region: REGION,
     });
-  
+
     const params = {
       Bucket: S3_BUCKET,
       Key: path,
       Body: file,
+      ContentType: file.type,
     };
-  
+
     try {
       await s3.putObject(params).promise();
-      const url = s3.getSignedUrl('getObject', { Bucket: S3_BUCKET, Key: path });
-      return url;
+      return path;
     } catch (err) {
       console.error("Error uploading file", err);
       throw err;
     }
   };
-  
+
   const handleSave = async (valuess: typeof form.values) => {
     if (!userId) return;
-  
-    
-    const values={
-        first_name: valuess.first_name,
-        last_name: valuess.last_name,
-        location: valuess.location,
-        designations: valuess.designations,
-        description: valuess.description,
-        business_email: valuess.business_email,
-        date_of_birth: valuess.date_of_birth,
-        years_of_experience: valuess.years_of_experience,
-        contact: valuess.contact,
-        resume:valuess.resume,
-        profile_image:valuess.profile_image,
-        
-    }
-    
-    let resumePath = valuess.resume_preview;
-    let profileImagePath = valuess.profile_image_preview;
-  
+
+    const values = {
+      first_name: valuess.first_name,
+      last_name: valuess.last_name,
+      location: valuess.location,
+      designations: valuess.designations,
+      description: valuess.description,
+      business_email: valuess.business_email,
+      date_of_birth: valuess.date_of_birth,
+      years_of_experience: valuess.years_of_experience,
+      contact: valuess.contact,
+      resume: valuess.resume,
+      profile_image: valuess.profile_image,
+    };
+
+    let resumePath = userDetails?.resume;
+    let profileImagePath = userDetails?.profile_image;
+
     if (values.resume) {
-      resumePath = await handleFileUpload(values.resume, `user_detail/${userId}`);
+      const shortResumePath = `user_detail/${userId}/resume_${Date.now()}.pdf`;
+      resumePath = await handleFileUpload(values.resume, shortResumePath);
     }
-  
+
     if (values.profile_image) {
-      profileImagePath = await handleFileUpload(values.profile_image, `user_detail/${userId}`);
+      const shortProfileImagePath = `user_detail/${userId}/profile_image_${Date.now()}.${values.profile_image.name.split('.').pop()}`;
+      profileImagePath = await handleFileUpload(values.profile_image, shortProfileImagePath);
     }
-  
+
     const payload = {
       ...values,
-      resume: resumePath,
-      profile_image: profileImagePath,
+      date_of_birth: valuess.date_of_birth ? new Date(new Date(values.date_of_birth).setMonth(new Date(values.date_of_birth).getMonth())).toISOString() : null,
+      resume: resumePath||null,
+      profile_image: profileImagePath||null,
       user_id: userId,
-      };
-  
+      created_at: userDetails?.created_at || new Date().toISOString(),
+      id: userDetails?.id || 0,
+    };
+
     if (userDetails) {
       const { error } = await supabaseClient
         .from('user_details')
         .update(payload)
         .eq('user_id', userId);
-  
+
       if (error) {
         console.log('Error updating user details', error);
       } else {
-       
         setUserDetails(payload);
         alert('User details updated successfully');
       }
@@ -197,7 +196,7 @@ const handleFileUpload = async (file: File, path: string) => {
       const { error } = await supabaseClient
         .from('user_details')
         .insert(payload);
-  
+
       if (error) {
         console.log('Error inserting user details', error);
       } else {
@@ -206,7 +205,7 @@ const handleFileUpload = async (file: File, path: string) => {
       }
     }
   };
-  
+
   return (
     <Box>
       <form
