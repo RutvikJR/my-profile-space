@@ -7,13 +7,14 @@ import { showToast } from "../utils/toast";
 import { Link, useNavigate } from "react-router-dom";
 
 const navLinks = [
-  { link: "/education", label: "Educatoin" },
+  { link: "/education", label: "Education" },
   { link: "/experience", label: "Experience" },
   { link: "/skills", label: "Skills" },
   { link: "/projects", label: "Projects" },
   { link: "/testimonials", label: "Testimonials" },
   { link: "/faqs", label: "FAQs" },
   { link: "/services", label: "Services" },
+  { link: "/social-media", label: "Social Media" },
 ];
 
 export function NavbarSegmented() {

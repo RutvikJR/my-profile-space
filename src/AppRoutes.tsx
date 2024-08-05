@@ -14,6 +14,7 @@ import FAQs from "./pages/FAQs";
 import Testimonials from "./pages/Testimonials";
 import UserDetails from "./pages/UserDetails";
 
+import SocialMediaDetails from "./pages/SocialMediaDetails";
 
 const AppRoutes = () => {
   return (
@@ -91,7 +92,7 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-         <Route
+        <Route
           path="userdetails"
           element={
             <AuthGuard>
@@ -99,8 +100,17 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-        
+
+        <Route
+          path="social-media"
+          element={
+            <AuthGuard>
+              <SocialMediaDetails />
+            </AuthGuard>
+          }
+        />
       </Route>
+
       <Route path="login" element={<Login />} />
       <Route path="*" element={<NoPage />} />
     </Routes>
