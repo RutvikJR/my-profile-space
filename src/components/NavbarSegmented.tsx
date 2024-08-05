@@ -7,6 +7,7 @@ import { showToast } from "../utils/toast";
 import { Link, useNavigate } from "react-router-dom";
 
 const navLinks = [
+  { link: "/userdetails", label: "User"},
   { link: "/education", label: "Educatoin" },
   { link: "/experience", label: "Experience" },
   { link: "/skills", label: "Skills" },
