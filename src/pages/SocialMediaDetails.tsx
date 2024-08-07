@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Box, Button, TextInput, Select, Text } from "@mantine/core";
+import { Box, Button, TextInput, Select, Text, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal } from "@mantine/core";
 import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 type SocialMediaDetail = Database["public"]["Tables"]["user_socials"]["Row"];
 type PlatformSocial = Database["public"]["Tables"]["platform_socials"]["Row"];
@@ -147,6 +148,26 @@ const SocialMediaDetails = () => {
     setEditDetailId(null);
     open();
   };
+  const rows = mergedSocials?.map((social) => (
+    <Table.Tr key={social.id} className="text-center">
+      <Table.Td className="px-4 truncate max-w-xs">{social.platform.name}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{social.url}</Table.Td>
+      <Table.Td className="px-4">
+        <div className="flex justify-end mx-3">
+          <FaEdit onClick={() => handleEditClick(social)} className="cursor-pointer text-blue-500 mx-3" />
+          <FaTrashAlt onClick={() => handleDeleteSocialMediaDetail(social.id.toString())} className="cursor-pointer text-red-500 mx-3" />
+        </div>
+      </Table.Td>
+    </Table.Tr>
+  )) || [];
+
+  const ths = (
+    <Table.Tr className="text-center">
+      <Table.Th className="px-4 text-center">Skill Name</Table.Th>
+      <Table.Th className="px-4 text-center">Skill Rating</Table.Th>
+      <Table.Th className="px-4 text-center"></Table.Th>
+    </Table.Tr>
+  );
 
   return (
     <>
@@ -161,36 +182,40 @@ const SocialMediaDetails = () => {
         {mergedSocials.length === 0 ? (
           <Text>There are no social media details added by you.</Text>
         ) : (
-          <ul>
-            {mergedSocials.map((detail) => (
-              <div className="group" key={detail.id}>
-                <li className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 overflow-hidden h-28">
-                  <div>
-                    <strong>Platform: </strong>
-                    {detail.platform.name}
-                  </div>
-                  <div>
-                    <strong>URL: </strong> {detail.url}
-                  </div>
-                  <div className="">
-                    <Button
-                      onClick={() => handleEditClick(detail)}
-                      className="mr-2 mt-2 rounded-full"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      color="red"
-                      className="ml-2 mt-2 rounded-full"
-                      onClick={() => handleDeleteSocialMediaDetail(detail.id.toString())}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </li>
-              </div>
-            ))}
-          </ul>
+          // <ul>
+          //   {mergedSocials.map((detail) => (
+          //     <div className="group" key={detail.id}>
+          //       <li className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 overflow-hidden h-28">
+          //         <div>
+          //           <strong>Platform: </strong>
+          //           {detail.platform.name}
+          //         </div>
+          //         <div>
+          //           <strong>URL: </strong> {detail.url}
+          //         </div>
+          //         <div className="">
+          //           <Button
+          //             onClick={() => handleEditClick(detail)}
+          //             className="mr-2 mt-2 rounded-full"
+          //           >
+          //             Edit
+          //           </Button>
+          //           <Button
+          //             color="red"
+          //             className="ml-2 mt-2 rounded-full"
+          //             onClick={() => handleDeleteSocialMediaDetail(detail.id.toString())}
+          //           >
+          //             Delete
+          //           </Button>
+          //         </div>
+          //       </li>
+          //     </div>
+          //   ))}
+          // </ul>
+<Table striped highlightOnHover withTableBorder>
+            <Table.Thead>{ths}</Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
         )}
       </Box>
 

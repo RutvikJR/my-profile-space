@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, TextInput, Text } from "@mantine/core";
+import { Box, Button, TextInput, Text, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal } from "@mantine/core";
 import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 type FAQs = Database["public"]["Tables"]["faqs"]["Row"];
 
@@ -137,6 +138,25 @@ const FAQs = () => {
     open();
   };
 
+  const ths = (
+    <Table.Tr className="text-center">
+      <Table.Th className="px-4 text-center">Skill Name</Table.Th>
+      <Table.Th className="px-4 text-center">Skill Rating</Table.Th>
+      <Table.Th className="px-4 text-center"></Table.Th>
+    </Table.Tr>
+  );
+  const rows = faqs?.map((faq) => (
+    <Table.Tr key={faq.id} className="text-center">
+      <Table.Td className="px-4 truncate max-w-xs">{faq.question}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{faq.answer}</Table.Td>
+      <Table.Td className="px-4">
+        <div className="flex justify-end mx-3">
+          <FaEdit onClick={() => handleEditClick(faq)} className="cursor-pointer text-blue-500 mx-3" />
+          <FaTrashAlt onClick={() => handleDeleteFAQs(faq.id.toString())} className="cursor-pointer text-red-500 mx-3" />
+        </div>
+      </Table.Td>
+    </Table.Tr>
+  )) || [];
   return (
     <>
       <Box>
@@ -150,35 +170,12 @@ const FAQs = () => {
         {faqs?.length === 0 ? (
           <Text>There are no FAQs added by you.</Text>
         ) : (
-          <ul>
-            {faqs?.map((faq) => (
-              <div className="group" key={faq.id}>
-                <li className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 overflow-hidden h-28">
-                  <div>
-                    <strong>Question: </strong> {faq.question}
-                  </div>
-                  <div>
-                    <strong>Answer: </strong> {faq.answer}
-                  </div>
-                  <div className="">
-                    <Button
-                      onClick={() => handleEditClick(faq)}
-                      className="mr-2 mt-2 rounded-full"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      color="red"
-                      className="ml-2 mt-2 rounded-full"
-                      onClick={() => handleDeleteFAQs(faq.id.toString())}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </li>
-              </div>
-            ))}
-          </ul>
+          <div>
+          <Table striped highlightOnHover withTableBorder>
+            <Table.Thead>{ths}</Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
+          </div>
         )}
       </Box>
 

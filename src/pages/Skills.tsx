@@ -186,10 +186,10 @@ const Skills = () => {
       {skills == null || skills.length === 0 ? (
         <Text>There are no skills you added</Text>
       ) : (
-        <Table striped highlightOnHover withTableBorder>
-          <Table.Thead>{ths}</Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
-        </Table>
+          <Table striped highlightOnHover withTableBorder>
+            <Table.Thead>{ths}</Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
       )}
     </div>
   );

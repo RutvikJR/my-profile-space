@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Button, Text, Box, Textarea, Modal, TextInput, Select } from "@mantine/core";
+import { Button, Text, Box, Textarea, Modal, TextInput, Select, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 type Testimonial = Database['public']['Tables']['testimonials']['Row'];
 
@@ -133,6 +134,30 @@ const Testimonials = () => {
     setEditTestimonialId(null);
     setModalOpened(true);
   };
+  const rows = testimonials?.map((testimonial) => (
+    <Table.Tr key={testimonial.id} className="text-center">
+      <Table.Td className="px-4 truncate max-w-xs">{testimonial.name}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{testimonial.position}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{testimonial.review}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{testimonial.is_male?<div>male</div>:<div>female</div>}</Table.Td>
+      <Table.Td className="px-4">
+        <div className="flex justify-end mx-3">
+          <FaEdit onClick={() => handleEditClick(testimonial)} className="cursor-pointer text-blue-500 mx-3" />
+          <FaTrashAlt onClick={() => handleDeleteTestimonial(testimonial.id.toString())} className="cursor-pointer text-red-500 mx-3" />
+        </div>
+      </Table.Td>
+    </Table.Tr>
+  )) || [];
+
+  const ths = (
+    <Table.Tr className="text-center">
+      <Table.Th className="px-4 text-center">Name</Table.Th>
+      <Table.Th className="px-4 text-center">position</Table.Th>
+      <Table.Th className="px-4 text-center">Review</Table.Th>
+      <Table.Th className="px-4 text-center">Gender</Table.Th>
+      <Table.Th className="px-4 text-center"></Table.Th>
+    </Table.Tr>
+  );
   return (
     <>
       <Text size="xl" mb="md">Testimonials</Text>
@@ -194,49 +219,13 @@ const Testimonials = () => {
       {testimonials?.length === 0 ? (
         <Text>There are no testimonials you added</Text>
       ) : (
-        <ul>
-          {testimonials?.map((testimonial) => (
-            <li
-              key={testimonial.id}
-              className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4"
-            >
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 md:mb-0">
-                <div>
-                  <img
-                    src={testimonial.is_male ? 'male.jpg' : 'female.jpg'}
-                    alt={testimonial.is_male ? 'Male' : 'Female'}
-                    width={50}
-                    height={50}
-                  />
-                  <div className="mr-4">
-                    <strong>Name : </strong> {testimonial.name}
-                  </div>
-                  <div className="mr-4">
-                    <strong>Position : </strong> {testimonial.position}
-                  </div>
-                  <div>
-                    <strong>Review : </strong> {testimonial.review}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Button
-                  onClick={() => handleEditClick(testimonial)}
-                  className="mr-2 rounded-full"
-                >
-                  Edit
-                </Button>
-                <Button
-                  color="red"
-                  className="rounded-full"
-                  onClick={() => handleDeleteTestimonial(testimonial.id.toString())}
-                >
-                  Delete
-                </Button>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div>
+        
+        <Table striped highlightOnHover withTableBorder>
+        <Table.Thead>{ths}</Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+      </Table>
+      </div>
       )}
     </>
   );

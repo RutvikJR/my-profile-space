@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
-import { Modal, Button, Group, TextInput, Textarea } from "@mantine/core";
+import { Modal, Button, Group, TextInput, Textarea, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { MonthPickerInput } from "@mantine/dates";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 type Education = Database["public"]["Tables"]["education"]["Row"];
 
@@ -205,7 +206,41 @@ const Education = () => {
     const date = new Date(dateString);
     return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   };
+  // schoolName: string;
+  //   degree: string;
+  //   fieldOfStudy: string;
+  //   startDate: Date | null;
+  //   endDate: Date | null;
+  //   description: 
 
+  const rows = educations?.map((education) => (
+    <Table.Tr key={education.id} className="text-center">
+      <Table.Td className="px-4 truncate max-w-xs">{education.school}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{education.degree}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{education.field_of_study}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{education.start_date}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{education.end_date}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{education.description}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs"></Table.Td>
+      <Table.Td className="px-4">
+        <div className="flex justify-end mx-3">
+          <FaEdit onClick={() => handleEditClick(education)} className="cursor-pointer text-blue-500 mx-3" />
+          <FaTrashAlt onClick={() => handleDeleteEducation(education.id.toString())} className="cursor-pointer text-red-500 mx-3" />
+        </div>
+      </Table.Td>
+    </Table.Tr>
+  )) || [];
+  const ths = (
+    <Table.Tr className="text-center">
+      <Table.Th className="px-4 text-center">School/University</Table.Th>
+      <Table.Th className="px-4 text-center">Degree</Table.Th>
+      <Table.Th className="px-4 text-center">Field of study</Table.Th>
+      <Table.Th className="px-4 text-center">Start date</Table.Th>
+      <Table.Th className="px-4 text-center">End date</Table.Th>
+      <Table.Th className="px-4 text-center">Description</Table.Th>
+      <Table.Th className="px-4 text-center"></Table.Th>
+    </Table.Tr>
+  );
   return (
     <>
       <div className="flex flex-col">
@@ -280,50 +315,12 @@ const Education = () => {
             There is no Education you added
           </h4>
         ) : (
-          <ul>
-            {educations?.map((education) => (
-              <li
-                key={education.id}
-                className="list-none mb-4"
-              >
-                <div className="border rounded-lg shadow-md p-4 mt-4">
-                  <h4 className="text-xl font-bold mb-2">{education.school}</h4>
-                  <p className="mb-2">
-                    <strong>Degree:</strong> {education.degree}
-                  </p>
-                  <p className="mb-2">
-                    <strong>Field of Study:</strong> {education.field_of_study}
-                  </p>
-                  <p className="mb-2">
-                    <strong>Start Date:</strong> {formatDate(education.start_date)}
-                  </p>
-                  <p className="mb-2">
-                    <strong>End Date:</strong> {education.end_date ? formatDate(education.end_date) : "Present"}
-                  </p>
-                  <p className="mb-2">
-                    <strong>Description:</strong> {education.description}
-                  </p>
-                  <Button
-                    onClick={() => handleEditClick(education)}
-                    variant="filled"
-                    size="md"
-                    className="mt-4 w-24"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDeleteEducation(education.id.toString())}
-                    variant="filled"
-                    size="md"
-                    className="mt-4 w-24 ml-2"
-                    color="red"
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div>
+            <Table striped highlightOnHover withTableBorder>
+              <Table.Thead>{ths}</Table.Thead>
+              <Table.Tbody>{rows}</Table.Tbody>
+            </Table>
+          </div>
         )}
       </div>
     </>

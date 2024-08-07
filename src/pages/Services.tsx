@@ -1,5 +1,5 @@
 
-import { Button, Text, TextInput, Box, Card, Textarea, Modal, Group } from "@mantine/core";
+import { Button, Text, TextInput, Box, Textarea, Modal, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { useEffect, useState } from "react";
@@ -12,11 +12,11 @@ type Service = Database["public"]["Tables"]["services"]["Row"];
 const Services = () => {
   const userId = userStore((store) => store.id);
 
-  
+
   const [editServiceId, setEditServiceId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
 
-  const {services,setServices}=userStore();
+  const { services, setServices } = userStore();
 
   const form = useForm({
     initialValues: {
@@ -60,7 +60,7 @@ const Services = () => {
     if (error) {
       console.log("Error adding service", error);
     } else {
-      
+
       form.reset();
       loadServices();
       setModalOpened(false);
@@ -110,17 +110,25 @@ const Services = () => {
     setModalOpened(true);
   };
 
-  const serviceCards = services?.map((service) => (
-    <Card key={service.id} shadow="sm" padding="lg" style={{ marginBottom: '20px' }}>
-      <Text fw={500}>{service.name}</Text>
-      <Text size="sm">{service.description}</Text>
-      <Group justify="right" mt="md">
-        <FaEdit onClick={() => handleEditClick(service)} className="cursor-pointer text-blue-500" />
-        <FaTrashAlt onClick={() => handleDeleteService(service.id.toString())} className="cursor-pointer text-red-500" />
-      </Group>
-    </Card>
+  const ths = (
+    <Table.Tr className="text-center">
+      <Table.Th className="px-4 text-center">Service Name</Table.Th>
+      <Table.Th className="px-4 text-center">Service Description</Table.Th>
+      <Table.Th className="px-4 text-center"></Table.Th>
+    </Table.Tr>
+  );
+  const rows = services?.map((service) => (
+    <Table.Tr key={service.id} className="text-center">
+      <Table.Td className="px-4 truncate max-w-xs">{service.name}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{service.description}</Table.Td>
+      <Table.Td className="px-4">
+        <div className="flex justify-end mx-3">
+          <FaEdit onClick={() => handleEditClick(service)} className="cursor-pointer text-blue-500 mx-3" />
+          <FaTrashAlt onClick={() => handleDeleteService(service.id.toString())} className="cursor-pointer text-red-500 mx-3" />
+        </div>
+      </Table.Td>
+    </Table.Tr>
   )) || [];
-  
   return (
     <div>
       <Text>Services</Text>
@@ -128,7 +136,12 @@ const Services = () => {
       {services == null || services.length === 0 ? (
         <Text>There are no services you added</Text>
       ) : (
-        <div>{serviceCards}</div>
+        <div>
+          <Table striped highlightOnHover withTableBorder>
+            <Table.Thead>{ths}</Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
+        </div>
       )}
       <Modal
         opened={modalOpened}

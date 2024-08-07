@@ -4,6 +4,7 @@ import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
+import { DatePicker } from "@mantine/dates";
 
 type UserDetails = Database['public']['Tables']['user_details']['Row'];
 
@@ -170,11 +171,13 @@ const UserDetailsForm = () => {
       profileImagePath = await handleFileUpload(values.profile_image, shortProfileImagePath);
     }
 
+    var temp_date = valuess.date_of_birth ? new Date(new Date(values.date_of_birth).setDate(new Date(values.date_of_birth).getDate() + 1)) : null;
+    // temp_date=temp_date?new Date(new Date(values.date_of_birth).setMonth(new Date(values.date_of_birth).getMonth())):null;
     const payload = {
       ...values,
-      date_of_birth: valuess.date_of_birth ? new Date(new Date(values.date_of_birth).setMonth(new Date(values.date_of_birth).getMonth())).toISOString() : null,
-      resume: resumePath||null,
-      profile_image: profileImagePath||null,
+      date_of_birth: temp_date,
+      resume: resumePath || null,
+      profile_image: profileImagePath || null,
       user_id: userId,
       created_at: userDetails?.created_at || new Date().toISOString(),
       id: userDetails?.id || 0,
@@ -243,9 +246,8 @@ const UserDetailsForm = () => {
           placeholder="Business Email"
           {...form.getInputProps('business_email')}
         />
-        <TextInput
-          label="Date of Birth"
-          placeholder="YYYY-MM-DD"
+        <Text>Date of Birth</Text>
+        <DatePicker
           {...form.getInputProps('date_of_birth')}
         />
         <TextInput

@@ -1,10 +1,11 @@
-import { Button, Text, Modal, TextInput, Checkbox, Textarea } from "@mantine/core";
+import { Button, Text, Modal, TextInput, Checkbox, Textarea, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { MonthPickerInput } from '@mantine/dates';
 import { useEffect, useState } from "react";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
+import { FaCheckCircle, FaEdit, FaTrashAlt } from "react-icons/fa";
 
 type Experience = Database['public']['Tables']['experience']['Row'];
 
@@ -15,7 +16,7 @@ const Experience = () => {
   const [editExperienceId, setEditExperienceId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
 
-  const {experience,setExperience}=userStore();
+  const { experience, setExperience } = userStore();
 
   const form = useForm({
     initialValues: {
@@ -200,6 +201,36 @@ const Experience = () => {
     const date = new Date(dateString);
     return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   };
+  
+  const ths = (
+    <Table.Tr className="text-center">
+      <Table.Th className="px-4 text-center">Position</Table.Th>
+      <Table.Th className="px-4 text-center">Company</Table.Th>
+      <Table.Th className="px-4 text-center">Start date</Table.Th>
+      <Table.Th className="px-4 text-center">End date</Table.Th>
+      <Table.Th className="px-4 text-center">Description</Table.Th>
+      <Table.Th className="px-4 text-center">Currently working</Table.Th>
+      <Table.Th className="px-4 text-center"></Table.Th>
+    </Table.Tr>
+  );
+  const rows = (experience || [])?.map((experience) => {
+    return (
+      <Table.Tr key={experience.id} className="text-center">
+        <Table.Td className="px-4 truncate max-w-xs">{experience.position}</Table.Td>
+        <Table.Td className="px-4 truncate max-w-xs">{experience.company}</Table.Td>
+        <Table.Td className="px-4 truncate max-w-xs">{experience.start_date}</Table.Td>
+        <Table.Td className="px-4 truncate max-w-xs">{experience.end_date?experience.end_date:<div>-</div>}</Table.Td>
+        <Table.Td className="px-4 truncate max-w-xs">{experience.description}</Table.Td>
+        <Table.Td className="px-4 truncate max-w-xs">{experience.is_present ? <FaCheckCircle className="mx-auto" /> : <></>}</Table.Td>
+        <Table.Td className="px-4">
+          <div className="flex justify-end mx-3">
+            <FaEdit onClick={() => handleEditClick(experience)} className="cursor-pointer text-blue-500 mx-3" />
+            <FaTrashAlt onClick={() => handleDeleteExperience(experience.id.toString())} className="cursor-pointer text-red-500 mx-3" />
+          </div>
+        </Table.Td>
+      </Table.Tr>
+    );
+  }) ;
 
   return (
     <>
@@ -274,49 +305,14 @@ const Experience = () => {
       {experience?.length === 0 ? (
         <Text>There are no experiences you added</Text>
       ) : (
-        <ul>
-          {experience?.map((experience) => (
-            <li
-              key={experience.id}
-              className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4"
-            >
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 md:mb-0">
-                <div>
-                  <div className="mr-4">
-                    <strong>Job Title: </strong> {experience.position}
-                  </div>
-                  <div className="mr-4">
-                    <strong>Job Location: </strong> {experience.company}
-                  </div>
-                  <div className="mr-4">
-                    <strong>Start Date: </strong> {formatDate(experience.start_date)}
-                  </div>
-                  <div className="mr-4">
-                    <strong>End Date: </strong> {experience.end_date ? formatDate(experience.end_date) : 'Present'}
-                  </div>
-                  <div>
-                    <strong>Description: </strong> {experience.description}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Button
-                  onClick={() => handleEditClick(experience)}
-                  className="mr-2 rounded-full"
-                >
-                  Edit
-                </Button>
-                <Button
-                  color="red"
-                  className="rounded-full"
-                  onClick={() => handleDeleteExperience(experience.id.toString())}
-                >
-                  Delete
-                </Button>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div>
+          
+          <Table striped highlightOnHover withTableBorder>
+             <Table.Thead>{ths}</Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody> 
+          </Table>
+
+        </div>
       )}
     </>
   );
