@@ -102,19 +102,23 @@ const Education = () => {
 
   const handleEditEducation = async (values: typeof form.values) => {
     if (!userId || !editEducationId) return;
-
+  
     try {
+      // Fetch current data to compare and update
       const { data: currentData, error: fetchError } = await supabaseClient
         .from("education")
         .select("start_date, end_date")
         .eq("id", editEducationId)
         .single();
-
+  
       if (fetchError) {
         console.log(`Error fetching current education data: ${fetchError.message}`);
         return;
       }
-
+  
+      // Convert to Date if needed
+      const formatDateInput = (date: Date | null) => date ? new Date(date) : null;
+  
       const adjustedValues: any = {
         school: values.schoolName,
         degree: values.degree,
@@ -122,25 +126,33 @@ const Education = () => {
         description: values.description,
         is_present: values.isPresent,
       };
-
-      if (values.startDate && new Date(values.startDate).toISOString() !== new Date(currentData.start_date).toISOString()) {
-        adjustedValues.start_date = new Date(values.startDate);
-        adjustedValues.start_date.setMonth(adjustedValues.start_date.getMonth() + 1);
+  
+      // Handle start_date adjustment
+      if (values.startDate !== null) {
+        const startDate = formatDateInput(values.startDate);
+        if (startDate && startDate.toISOString() !== new Date(currentData.start_date).toISOString()) {
+          startDate.setMonth(startDate.getMonth() + 1);  // Adjust month
+          adjustedValues.start_date = startDate.toISOString();
+        }
       }
-
-      if (!values.isPresent && values.endDate && new Date(values.endDate).toISOString() !== new Date(currentData.end_date).toISOString()) {
-        adjustedValues.end_date = new Date(values.endDate);
-        adjustedValues.end_date.setMonth(adjustedValues.endDate.getMonth() + 1);
+  
+      // Handle end_date adjustment
+      if (!values.isPresent && values.endDate !== null) {
+        const endDate = formatDateInput(values.endDate);
+        if (endDate && endDate.toISOString() !== new Date(currentData.end_date).toISOString()) {
+          endDate.setMonth(endDate.getMonth() + 1);  // Adjust month
+          adjustedValues.end_date = endDate.toISOString();
+        }
       } else if (values.isPresent) {
         adjustedValues.end_date = null;
       }
-
+  
       const { data, error } = await supabaseClient
         .from("education")
         .update(adjustedValues)
         .eq("id", editEducationId)
         .select();
-
+  
       if (error) {
         console.log(`Error editing education: ${error.message}`);
       } else {
@@ -153,7 +165,8 @@ const Education = () => {
       console.log(`Error in Edit Education part: ${error}`);
     }
   };
-
+  
+  
   const openAddEducationModal = () => {
     form.reset();
     setEditEducationId(null);
