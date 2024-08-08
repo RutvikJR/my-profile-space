@@ -100,6 +100,7 @@ const Experience = () => {
       } else {
         setExperience((prev) => (prev ? [...prev, data[0]] : [data[0]]));
         form.reset();
+        loadExperiences();
         setModalOpened(false);
       }
     } catch (error) {
@@ -153,6 +154,7 @@ const Experience = () => {
         setExperience((prev) => prev ? prev.map((exp) => (exp.id === data[0].id ? data[0] : exp)) : [data[0]]);
         setEditExperienceId(null);
         form.reset();
+        loadExperiences();
         setModalOpened(false);
       }
     } catch (error) {
@@ -271,11 +273,11 @@ const Experience = () => {
         </form>
       </Modal>
 
-      {experience?.length === 0 ? (
+      {experience && experience?.length === 0 ? (
         <Text>There are no experiences you added</Text>
       ) : (
         <ul>
-          {experience?.map((experience) => (
+          {Array.isArray(experience) && experience?.map((experience) => (
             <li
               key={experience.id}
               className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4"
