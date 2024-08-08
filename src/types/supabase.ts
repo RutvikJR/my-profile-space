@@ -14,9 +14,10 @@ export type Database = {
           created_at: string
           degree: string
           description: string | null
-          end_date: string
+          end_date: string | null
           field_of_study: string
           id: number
+          is_present: boolean
           school: string
           start_date: string
           updated_at: string | null
@@ -26,9 +27,10 @@ export type Database = {
           created_at?: string
           degree: string
           description?: string | null
-          end_date: string
+          end_date?: string | null
           field_of_study: string
           id?: number
+          is_present?: boolean
           school: string
           start_date: string
           updated_at?: string | null
@@ -38,9 +40,10 @@ export type Database = {
           created_at?: string
           degree?: string
           description?: string | null
-          end_date?: string
+          end_date?: string | null
           field_of_study?: string
           id?: number
+          is_present?: boolean
           school?: string
           start_date?: string
           updated_at?: string | null
