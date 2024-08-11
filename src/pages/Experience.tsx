@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { MonthPickerInput } from "@mantine/dates";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
@@ -24,7 +24,7 @@ const Experience = () => {
   const [editExperienceId, setEditExperienceId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
 
-  const { experience, setExperience } = userStore();
+  const { experience, loadExperiences } = userStore();
 
   const form = useForm({
     initialValues: {
@@ -71,33 +71,6 @@ const Experience = () => {
     },
   });
 
-  useEffect(() => {
-    if (userId) {
-      loadExperiences();
-    }
-  }, [userId]);
-
-  const loadExperiences = async () => {
-    if (!userId) return;
-
-    try {
-      const { data, error } = await supabaseClient
-        .from("experience")
-        .select()
-        .eq("user_id", userId);
-
-      if (error) {
-        console.log(`Error fetching Experience: ${error.message}`);
-      } else {
-        setExperience(data);
-      }
-      form.reset();
-      setEditExperienceId(null);
-    } catch (error) {
-      console.log(`Error in Load Experience part: ${error}`);
-    }
-  };
-
   const handleAddExperience = async (values: typeof form.values) => {
     if (!userId) return;
 
@@ -112,11 +85,11 @@ const Experience = () => {
         end_date: values.is_present
           ? null
           : values.end_date
-          ? new Date(values.end_date.setMonth(values.end_date.getMonth() + 1))
-          : null,
+            ? new Date(values.end_date.setMonth(values.end_date.getMonth() + 1))
+            : null,
       };
 
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from("experience")
         .insert([{ ...adjustedValues, user_id: userId }])
         .select();
@@ -124,9 +97,8 @@ const Experience = () => {
       if (error) {
         console.log(`Error adding experience: ${error.message}`);
       } else {
-        setExperience((prev) => (prev ? [...prev, data[0]] : [data[0]]));
-        form.reset();
         loadExperiences();
+        form.reset();
         setModalOpened(false);
       }
     } catch (error) {
@@ -192,11 +164,6 @@ const Experience = () => {
       if (error) {
         console.log(`Error editing experience: ${error.message}`);
       } else {
-        setExperience((prev) =>
-          prev
-            ? prev.map((exp) => (exp.id === data[0].id ? data[0] : exp))
-            : [data[0]]
-        );
         setEditExperienceId(null);
         form.reset();
         loadExperiences();
@@ -227,7 +194,7 @@ const Experience = () => {
   const handleEditClick = (experience: Experience) => {
     form.setValues({
       position: experience.position,
-      company: experience.company,
+      company: experience.company ?? undefined,
       start_date: experience.start_date
         ? new Date(experience.start_date)
         : null,
@@ -245,11 +212,6 @@ const Experience = () => {
     setModalOpened(true);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("default", { month: "long", year: "numeric" });
-  };
-
   const ths = (
     <Table.Tr className="text-center">
       <Table.Th className="px-4 text-center">Position</Table.Th>
@@ -261,7 +223,7 @@ const Experience = () => {
       <Table.Th className="px-4 text-center"></Table.Th>
     </Table.Tr>
   );
-  const rows = (experience || [])?.map((experience) => {
+  const rows = experience?.map((experience) => {
     return (
       <Table.Tr key={experience.id} className="text-center">
         <Table.Td className="px-4 truncate max-w-xs">
