@@ -376,6 +376,38 @@ export type Database = {
           },
         ]
       }
+      user_setting: {
+        Row: {
+          created_at: string
+          id: number
+          slug: string | null
+          theme_color: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          slug?: string | null
+          theme_color?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          slug?: string | null
+          theme_color?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_setting_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_socials: {
         Row: {
           created_at: string

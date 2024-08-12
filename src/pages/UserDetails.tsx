@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, TextInput, Box, Textarea, Group, Image } from "@mantine/core";
+import { Button, Text, TextInput, Box, Textarea, Group, Image, Select, Alert } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
@@ -7,11 +7,16 @@ import { Database } from "../types/supabase";
 import { DatePicker } from "@mantine/dates";
 
 type UserDetails = Database['public']['Tables']['user_details']['Row'];
+type UserSettings = Database['public']['Tables']['user_setting']['Row'];
 
 const UserDetailsForm = () => {
   const userId = userStore((store) => store.id);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
+  const [userTheme, SetUserTheme] = useState("");
+  const [slugError, setSlugError] = useState('');
 
+  const theme_color = ['yellow', 'red'];
   const form = useForm({
     initialValues: {
       first_name: '',
@@ -82,6 +87,47 @@ const UserDetailsForm = () => {
 
     loadUserDetails();
   }, [userId]);
+  useEffect(() => {
+    const loadUserSetting = async () => {
+      if (!userId) return;
+
+
+      const { data, error } = await supabaseClient
+        .from('user_setting')
+        .select()
+        .eq('user_id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.log("Error retrieving user setting", error);
+        return;
+      }
+
+
+      if (!data) {
+        const { data: newData, error: insertError } = await supabaseClient
+          .from('user_setting')
+          .insert({ user_id: userId })
+          .select()
+          .single();
+
+        if (insertError) {
+
+          return;
+        }
+
+        setUserSettings([newData]);
+      } else {
+
+        setUserSettings([data]);
+
+      }
+    };
+
+    loadUserSetting();
+  }, [userId]);
+
+
 
   const fetchFilePreview = async (filePath: string) => {
     const S3_BUCKET = "rutvikjr-bucket";
@@ -209,6 +255,66 @@ const UserDetailsForm = () => {
     }
   };
 
+
+  const formm = useForm({
+    initialValues: {
+      theme_color: 'yellow', // Default theme color
+      slug: '', // Slug field
+    },
+
+    validate: {
+      theme_color: (value) => (value ? null : 'Theme color is required'),
+      slug: (value) => (value ? null : 'Slug is required'),
+    },
+  })
+
+  const handleSubmit = async (values) => {
+    try {
+      console.log("Form values:", values);
+
+      // Reset the slug error before validation
+      setSlugError('');
+
+      // Check if the slug already exists
+      const { data: newData, error: newError } = await supabaseClient
+        .from('user_setting')
+        .select()
+        .eq('slug', values.slug);
+
+      if (newError) {
+        console.error("Error checking slug:", newError);
+        return;
+      }
+
+      if (newData && newData.length > 0) {
+        // Set the slug error to display above the slug input
+        setSlugError("The slug is already in use. Please try a different one.");
+        return;
+      }
+
+      // Proceed to update the user settings if the slug is unique
+      const { data, error } = await supabaseClient
+        .from('user_setting')
+        .update({
+          slug: values.slug,
+          theme_color: values.theme_color,
+        })
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error("Error updating user settings:", error);
+        return;
+      }
+
+      console.log("User settings updated successfully:", data);
+      // Additional success logic here (e.g., notifying the user)
+
+    } catch (err) {
+      console.error("Unexpected error occurred:", err);
+    }
+  };
+
+
   return (
     <Box>
       <form
@@ -300,7 +406,36 @@ const UserDetailsForm = () => {
           Save
         </Button>
       </form>
+      <form onSubmit={formm.onSubmit(handleSubmit)}>
+        <Select
+          label="Theme Color"
+          placeholder="Pick a color"
+          data={[
+            { value: 'red', label: 'Red' },
+            { value: 'yellow', label: 'Yellow' },
+            { value: 'blue', label: 'Blue' },
+          ]}
+          {...formm.getInputProps('theme_color')}
+          mb="md"
+        />
+
+        <TextInput
+          label="Slug"
+          placeholder="Enter your slug"
+          {...form.getInputProps('slug')}
+          error={slugError && <Text color="red" size="sm">{slugError}</Text>} // Display the error message in red
+          mb="md"
+        />
+
+
+        <Button type="submit" color="cyan">
+          Save Settings
+        </Button>
+      </form>
+
+
     </Box>
+
   );
 };
 

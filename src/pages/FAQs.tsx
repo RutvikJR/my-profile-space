@@ -140,8 +140,8 @@ const FAQs = () => {
 
   const ths = (
     <Table.Tr className="text-center">
-      <Table.Th className="px-4 text-center">Skill Name</Table.Th>
-      <Table.Th className="px-4 text-center">Skill Rating</Table.Th>
+      <Table.Th className="px-4 text-center">Question</Table.Th>
+      <Table.Th className="px-4 text-center">Answer</Table.Th>
       <Table.Th className="px-4 text-center"></Table.Th>
     </Table.Tr>
   );
