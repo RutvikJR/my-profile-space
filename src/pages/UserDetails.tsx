@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, TextInput, Box, Textarea, Group, Image, Select, Alert } from "@mantine/core";
+import { Button, Text, TextInput, Box, Textarea, Group, Image, Select, Collapse } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
-import { DatePicker } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
+import { useDisclosure } from "@mantine/hooks";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 
 type UserDetails = Database['public']['Tables']['user_details']['Row'];
 type UserSettings = Database['public']['Tables']['user_setting']['Row'];
@@ -13,10 +16,11 @@ const UserDetailsForm = () => {
   const userId = userStore((store) => store.id);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
-  const [userTheme, SetUserTheme] = useState("");
   const [slugError, setSlugError] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [opened, { toggle }] = useDisclosure(false);
 
-  const theme_color = ['yellow', 'red'];
+
   const form = useForm({
     initialValues: {
       first_name: '',
@@ -91,7 +95,6 @@ const UserDetailsForm = () => {
     const loadUserSetting = async () => {
       if (!userId) return;
 
-
       const { data, error } = await supabaseClient
         .from('user_setting')
         .select()
@@ -103,7 +106,6 @@ const UserDetailsForm = () => {
         return;
       }
 
-
       if (!data) {
         const { data: newData, error: insertError } = await supabaseClient
           .from('user_setting')
@@ -112,20 +114,26 @@ const UserDetailsForm = () => {
           .single();
 
         if (insertError) {
-
+          console.log("Error inserting new user setting", insertError);
           return;
         }
 
-        setUserSettings([newData]);
+        formm.setValues({
+          theme_color: newData.theme_color || 'yellow',
+          slug: newData.slug || '',
+        });
       } else {
-
+        formm.setValues({
+          theme_color: data.theme_color || 'yellow',
+          slug: data.slug || '',
+        });
         setUserSettings([data]);
-
       }
     };
 
     loadUserSetting();
   }, [userId]);
+
 
 
 
@@ -197,7 +205,7 @@ const UserDetailsForm = () => {
       designations: valuess.designations,
       description: valuess.description,
       business_email: valuess.business_email,
-      date_of_birth: valuess.date_of_birth,
+      date_of_birth: selectedDate,
       years_of_experience: valuess.years_of_experience,
       contact: valuess.contact,
       resume: valuess.resume,
@@ -217,7 +225,7 @@ const UserDetailsForm = () => {
       profileImagePath = await handleFileUpload(values.profile_image, shortProfileImagePath);
     }
 
-    var temp_date = valuess.date_of_birth ? new Date(new Date(values.date_of_birth).setDate(new Date(values.date_of_birth).getDate() + 1)) : null;
+    var temp_date = selectedDate ? new Date(new Date(selectedDate).setDate(new Date(selectedDate).getDate() + 1)) : null;
     // temp_date=temp_date?new Date(new Date(values.date_of_birth).setMonth(new Date(values.date_of_birth).getMonth())):null;
     const payload = {
       ...values,
@@ -268,29 +276,31 @@ const UserDetailsForm = () => {
     },
   })
 
-  const handleSubmit = async (values) => {
+  const checkSlug = async (values) => {
     try {
-      console.log("Form values:", values);
-
-      // Reset the slug error before validation
       setSlugError('');
-
-      // Check if the slug already exists
       const { data: newData, error: newError } = await supabaseClient
         .from('user_setting')
         .select()
         .eq('slug', values.slug);
-
       if (newError) {
         console.error("Error checking slug:", newError);
         return;
       }
-
       if (newData && newData.length > 0) {
         // Set the slug error to display above the slug input
         setSlugError("The slug is already in use. Please try a different one.");
         return;
       }
+    }
+    catch (error) {
+      console.log("error for checking the slug finder", error);
+
+    }
+  }
+  const handleSubmit = async (values) => {
+    try {
+      console.log("Form values:", values);
 
       // Proceed to update the user settings if the slug is unique
       const { data, error } = await supabaseClient
@@ -317,6 +327,41 @@ const UserDetailsForm = () => {
 
   return (
     <Box>
+      <Group justify="left" mb={5}>
+        <Button onClick={toggle} color="cyan">
+          Theme setting for template{' '}
+          <FontAwesomeIcon icon={opened ? faCaretUp : faCaretDown} className="ml-4" />
+        </Button>
+      </Group>
+      <Collapse in={opened}>
+        <form onSubmit={formm.onSubmit(handleSubmit)}>
+          <Select
+            label="Theme Color"
+            placeholder="Pick a color"
+            data={[
+              { value: 'red', label: 'Red' },
+              { value: 'yellow', label: 'Yellow' },
+              { value: 'blue', label: 'Blue' },
+            ]}
+            {...formm.getInputProps('theme_color')}
+            mb="md"
+          />
+
+          <Group spacing="xs" align="flex-end" mb="md">
+            <TextInput
+              label="Slug"
+              placeholder="Enter your slug"
+              {...formm.getInputProps('slug')}
+              error={slugError && <Text color="red" size="sm">{slugError}</Text>}
+            />
+            <Button color="cyan" onClick={() => checkSlug(formm.values)}>Available</Button>
+          </Group>
+
+          <Button type="submit" color="cyan">
+            Save Settings
+          </Button>
+        </form>
+      </Collapse>
       <form
         onSubmit={form.onSubmit((values) => {
           handleSave(values);
@@ -352,9 +397,12 @@ const UserDetailsForm = () => {
           placeholder="Business Email"
           {...form.getInputProps('business_email')}
         />
-        <Text>Date of Birth</Text>
-        <DatePicker
-          {...form.getInputProps('date_of_birth')}
+        <DatePickerInput
+          label="Date of Birth"
+          placeholder="Select date"
+          value={selectedDate ? new Date(selectedDate) : null}
+          onChange={(date) => setSelectedDate(date?.toISOString() ?? null)}
+          withAsterisk
         />
         <TextInput
           label="Years of Experience"
@@ -406,32 +454,7 @@ const UserDetailsForm = () => {
           Save
         </Button>
       </form>
-      <form onSubmit={formm.onSubmit(handleSubmit)}>
-        <Select
-          label="Theme Color"
-          placeholder="Pick a color"
-          data={[
-            { value: 'red', label: 'Red' },
-            { value: 'yellow', label: 'Yellow' },
-            { value: 'blue', label: 'Blue' },
-          ]}
-          {...formm.getInputProps('theme_color')}
-          mb="md"
-        />
 
-        <TextInput
-          label="Slug"
-          placeholder="Enter your slug"
-          {...form.getInputProps('slug')}
-          error={slugError && <Text color="red" size="sm">{slugError}</Text>} // Display the error message in red
-          mb="md"
-        />
-
-
-        <Button type="submit" color="cyan">
-          Save Settings
-        </Button>
-      </form>
 
 
     </Box>
