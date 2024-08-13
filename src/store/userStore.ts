@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from "zustand";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Tables } from "../types/supabase";
@@ -7,7 +8,7 @@ interface userStoreInterface {
   isInitializing: boolean;
   skills: Tables<"skills">[];
   experience: Tables<"experience">[];
-  education: Tables<"education">[];
+  educations: Tables<"education">[];
   faqs: Tables<"faqs">[];
   services: Tables<"services">[];
   testimonials: Tables<"testimonials">[];
@@ -17,22 +18,22 @@ interface userStoreInterface {
   platformSocials: Tables<"platform_socials">[]; // Add this line
   setUserId: (userId: string) => void;
   initializeUser: () => Promise<void>;
-  setSkills:(skills:Tables<"skills">[])=> void;
-  loadSkills: ()=>Promise<void>;
-  setExperience:(experience:Tables<"experience">[])=> void;
-  loadExperience: ()=>Promise<void>;
-  setEducation:(education:Tables<"education">[])=> void;
-  loadEducation: ()=>Promise<void>;
+  setSkills: (skills: Tables<"skills">[]) => void;
+  loadSkills: () => Promise<void>;
+  setExperience: (experience: Tables<"experience">[]) => void;
+  loadExperiences: () => Promise<void>;
+  setEducation: (educations: Tables<"education">[]) => void;
+  loadEducations: () => Promise<void>;
   setFaqs: (faqs: Tables<"faqs">[]) => void;
   loadFaqs: () => Promise<void>;
-  setServices:(services:Tables<"services">[]) => void;
+  setServices: (services: Tables<"services">[]) => void;
   loadServices: () => Promise<void>;
   setTestimonials: (testimonials: Tables<"testimonials">[]) => void;
-  loadTestimonials:()=>Promise<void>;
+  loadTestimonials: () => Promise<void>;
   setProjects: (projects: Tables<"projects">[]) => void;
-  loadProjects: ()=>Promise<void>;
+  loadProjects: () => Promise<void>;
   setUserSocials: (userSocials: Tables<"user_socials">[]) => void;
-  loadUserSocials: ()=>Promise<void>;
+  loadUserSocials: () => Promise<void>;
   setPlatformSocials: (platformSocials: Tables<"platform_socials">[]) => void; // Add this line
   loadPlatformSocials: () => Promise<void>; // Add this line
 }
@@ -42,15 +43,15 @@ const userStore = create<userStoreInterface>((set) => ({
   isInitializing: true,
   skills: [],
   experience: [],
-  education: [],
+  educations: [],
   faqs: [],
-  services:[],
+  services: [],
   testimonials: [],
   projects: [],
-  userSocials:[],
+  userSocials: [],
   user_detail: null,
   platformSocials: [], // Add this line
-  setUserId: (userId: string) => set((state) => ({ id: userId })),
+  setUserId: (userId: string) => set(() => ({ id: userId })),
   initializeUser: async () => {
     const { data, error } = await supabaseClient.auth.getUser();
     if (error) {
@@ -75,91 +76,87 @@ const userStore = create<userStoreInterface>((set) => ({
       userStore.getState().setFaqs(data);
     }
   },
-  setServices:(services: Tables<"services">[])=>set({ services }),
-  loadServices: async()=>{
-    const {data,error} =await supabaseClient
+  setServices: (services: Tables<"services">[]) => set({ services }),
+  loadServices: async () => {
+    const { data, error } = await supabaseClient
       .from("services")
       .select()
-      .eq("user_id",userStore.getState().id ?? "");
+      .eq("user_id", userStore.getState().id ?? "");
 
-      if(error){
-        console.log("Error fetching Services: "+error);        
-      }
-      else{
-        userStore.getState().setServices(data);
-      }
+    if (error) {
+      console.log("Error fetching Services: " + error);
+    } else {
+      userStore.getState().setServices(data);
+    }
   },
-  setSkills:(skills: Tables<"skills">[])=>set({ skills }),
-  loadSkills: async()=>{
-    const {data,error} =await supabaseClient
+  setSkills: (skills: Tables<"skills">[]) => set({ skills }),
+  loadSkills: async () => {
+    const { data, error } = await supabaseClient
       .from("skills")
       .select()
-      .eq("user_id",userStore.getState().id ?? "");
+      .eq("user_id", userStore.getState().id ?? "");
 
-      if(error){
-        console.log("Error fetching skills: "+error);        
-      }
-      else{
-        userStore.getState().setSkills(data);
-      }
+    if (error) {
+      console.log("Error fetching skills: " + error);
+    } else {
+      userStore.getState().setSkills(data);
+    }
   },
-  setEducation:(education: Tables<"education">[])=>set({ education }),
-  loadEducation: async()=>{
-    const {data,error} =await supabaseClient
+  setEducation: (educations: Tables<"education">[]) => set({ educations }),
+  loadEducations: async () => {
+    const { data, error } = await supabaseClient
       .from("education")
       .select()
-      .eq("user_id",userStore.getState().id ?? "");
+      .eq("user_id", userStore.getState().id ?? "");
 
-      if(error){
-        console.log("Error fetching education: "+error);        
-      }
-      else{
-        userStore.getState().setEducation(data);
-      }
+    if (error) {
+      console.log("Error fetching education: " + error);
+    } else {
+      userStore.getState().setEducation(data);
+    }
   },
-  setExperience:(experience: Tables<"experience">[])=>set({ experience }),
-  loadExperience: async()=>{
-    const {data,error} =await supabaseClient
+  setExperience: (experience: Tables<"experience">[]) => set({ experience }),
+  loadExperiences: async () => {
+    const { data, error } = await supabaseClient
       .from("experience")
       .select()
-      .eq("user_id",userStore.getState().id ?? "");
+      .eq("user_id", userStore.getState().id ?? "");
 
-      if(error){
-        console.log("Error fetching experience: "+error);        
-      }
-      else{
-        userStore.getState().setExperience(data);
-      }
+    if (error) {
+      console.log("Error fetching experience: " + error);
+    } else {
+      userStore.getState().setExperience(data);
+    }
   },
-  setTestimonials:(testimonials: Tables<"testimonials">[])=>set({ testimonials }),
-  loadTestimonials: async()=>{
-    const {data,error} =await supabaseClient
+  setTestimonials: (testimonials: Tables<"testimonials">[]) =>
+    set({ testimonials }),
+  loadTestimonials: async () => {
+    const { data, error } = await supabaseClient
       .from("testimonials")
       .select()
-      .eq("user_id",userStore.getState().id ?? "");
+      .eq("user_id", userStore.getState().id ?? "");
 
-      if(error){
-        console.log("Error fetching testimonials: "+error);        
-      }
-      else{
-        userStore.getState().setTestimonials(data);
-      }
+    if (error) {
+      console.log("Error fetching testimonials: " + error);
+    } else {
+      userStore.getState().setTestimonials(data);
+    }
   },
-  setProjects:(projects: Tables<"projects">[])=>set({ projects }),
-  loadProjects: async()=>{
-    const {data,error} =await supabaseClient
+  setProjects: (projects: Tables<"projects">[]) => set({ projects }),
+  loadProjects: async () => {
+    const { data, error } = await supabaseClient
       .from("projects")
       .select()
-      .eq("user_id",userStore.getState().id ?? "");
+      .eq("user_id", userStore.getState().id ?? "");
 
-      if(error){
-        console.log("Error fetching projects: "+error);        
-      }
-      else{
-        userStore.getState().setProjects(data);
-      }
+    if (error) {
+      console.log("Error fetching projects: " + error);
+    } else {
+      userStore.getState().setProjects(data);
+    }
   },
-  setUserSocials: (userSocials: Tables<"user_socials">[]) => set({ userSocials }),
+  setUserSocials: (userSocials: Tables<"user_socials">[]) =>
+    set({ userSocials }),
   loadUserSocials: async () => {
     const { data, error } = await supabaseClient
       .from("user_socials")
@@ -172,8 +169,9 @@ const userStore = create<userStoreInterface>((set) => ({
       userStore.getState().setUserSocials(data);
     }
   },
-  setPlatformSocials: (platformSocials: Tables<"platform_socials">[]) => set({ platformSocials }), // Add this line
-  loadPlatformSocials: async () => { 
+  setPlatformSocials: (platformSocials: Tables<"platform_socials">[]) =>
+    set({ platformSocials }), // Add this line
+  loadPlatformSocials: async () => {
     const { data, error } = await supabaseClient
       .from("platform_socials")
       .select("*");

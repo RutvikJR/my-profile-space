@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
@@ -19,7 +19,7 @@ type Education = Database["public"]["Tables"]["education"]["Row"];
 
 const Education = () => {
   const userId = userStore((store) => store.id);
-  const [educations, setEducations] = useState<Education[] | null>(null);
+  const { educations, loadEducations } = userStore();
   const [editEducationId, setEditEducationId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
 
@@ -51,33 +51,6 @@ const Education = () => {
     },
   });
 
-  useEffect(() => {
-    if (userId) {
-      loadEducations();
-    }
-  }, [userId]);
-
-  const loadEducations = async () => {
-    if (!userId) return;
-
-    try {
-      const { data, error } = await supabaseClient
-        .from("education")
-        .select()
-        .eq("user_id", userId);
-
-      if (error) {
-        console.log(`Error in Fetching Education: ${error}`);
-      } else {
-        setEducations(data);
-      }
-      form.reset();
-      setEditEducationId(null);
-    } catch (error) {
-      console.log(`Error in Load Education part: ${error}`);
-    }
-  };
-
   const handleAddEducation = async (values: typeof form.values) => {
     if (!userId) return;
 
@@ -94,15 +67,15 @@ const Education = () => {
         end_date: values.isPresent
           ? null
           : values.endDate
-          ? new Date(
-              values.endDate.setMonth(values.endDate.getMonth() + 1)
-            ).toISOString()
-          : null,
+            ? new Date(
+                values.endDate.setMonth(values.endDate.getMonth() + 1)
+              ).toISOString()
+            : null,
         description: values.description,
         user_id: userId,
       };
 
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from("education")
         .insert([adjustedValues])
         .select();
@@ -110,7 +83,7 @@ const Education = () => {
       if (error) {
         console.log(`Error adding education: ${error}`);
       } else {
-        setEducations((prev) => (prev ? [...prev, data[0]] : [data[0]]));
+        loadEducations();
         form.reset();
         setModalOpened(false);
       }
@@ -176,7 +149,7 @@ const Education = () => {
         adjustedValues.end_date = null;
       }
 
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from("education")
         .update(adjustedValues)
         .eq("id", editEducationId)
@@ -185,11 +158,7 @@ const Education = () => {
       if (error) {
         console.log(`Error editing education: ${error.message}`);
       } else {
-        setEducations((prev) =>
-          prev
-            ? prev.map((edu) => (edu.id === data[0].id ? data[0] : edu))
-            : [data[0]]
-        );
+        loadEducations();
         setEditEducationId(null);
         form.reset();
         setModalOpened(false);
@@ -235,18 +204,6 @@ const Education = () => {
     setEditEducationId(education.id.toString());
     setModalOpened(true);
   };
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleString("default", { month: "long", year: "numeric" });
-  };
-  // schoolName: string;
-  //   degree: string;
-  //   fieldOfStudy: string;
-  //   startDate: Date | null;
-  //   endDate: Date | null;
-  //   description:
 
   const rows =
     educations?.map((education) => (

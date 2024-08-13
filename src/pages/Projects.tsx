@@ -1,64 +1,56 @@
-import React, { useState, useEffect } from "react";
-import { Button, Text, TextInput, Box, Card, Textarea, Modal, Group, Badge, Image } from "@mantine/core";
-import { MonthPickerInput } from '@mantine/dates';
+import React, { useState } from "react";
+import {
+  Button,
+  Text,
+  TextInput,
+  Box,
+  Card,
+  Textarea,
+  Modal,
+  Group,
+  Badge,
+  Image,
+} from "@mantine/core";
+import { MonthPickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
-import { FaEdit, FaTrashAlt, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaEdit, FaTrashAlt, FaPlus, FaTimes } from "react-icons/fa";
 
-type Project = Database['public']['Tables']['projects']['Row'];
+type Project = Database["public"]["Tables"]["projects"]["Row"];
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     AWS: any;
   }
 }
 
 const Projects = () => {
   const userId = userStore((store) => store.id);
-  const { projects, setProjects } = userStore();
+  const { projects, loadProjects } = userStore();
   const [editProjectId, setEditProjectId] = useState<number | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
 
   const form = useForm({
     initialValues: {
-      title: '',
-      description: '',
-      client_name: '',
-      industry: '',
+      title: "",
+      description: "",
+      client_name: "",
+      industry: "",
       technology: [] as string[],
       date: new Date(),
-      url: '',
+      url: "",
       images: [] as File[],
       imagePreviews: [] as string[],
     },
     validate: {
-      title: (value) => (value.length > 0 ? null : 'Title is required'),
-      description: (value) => (value.length > 0 ? null : 'Description is required'),
+      title: (value) => (value.length > 0 ? null : "Title is required"),
+      description: (value) =>
+        value.length > 0 ? null : "Description is required",
     },
   });
-
-  const loadProjects = async () => {
-    if (!userId) return;
-
-    const { data, error } = await supabaseClient
-      .from('projects')
-      .select()
-      .eq('user_id', userId);
-
-    if (error) {
-      console.log("Error fetching projects", error);
-    } else {
-      setProjects(data);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      loadProjects();
-    }
-  }, [userId]);
 
   const uploadFilesToS3 = async (files: File[]): Promise<string[]> => {
     const S3_BUCKET = "rutvikjr-bucket";
@@ -87,10 +79,9 @@ const Projects = () => {
         const upload = s3.putObject(params).promise();
         await upload;
 
-        const url = s3.getSignedUrl('getObject', {
+        const url = s3.getSignedUrl("getObject", {
           Bucket: S3_BUCKET,
-          Key: `project/${file.name}`
-
+          Key: `project/${file.name}`,
         });
 
         urls.push(url);
@@ -106,24 +97,38 @@ const Projects = () => {
   const handleAddProject = async (values: typeof form.values) => {
     if (!userId) return;
 
-    const { title, description, client_name, industry, technology, date, url, images } = values;
+    const {
+      title,
+      description,
+      client_name,
+      industry,
+      technology,
+      date,
+      url,
+      images,
+    } = values;
 
     try {
       const imageUrls = await uploadFilesToS3(images);
 
-      const { error } = await supabaseClient
-        .from('projects')
-        .insert([{
+      const { error } = await supabaseClient.from("projects").insert([
+        {
           title,
           description,
           client_name,
           industry,
           technology,
-          date: (date instanceof Date) ? new Date(new Date(date).setMonth(new Date(date).getMonth()+1)).toISOString() : null,
+          date:
+            date instanceof Date
+              ? new Date(
+                  new Date(date).setMonth(new Date(date).getMonth() + 1)
+                ).toISOString()
+              : null,
           url,
           images: imageUrls,
-          user_id: userId
-        }]);
+          user_id: userId,
+        },
+      ]);
 
       if (error) {
         console.log("Error adding project", error);
@@ -140,33 +145,44 @@ const Projects = () => {
   const handleEditProject = async (values: typeof form.values) => {
     if (!userId || !editProjectId) return;
 
-    const { title, description, client_name, industry, technology, date, url, images } = values;
+    const {
+      title,
+      description,
+      client_name,
+      industry,
+      technology,
+      date,
+      url,
+      images,
+    } = values;
 
     try {
-      let imageUrls: string[] = values.imagePreviews;
+      const imageUrls: string[] = values.imagePreviews;
       if (images.length > 0) {
         const newUrls = await uploadFilesToS3(images);
         imageUrls.concat(newUrls);
-
-
       }
-
 
       console.log(imageUrls);
 
       const { error } = await supabaseClient
-        .from('projects')
+        .from("projects")
         .update({
           title,
           description,
           client_name,
           industry,
           technology,
-          date: (date instanceof Date) ? new Date(new Date(date).setMonth(new Date(date).getMonth()+1)).toISOString() : null,
+          date:
+            date instanceof Date
+              ? new Date(
+                  new Date(date).setMonth(new Date(date).getMonth() + 1)
+                ).toISOString()
+              : null,
           url,
           images: imageUrls,
         })
-        .eq('id', editProjectId);
+        .eq("id", editProjectId);
 
       if (error) {
         console.log("Error updating project", error);
@@ -180,13 +196,12 @@ const Projects = () => {
       console.error("Error uploading files or updating project", err);
     }
   };
- 
 
   const handleDeleteProject = async (id: number) => {
     const { error } = await supabaseClient
-      .from('projects')
+      .from("projects")
       .delete()
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) {
       console.log("Error deleting project", error);
@@ -197,20 +212,20 @@ const Projects = () => {
 
   const handleEditClick = (project: Project) => {
     form.setValues({
-      title: project.title || '',
-      description: project.description || '',
-      client_name: project.client_name || '',
-      industry: project.industry || '',
+      title: project.title || "",
+      description: project.description || "",
+      client_name: project.client_name || "",
+      industry: project.industry || "",
       technology: project.technology || [],
       date: project.date ? new Date(project.date) : new Date(),
-      url: project.url || '',
+      url: project.url || "",
       images: [],
       imagePreviews: project.images || [], // Load existing images for editing
     });
     setEditProjectId(project.id);
     setModalOpened(true);
   };
- 
+
   const openAddProjectModal = () => {
     form.reset();
     setEditProjectId(null);
@@ -218,42 +233,68 @@ const Projects = () => {
   };
 
   const handleAddTechnology = (technology: string) => {
-    form.setFieldValue('technology', [...form.values.technology, technology]);
+    form.setFieldValue("technology", [...form.values.technology, technology]);
   };
 
   const handleRemoveTechnology = (index: number) => {
-    form.setFieldValue('technology', form.values.technology.filter((_, i) => i !== index));
+    form.setFieldValue(
+      "technology",
+      form.values.technology.filter((_, i) => i !== index)
+    );
   };
 
   const handleImageUpload = (file: File) => {
-    form.setFieldValue('images', [...form.values.images, file]);
+    form.setFieldValue("images", [...form.values.images, file]);
     const reader = new FileReader();
     reader.onload = (e) => {
-      form.setFieldValue('imagePreviews', [...form.values.imagePreviews, e.target?.result as string]);
+      form.setFieldValue("imagePreviews", [
+        ...form.values.imagePreviews,
+        e.target?.result as string,
+      ]);
     };
     reader.readAsDataURL(file);
   };
 
   const handleRemoveImage = (index: number) => {
-    form.setFieldValue('images', form.values.images.filter((_, i) => i !== index));
-    form.setFieldValue('imagePreviews', form.values.imagePreviews.filter((_, i) => i !== index));
+    form.setFieldValue(
+      "images",
+      form.values.images.filter((_, i) => i !== index)
+    );
+    form.setFieldValue(
+      "imagePreviews",
+      form.values.imagePreviews.filter((_, i) => i !== index)
+    );
   };
 
-  const projectCards = projects?.map((project) => (
-    <Card key={project.id} shadow="sm" padding="lg" style={{ marginBottom: '20px' }}>
-      <Text fw={500}>{project.title}</Text>
-      <Text size="sm">{project.description}</Text>
-      <Group justify="right" mt="md">
-        <FaEdit onClick={() => handleEditClick(project)} className="cursor-pointer text-blue-500" />
-        <FaTrashAlt onClick={() => handleDeleteProject(project.id)} className="cursor-pointer text-red-500" />
-      </Group>
-    </Card>
-  )) || [];
+  const projectCards =
+    projects?.map((project) => (
+      <Card
+        key={project.id}
+        shadow="sm"
+        padding="lg"
+        style={{ marginBottom: "20px" }}
+      >
+        <Text fw={500}>{project.title}</Text>
+        <Text size="sm">{project.description}</Text>
+        <Group justify="right" mt="md">
+          <FaEdit
+            onClick={() => handleEditClick(project)}
+            className="cursor-pointer text-blue-500"
+          />
+          <FaTrashAlt
+            onClick={() => handleDeleteProject(project.id)}
+            className="cursor-pointer text-red-500"
+          />
+        </Group>
+      </Card>
+    )) || [];
 
   return (
     <div>
       <Text>Projects</Text>
-      <Button onClick={openAddProjectModal} mb="md">Add Project</Button>
+      <Button onClick={openAddProjectModal} mb="md">
+        Add Project
+      </Button>
       {projects == null || projects.length === 0 ? (
         <Text>There are no projects you added</Text>
       ) : (
@@ -262,7 +303,7 @@ const Projects = () => {
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
-        title={editProjectId ? 'Edit Project' : 'Add Project'}
+        title={editProjectId ? "Edit Project" : "Add Project"}
       >
         <Box>
           <form
@@ -277,34 +318,34 @@ const Projects = () => {
             <TextInput
               label="Project Title"
               placeholder="Project Title"
-              {...form.getInputProps('title')}
+              {...form.getInputProps("title")}
             />
             <Textarea
               label="Project Description"
               placeholder="Project Description"
-              {...form.getInputProps('description')}
+              {...form.getInputProps("description")}
             />
             <TextInput
               label="Client Name"
               placeholder="Client Name"
-              {...form.getInputProps('client_name')}
+              {...form.getInputProps("client_name")}
             />
             <TextInput
               label="Industry"
               placeholder="Industry"
-              {...form.getInputProps('industry')}
+              {...form.getInputProps("industry")}
             />
             <MonthPickerInput
               label="Date"
               placeholder="Pick start date"
-              {...form.getInputProps('date')}
+              {...form.getInputProps("date")}
               maxDate={new Date()}
               mb="md"
             />
             <TextInput
               label="URL"
               placeholder="URL"
-              {...form.getInputProps('url')}
+              {...form.getInputProps("url")}
             />
             <div>
               <Text>Images</Text>
@@ -318,16 +359,19 @@ const Projects = () => {
                     }
                   }}
                 />
-                
               </Group>
-              <div style={{ marginTop: '10px' }}>
+              <div style={{ marginTop: "10px" }}>
                 {form.values.imagePreviews.map((preview, index) => (
                   <Badge
                     key={index}
                     variant="filled"
                     color="blue"
-
-                    rightSection={<FaTimes onClick={() => handleRemoveImage(index)} className="cursor-pointer" />}
+                    rightSection={
+                      <FaTimes
+                        onClick={() => handleRemoveImage(index)}
+                        className="cursor-pointer"
+                      />
+                    }
                   >
                     <Image src={preview} width={100} height={100} />
                   </Badge>
@@ -337,7 +381,17 @@ const Projects = () => {
             <div>
               <Text>Technologies</Text>
               {form.values.technology.map((tech, index) => (
-                <Badge key={index} variant="filled" color="blue" rightSection={<FaTimes onClick={() => handleRemoveTechnology(index)} className="cursor-pointer" />}>
+                <Badge
+                  key={index}
+                  variant="filled"
+                  color="blue"
+                  rightSection={
+                    <FaTimes
+                      onClick={() => handleRemoveTechnology(index)}
+                      className="cursor-pointer"
+                    />
+                  }
+                >
                   {tech}
                 </Badge>
               ))}
@@ -345,28 +399,32 @@ const Projects = () => {
                 <TextInput
                   placeholder="Add Technology"
                   onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
+                    if (event.key === "Enter") {
                       event.preventDefault();
-                      if (event.currentTarget.value.trim() !== '') {
+                      if (event.currentTarget.value.trim() !== "") {
                         handleAddTechnology(event.currentTarget.value);
-                        event.currentTarget.value = '';
+                        event.currentTarget.value = "";
                       }
                     }
                   }}
                 />
-                <Button onClick={() => {
-                  const input = document.querySelector('input[placeholder="Add Technology"]') as HTMLInputElement;
-                  if (input?.value.trim() !== '') {
-                    handleAddTechnology(input.value);
-                    input.value = '';
-                  }
-                }}>
+                <Button
+                  onClick={() => {
+                    const input = document.querySelector(
+                      'input[placeholder="Add Technology"]'
+                    ) as HTMLInputElement;
+                    if (input?.value.trim() !== "") {
+                      handleAddTechnology(input.value);
+                      input.value = "";
+                    }
+                  }}
+                >
                   <FaPlus />
                 </Button>
               </Group>
             </div>
             <Button type="submit" color="cyan" mt="md">
-              {editProjectId ? 'Save' : 'Add'}
+              {editProjectId ? "Save" : "Add"}
             </Button>
           </form>
         </Box>
