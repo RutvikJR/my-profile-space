@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box, Button, TextInput, Text, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -15,7 +15,7 @@ const FAQs = () => {
   const [editFAQId, setEditFAQId] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { faqs, setFaqs } = userStore();
+  const { faqs, setFaqs, loadFaqs } = userStore();
 
   const form = useForm({
     initialValues: {
@@ -27,33 +27,6 @@ const FAQs = () => {
       answer: (value) => (value.length > 0 ? null : "Please enter Answer"),
     },
   });
-
-  useEffect(() => {
-    if (userId) {
-      loadFAQs();
-    }
-  }, [userId]);
-
-  const loadFAQs = async () => {
-    if (!userId) return;
-
-    try {
-      const { data, error } = await supabaseClient
-        .from("faqs")
-        .select()
-        .eq("user_id", userId);
-
-      if (error) {
-        console.log(`Error fetching FAQs: ${error}`);
-      } else {
-        setFaqs(data);
-      }
-      form.reset();
-      setEditFAQId(null);
-    } catch (error) {
-      console.log(`Error in Load FAQs part: ${error}`);
-    }
-  };
 
   const handleAddFAQs = async (values: {
     question: string;
@@ -116,7 +89,7 @@ const FAQs = () => {
       if (error) {
         console.log(`Error deleting FAQ: ${error}`);
       } else {
-        loadFAQs();
+        loadFaqs();
       }
     } catch (error) {
       console.log(`Error in Delete FAQ part: ${error}`);
@@ -145,18 +118,25 @@ const FAQs = () => {
       <Table.Th className="px-4 text-center"></Table.Th>
     </Table.Tr>
   );
-  const rows = faqs?.map((faq) => (
-    <Table.Tr key={faq.id} className="text-center">
-      <Table.Td className="px-4 truncate max-w-xs">{faq.question}</Table.Td>
-      <Table.Td className="px-4 truncate max-w-xs">{faq.answer}</Table.Td>
-      <Table.Td className="px-4">
-        <div className="flex justify-end mx-3">
-          <FaEdit onClick={() => handleEditClick(faq)} className="cursor-pointer text-blue-500 mx-3" />
-          <FaTrashAlt onClick={() => handleDeleteFAQs(faq.id.toString())} className="cursor-pointer text-red-500 mx-3" />
-        </div>
-      </Table.Td>
-    </Table.Tr>
-  )) || [];
+  const rows =
+    faqs?.map((faq) => (
+      <Table.Tr key={faq.id} className="text-center">
+        <Table.Td className="px-4 truncate max-w-xs">{faq.question}</Table.Td>
+        <Table.Td className="px-4 truncate max-w-xs">{faq.answer}</Table.Td>
+        <Table.Td className="px-4">
+          <div className="flex justify-end mx-3">
+            <FaEdit
+              onClick={() => handleEditClick(faq)}
+              className="cursor-pointer text-blue-500 mx-3"
+            />
+            <FaTrashAlt
+              onClick={() => handleDeleteFAQs(faq.id.toString())}
+              className="cursor-pointer text-red-500 mx-3"
+            />
+          </div>
+        </Table.Td>
+      </Table.Tr>
+    )) || [];
   return (
     <>
       <Box>
@@ -171,10 +151,10 @@ const FAQs = () => {
           <Text>There are no FAQs added by you.</Text>
         ) : (
           <div>
-          <Table striped highlightOnHover withTableBorder>
-            <Table.Thead>{ths}</Table.Thead>
-            <Table.Tbody>{rows}</Table.Tbody>
-          </Table>
+            <Table striped highlightOnHover withTableBorder>
+              <Table.Thead>{ths}</Table.Thead>
+              <Table.Tbody>{rows}</Table.Tbody>
+            </Table>
           </div>
         )}
       </Box>

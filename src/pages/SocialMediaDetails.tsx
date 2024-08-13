@@ -15,13 +15,13 @@ const mergeUserAndPlatformSocials = (
   userSocials: SocialMediaDetail[],
   platformSocials: PlatformSocial[]
 ) => {
-  return userSocials.map(userSocial => {
-    const platform = platformSocials.find(p => p.id === userSocial.social_id);
+  return userSocials.map((userSocial) => {
+    const platform = platformSocials.find((p) => p.id === userSocial.social_id);
     if (platform) {
-      const { createdAt, id, ...platformData } = platform;
+      const { ...platformData } = platform;
       return {
         ...userSocial,
-        platform: platformData
+        platform: platformData,
       };
     }
     return userSocial;
@@ -32,16 +32,12 @@ const SocialMediaDetails = () => {
   const userId = userStore((store) => store.id);
   const [editDetailId, setEditDetailId] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
-  const { userSocials, setUserSocials, platformSocials, loadUserSocials, loadPlatformSocials } = userStore();
+  const { userSocials, setUserSocials, platformSocials, loadUserSocials } =
+    userStore();
 
-  const [mergedSocials, setMergedSocials] = useState<ReturnType<typeof mergeUserAndPlatformSocials>>([]);
-
-  useEffect(() => {
-    if (userId) {
-      loadUserSocials();
-      loadPlatformSocials();
-    }
-  }, [userId]);
+  const [mergedSocials, setMergedSocials] = useState<
+    ReturnType<typeof mergeUserAndPlatformSocials>
+  >([]);
 
   useEffect(() => {
     setMergedSocials(mergeUserAndPlatformSocials(userSocials, platformSocials));
@@ -63,7 +59,7 @@ const SocialMediaDetails = () => {
           return "Please enter a valid URL";
         }
       },
-    }
+    },
   });
 
   const handleAddSocialMediaDetail = async (values: {
@@ -75,7 +71,9 @@ const SocialMediaDetails = () => {
     try {
       const { data, error } = await supabaseClient
         .from("user_socials")
-        .insert([{ social_id: values.social_id, url: values.url, user_id: userId }])
+        .insert([
+          { social_id: values.social_id, url: values.url, user_id: userId },
+        ])
         .select();
 
       if (error) {
@@ -108,7 +106,9 @@ const SocialMediaDetails = () => {
       } else {
         setUserSocials(
           userSocials
-            ? userSocials.map((detail) => (detail.id === data[0].id ? data[0] : detail))
+            ? userSocials.map((detail) =>
+                detail.id === data[0].id ? data[0] : detail
+              )
             : [data[0]]
         );
         setEditDetailId(null);
@@ -122,7 +122,10 @@ const SocialMediaDetails = () => {
 
   const handleDeleteSocialMediaDetail = async (id: string) => {
     try {
-      const { error } = await supabaseClient.from("user_socials").delete().eq("id", id);
+      const { error } = await supabaseClient
+        .from("user_socials")
+        .delete()
+        .eq("id", id);
 
       if (error) {
         console.log(`Error deleting social media detail: ${error}`);
@@ -136,8 +139,8 @@ const SocialMediaDetails = () => {
 
   const handleEditClick = (detail: SocialMediaDetail) => {
     form.setValues({
-      social_id: detail.social_id,
-      url: detail.url,
+      social_id: detail.social_id ?? undefined,
+      url: detail.url ?? undefined,
     });
     setEditDetailId(detail.id.toString());
     open();
@@ -148,18 +151,29 @@ const SocialMediaDetails = () => {
     setEditDetailId(null);
     open();
   };
-  const rows = mergedSocials?.map((social) => (
-    <Table.Tr key={social.id} className="text-center">
-      <Table.Td className="px-4 truncate max-w-xs">{social.platform.name}</Table.Td>
-      <Table.Td className="px-4 truncate max-w-xs">{social.url}</Table.Td>
-      <Table.Td className="px-4">
-        <div className="flex justify-end mx-3">
-          <FaEdit onClick={() => handleEditClick(social)} className="cursor-pointer text-blue-500 mx-3" />
-          <FaTrashAlt onClick={() => handleDeleteSocialMediaDetail(social.id.toString())} className="cursor-pointer text-red-500 mx-3" />
-        </div>
-      </Table.Td>
-    </Table.Tr>
-  )) || [];
+  const rows =
+    mergedSocials?.map((social) => (
+      <Table.Tr key={social.id} className="text-center">
+        <Table.Td className="px-4 truncate max-w-xs">
+          {social.platform.name}
+        </Table.Td>
+        <Table.Td className="px-4 truncate max-w-xs">{social.url}</Table.Td>
+        <Table.Td className="px-4">
+          <div className="flex justify-end mx-3">
+            <FaEdit
+              onClick={() => handleEditClick(social)}
+              className="cursor-pointer text-blue-500 mx-3"
+            />
+            <FaTrashAlt
+              onClick={() =>
+                handleDeleteSocialMediaDetail(social.id.toString())
+              }
+              className="cursor-pointer text-red-500 mx-3"
+            />
+          </div>
+        </Table.Td>
+      </Table.Tr>
+    )) || [];
 
   const ths = (
     <Table.Tr className="text-center">
@@ -212,14 +226,19 @@ const SocialMediaDetails = () => {
           //     </div>
           //   ))}
           // </ul>
-<Table striped highlightOnHover withTableBorder>
+          <Table striped highlightOnHover withTableBorder>
             <Table.Thead>{ths}</Table.Thead>
             <Table.Tbody>{rows}</Table.Tbody>
           </Table>
         )}
       </Box>
 
-      <Modal opened={opened} onClose={close} title="Social Media Detail Form" centered>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Social Media Detail Form"
+        centered
+      >
         <Box mb="xl">
           <form
             onSubmit={form.onSubmit((values) => {
