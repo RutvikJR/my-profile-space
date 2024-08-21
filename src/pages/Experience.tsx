@@ -12,7 +12,7 @@ import { MonthPickerInput } from "@mantine/dates";
 import { useState } from "react";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
-import { Database } from "../types/supabase";
+import { Database, TablesInsert, TablesUpdate } from "../types/supabase";
 import { FaCheckCircle, FaEdit, FaTrashAlt } from "react-icons/fa";
 
 type Experience = Database["public"]["Tables"]["experience"]["Row"];
@@ -75,18 +75,21 @@ const Experience = () => {
     if (!userId) return;
 
     try {
-      const adjustedValues = {
+      const adjustedValues: TablesInsert<"experience"> = {
         ...values,
         start_date: values.start_date
           ? new Date(
               values.start_date.setMonth(values.start_date.getMonth() + 1)
-            )
-          : null,
+            ).toISOString()
+          : "",
         end_date: values.is_present
           ? null
           : values.end_date
-            ? new Date(values.end_date.setMonth(values.end_date.getMonth() + 1))
+            ? new Date(
+                values.end_date.setMonth(values.end_date.getMonth() + 1)
+              ).toISOString()
             : null,
+        user_id: userId,
       };
 
       const { error } = await supabaseClient
@@ -123,7 +126,7 @@ const Experience = () => {
         return;
       }
 
-      const adjustedValues: any = {
+      const adjustedValues: TablesUpdate<"experience"> = {
         position: values.position,
         company: values.company,
         description: values.description,
@@ -135,27 +138,26 @@ const Experience = () => {
         new Date(values.start_date).toISOString() !==
           new Date(currentData.start_date).toISOString()
       ) {
-        adjustedValues.start_date = new Date(values.start_date);
-        adjustedValues.start_date.setMonth(
-          adjustedValues.start_date.getMonth() + 1
-        );
+        const start_date = new Date(values.start_date);
+        start_date.setMonth(start_date.getMonth() + 1);
+        adjustedValues.start_date = start_date.toISOString();
       }
 
       if (
         !values.is_present &&
         values.end_date !== null &&
+        currentData.end_date &&
         new Date(values.end_date).toISOString() !==
           new Date(currentData.end_date).toISOString()
       ) {
-        adjustedValues.end_date = new Date(values.end_date);
-        adjustedValues.end_date.setMonth(
-          adjustedValues.end_date.getMonth() + 1
-        );
+        const end_date = new Date(values.end_date);
+        end_date.setMonth(end_date.getMonth() + 1);
+        adjustedValues.end_date = end_date.toISOString();
       } else if (values.is_present) {
         adjustedValues.end_date = null;
       }
 
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from("experience")
         .update(adjustedValues)
         .eq("id", editExperienceId)

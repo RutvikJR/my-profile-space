@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
-import { Database } from "../types/supabase";
+import { Database, TablesInsert, TablesUpdate } from "../types/supabase";
 import {
   Modal,
   Button,
@@ -55,7 +55,7 @@ const Education = () => {
     if (!userId) return;
 
     try {
-      const adjustedValues = {
+      const adjustedValues: TablesInsert<"education"> = {
         school: values.schoolName,
         degree: values.degree,
         field_of_study: values.fieldOfStudy,
@@ -63,7 +63,7 @@ const Education = () => {
           ? new Date(
               values.startDate.setMonth(values.startDate.getMonth() + 1)
             ).toISOString()
-          : null,
+          : "",
         end_date: values.isPresent
           ? null
           : values.endDate
@@ -114,7 +114,7 @@ const Education = () => {
       const formatDateInput = (date: Date | null) =>
         date ? new Date(date) : null;
 
-      const adjustedValues: any = {
+      const adjustedValues: TablesUpdate<"education"> = {
         school: values.schoolName,
         degree: values.degree,
         field_of_study: values.fieldOfStudy,
@@ -140,7 +140,8 @@ const Education = () => {
         const endDate = formatDateInput(values.endDate);
         if (
           endDate &&
-          endDate.toISOString() !== new Date(currentData.end_date).toISOString()
+          endDate.toISOString() !==
+            new Date(currentData.end_date ?? "").toISOString()
         ) {
           endDate.setMonth(endDate.getMonth() + 1); // Adjust month
           adjustedValues.end_date = endDate.toISOString();
@@ -324,7 +325,7 @@ const Education = () => {
             {...form.getInputProps("description")}
             required
           />
-          <Group position="right" mt="md">
+          <Group mt="md">
             <Button
               type="submit"
               className="bg-cyan-500 text-white hover:bg-cyan-600"
