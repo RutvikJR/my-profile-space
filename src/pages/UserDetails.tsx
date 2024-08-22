@@ -8,18 +8,23 @@ import { DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import Contact from "./Contact";
+import { showNotification } from "@mantine/notifications";
+import { showToast } from "../utils/toast";
 
 type UserDetails = Database['public']['Tables']['user_details']['Row'];
 type UserSettings = Database['public']['Tables']['user_setting']['Row'];
 
 const UserDetailsForm = () => {
   const userId = userStore((store) => store.id);
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
+  // const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  // const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
   const [slugError, setSlugError] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [opened, { toggle }] = useDisclosure(false);
 
+  const { userDetails, setUserDetails } = userStore();
+  const { userSettings, setUserSettings } = userStore();
 
   const form = useForm({
     initialValues: {
@@ -30,8 +35,8 @@ const UserDetailsForm = () => {
       description: '',
       business_email: '',
       date_of_birth: '',
-      years_of_experience: 0,
-      contact: 0,
+      years_of_experience: null,
+      contact: null,
       resume: null as File | null,
       profile_image: null as File | null,
       resume_preview: '',
@@ -54,6 +59,7 @@ const UserDetailsForm = () => {
         .single();
 
       if (error) {
+        showToast("Error loading user details", "error");
         console.log("Error fetching user details", error);
       } else if (data) {
         const fetchedData: UserDetails = {
@@ -64,8 +70,8 @@ const UserDetailsForm = () => {
           description: data.description || '',
           business_email: data.business_email || '',
           date_of_birth: data.date_of_birth || '',
-          years_of_experience: data.years_of_experience || 0,
-          contact: data.contact || 0,
+          years_of_experience: data.years_of_experience || null,
+          contact: data.contact || null,
           resume: data.resume,
           profile_image: data.profile_image,
           created_at: data.created_at || '',
@@ -80,9 +86,9 @@ const UserDetailsForm = () => {
           designations: fetchedData.designations || '',
           description: fetchedData.description || '',
           business_email: fetchedData.business_email || '',
-          date_of_birth: fetchedData.date_of_birth || '',
-          years_of_experience: fetchedData.years_of_experience || 0,
-          contact: fetchedData.contact || 0,
+          date_of_birth: fetchedData.date_of_birth || null,
+          years_of_experience: fetchedData.years_of_experience || null,
+          contact: fetchedData.contact || null,
           resume_preview: data.resume ? await fetchFilePreview(data.resume) : '',
           profile_image_preview: data.profile_image ? await fetchFilePreview(data.profile_image) : '',
         });
@@ -102,6 +108,7 @@ const UserDetailsForm = () => {
         .single();
 
       if (error && error.code !== 'PGRST116') {
+        showToast("Error in theme retrival", "error");
         console.log("Error retrieving user setting", error);
         return;
       }
@@ -160,6 +167,7 @@ const UserDetailsForm = () => {
       const url = s3.getSignedUrl('getObject', params);
       return url;
     } catch (err) {
+
       console.error("Error fetching file preview", err);
       return '';
     }
@@ -190,6 +198,7 @@ const UserDetailsForm = () => {
       await s3.putObject(params).promise();
       return path;
     } catch (err) {
+      showToast("Error for uploading file", "error");
       console.error("Error uploading file", err);
       throw err;
     }
@@ -205,7 +214,7 @@ const UserDetailsForm = () => {
       designations: valuess.designations,
       description: valuess.description,
       business_email: valuess.business_email,
-      date_of_birth: selectedDate,
+      date_of_birth: valuess.date_of_birth,
       years_of_experience: valuess.years_of_experience,
       contact: valuess.contact,
       resume: valuess.resume,
@@ -225,10 +234,19 @@ const UserDetailsForm = () => {
       profileImagePath = await handleFileUpload(values.profile_image, shortProfileImagePath);
     }
 
-    var temp_date = selectedDate ? new Date(new Date(selectedDate).setDate(new Date(selectedDate).getDate() + 1)) : null;
-    // temp_date=temp_date?new Date(new Date(values.date_of_birth).setMonth(new Date(values.date_of_birth).getMonth())):null;
+    var temp_date = valuess.date_of_birth ? new Date(new Date(valuess.date_of_birth).setDate(new Date(valuess.date_of_birth).getDate() + 1)) : null;
+    var temp_years = valuess.years_of_experience;
+    if (valuess.years_of_experience == 0) {
+      temp_years = null;
+    }
+    var temp_contact = valuess.contact;
+    if (valuess.contact == 0) {
+      temp_contact = null;
+    }
     const payload = {
       ...values,
+      years_of_experience: temp_years,
+      contact: temp_contact,
       date_of_birth: temp_date,
       resume: resumePath || null,
       profile_image: profileImagePath || null,
@@ -244,10 +262,12 @@ const UserDetailsForm = () => {
         .eq('user_id', userId);
 
       if (error) {
+        showToast("Error in updation of user","error");
         console.log('Error updating user details', error);
       } else {
+        showToast("User updated successfully","updated");
         setUserDetails(payload);
-        alert('User details updated successfully');
+        console.log(payload);
       }
     } else {
       const { error } = await supabaseClient
@@ -255,8 +275,10 @@ const UserDetailsForm = () => {
         .insert(payload);
 
       if (error) {
+        showToast("Error in this process","error");
         console.log('Error inserting user details', error);
       } else {
+        showToast("User details saved successfully", "success");
         setUserDetails(payload);
         alert('User details saved successfully');
       }
@@ -284,16 +306,19 @@ const UserDetailsForm = () => {
         .select()
         .eq('slug', values.slug);
       if (newError) {
+        showToast("Error in fetching of slug: " ,"error");
         console.error("Error checking slug:", newError);
         return;
       }
       if (newData && newData.length > 0) {
+
         // Set the slug error to display above the slug input
         setSlugError("The slug is already in use. Please try a different one.");
         return;
       }
     }
     catch (error) {
+      showToast("Error in slug validation","error");
       console.log("error for checking the slug finder", error);
 
     }
@@ -312,14 +337,16 @@ const UserDetailsForm = () => {
         .eq('user_id', userId);
 
       if (error) {
+        showToast("Error updating user settings","error");
         console.error("Error updating user settings:", error);
         return;
       }
-
+      showToast("User settings updated successfully","updated");
       console.log("User settings updated successfully:", data);
       // Additional success logic here (e.g., notifying the user)
 
     } catch (err) {
+      showToast("Error updating user settings","error");
       console.error("Unexpected error occurred:", err);
     }
   };
@@ -400,10 +427,12 @@ const UserDetailsForm = () => {
         <DatePickerInput
           label="Date of Birth"
           placeholder="Select date"
-          value={selectedDate ? new Date(selectedDate) : null}
-          onChange={(date) => setSelectedDate(date?.toISOString() ?? null)}
+          value={form.values.date_of_birth ? new Date(form.values.date_of_birth) : null}
+          onChange={(date) => form.setFieldValue('date_of_birth', date ? date.toISOString() : "")} // Custom onChange
           withAsterisk
         />
+
+
         <TextInput
           label="Years of Experience"
           placeholder="Years of Experience"

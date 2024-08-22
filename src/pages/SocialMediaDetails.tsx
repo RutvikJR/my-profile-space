@@ -7,6 +7,7 @@ import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { showToast } from "../utils/toast";
 
 type SocialMediaDetail = Database["public"]["Tables"]["user_socials"]["Row"];
 type PlatformSocial = Database["public"]["Tables"]["platform_socials"]["Row"];
@@ -77,8 +78,10 @@ const SocialMediaDetails = () => {
         .select();
 
       if (error) {
+        showToast("Errot in inserting social information","error");
         console.log(`Error adding social media detail: ${error.message}`);
       } else {
+        showToast("Successfully added social media detail", "success");
         setUserSocials(userSocials ? [...userSocials, data[0]] : [data[0]]);
         form.reset();
         close();
@@ -102,8 +105,10 @@ const SocialMediaDetails = () => {
         .select();
 
       if (error) {
+        showToast("Error updating social media details", "error");
         console.log(`Error editing social media detail: ${error}`);
       } else {
+        showToast("Successfully updated social media details", "updated");
         setUserSocials(
           userSocials
             ? userSocials.map((detail) =>
@@ -116,6 +121,7 @@ const SocialMediaDetails = () => {
         close();
       }
     } catch (error) {
+      showToast("Failed to update social media details", "error");
       console.log(`Error in Edit Social Media Detail part: ${error}`);
     }
   };
@@ -128,11 +134,14 @@ const SocialMediaDetails = () => {
         .eq("id", id);
 
       if (error) {
+        showToast("Error for deleting social media detail","error");
         console.log(`Error deleting social media detail: ${error}`);
       } else {
+        showToast("Successfully deleted social media detail","deleted");
         loadUserSocials();
       }
     } catch (error) {
+      showToast("Error deleting social media detail","error");
       console.log(`Error in Delete Social Media Detail part: ${error}`);
     }
   };

@@ -7,6 +7,7 @@ import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { showToast } from "../utils/toast";
 
 type FAQs = Database["public"]["Tables"]["faqs"]["Row"];
 
@@ -41,13 +42,16 @@ const FAQs = () => {
         .select();
 
       if (error) {
+        showToast("Error in adding FAQ","error");
         console.log(`Error adding FAQ: ${error}`);
       } else {
+        showToast("Successfully added FAQ", "success");
         setFaqs(faqs ? [...faqs, data[0]] : [data[0]]);
         form.reset();
         close(); // Close the modal after adding FAQ
       }
     } catch (error) {
+      showToast("Failed to add FAQ", "error");
       console.log(`Error in Add FAQs part: ${error}`);
     }
   };
@@ -66,8 +70,10 @@ const FAQs = () => {
         .select();
 
       if (error) {
+        showToast("Error updating FAQ","error");
         console.log(`Error editing FAQ: ${error}`);
       } else {
+        showToast("Successfully updated FAQ", "updated");
         setFaqs(
           faqs
             ? faqs.map((exp) => (exp.id === data[0].id ? data[0] : exp))
@@ -78,6 +84,7 @@ const FAQs = () => {
         close(); // Close the modal after editing FAQ
       }
     } catch (error) {
+      showToast("Failed to update FAQ", "error")
       console.log(`Error in Edit FAQ part: ${error}`);
     }
   };
@@ -87,11 +94,14 @@ const FAQs = () => {
       const { error } = await supabaseClient.from("faqs").delete().eq("id", id);
 
       if (error) {
+        showToast("Error deleting FAQ", "error");
         console.log(`Error deleting FAQ: ${error}`);
       } else {
+        showToast("Successfully deleted FAQ", "deleted");
         loadFaqs();
       }
     } catch (error) {
+      showToast("Failed to Delete FAQ","error");
       console.log(`Error in Delete FAQ part: ${error}`);
     }
   };

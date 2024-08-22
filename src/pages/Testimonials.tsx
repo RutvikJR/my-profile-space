@@ -13,6 +13,7 @@ import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { showToast } from "../utils/toast";
 
 type Testimonial = Database["public"]["Tables"]["testimonials"]["Row"];
 
@@ -56,13 +57,16 @@ const Testimonials = () => {
         .select();
 
       if (error) {
+        showToast("Error inserting testimonials","error");
         console.log(`Error adding testimonial: ${error.message}`);
       } else {
+        showToast("Successfully inserted testimonials","success");
         loadTestimonials();
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
+      showToast("Error inserting testimonials","error");
       if (error instanceof Error) {
         console.error(error.message);
       } else {
@@ -90,14 +94,17 @@ const Testimonials = () => {
         .select();
 
       if (error) {
+        showToast("Error updating testimonials", "error");
         console.log(`Error editing testimonial: ${error}`);
       } else {
+        showToast("Successfully updated testimonials", "updated");
         loadTestimonials();
         setEditTestimonialId(null);
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
+      showToast("Failure updating testimonials", "error");
       console.log(`Error in Edit Testimonial part: ${error}`);
     }
   };
@@ -110,11 +117,14 @@ const Testimonials = () => {
         .eq("id", id);
 
       if (error) {
+        showToast("Error deleting testimonial","error");
         console.log(`Error deleting testimonial: ${error}`);
       } else {
+        showToast("Successfully deleted testimonial", "deleted");
         loadTestimonials();
       }
     } catch (error) {
+      showToast("Failed to delete testimonial", "error");
       console.log(`Error in Delete Testimonial part: ${error}`);
     }
   };

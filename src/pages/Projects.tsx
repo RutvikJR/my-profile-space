@@ -17,6 +17,7 @@ import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt, FaPlus, FaTimes } from "react-icons/fa";
+import { showToast } from "../utils/toast";
 
 type Project = Database["public"]["Tables"]["projects"]["Row"];
 
@@ -86,6 +87,7 @@ const Projects = () => {
 
         urls.push(url);
       } catch (err) {
+        showToast("Error uploading","error");
         console.error("Error uploading file", err);
         throw err;
       }
@@ -131,13 +133,16 @@ const Projects = () => {
       ]);
 
       if (error) {
+        showToast("Error for adding project","error");
         console.log("Error adding project", error);
       } else {
+        showToast("Project added successfully", "success");
         form.reset();
         loadProjects();
         setModalOpened(false);
       }
     } catch (err) {
+      showToast("Failed for adding project", "error");
       console.error("Error uploading files or adding project", err);
     }
   };
@@ -185,14 +190,17 @@ const Projects = () => {
         .eq("id", editProjectId);
 
       if (error) {
+        showToast("Error in updation of project", "error");
         console.log("Error updating project", error);
       } else {
+        showToast("Project updated successfully","updated");
         form.reset();
         setEditProjectId(null);
         loadProjects();
         setModalOpened(false);
       }
     } catch (err) {
+      showToast("Error updating project","error");
       console.error("Error uploading files or updating project", err);
     }
   };
@@ -204,8 +212,10 @@ const Projects = () => {
       .eq("id", id);
 
     if (error) {
+      showToast("Error in deletion of project","error");
       console.log("Error deleting project", error);
     } else {
+      showToast("Successfully deleted","deleted");
       loadProjects();
     }
   };

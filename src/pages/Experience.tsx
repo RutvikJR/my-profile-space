@@ -14,6 +14,7 @@ import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database, TablesInsert, TablesUpdate } from "../types/supabase";
 import { FaCheckCircle, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { showToast } from "../utils/toast";
 
 type Experience = Database["public"]["Tables"]["experience"]["Row"];
 
@@ -98,13 +99,16 @@ const Experience = () => {
         .select();
 
       if (error) {
+        showToast("Error in adding experience","error");
         console.log(`Error adding experience: ${error.message}`);
       } else {
+        showToast("Successfully added experience", "success");
         loadExperiences();
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
+      showToast("Error adding experience", "error");
       console.log(`Error in Add Experience part: ${error}`);
     }
   };
@@ -120,7 +124,9 @@ const Experience = () => {
         .single();
 
       if (fetchError) {
+        showToast("Error while fetching the Experience","error");
         console.log(
+
           `Error fetching current experience data: ${fetchError.message}`
         );
         return;
@@ -164,14 +170,17 @@ const Experience = () => {
         .select();
 
       if (error) {
+        showToast("Error for updating experience","error");
         console.log(`Error editing experience: ${error.message}`);
       } else {
+        showToast("Successfully updated experience","updated");
         setEditExperienceId(null);
         form.reset();
         loadExperiences();
         setModalOpened(false);
       }
     } catch (error) {
+      showToast("Error in updateing experience", "error");
       console.log(`Error in Edit Experience part: ${error}`);
     }
   };
@@ -184,11 +193,14 @@ const Experience = () => {
         .eq("id", id);
 
       if (error) {
+        showToast("Error in delete Experience","error");
         console.log(`Error deleting experience: ${error.message}`);
       } else {
+        showToast("Successfully deleted","deleted");
         loadExperiences();
       }
     } catch (error) {
+      showToast("Error in delete Experience","error");
       console.log(`Error in Delete Experience part: ${error}`);
     }
   };
