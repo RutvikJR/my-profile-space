@@ -36,9 +36,9 @@ const Skills = () => {
       .insert([{ ...values, user_id: userId }]);
 
     if (error) {
-      showToast("Error adding skill", "error");
+      showToast("Failed to add Skill record, please try again!", "error");
     } else {
-      showToast("Successfully added skill", "success");
+      showToast("Skill record added successfully!", "success");
       form.reset();
       loadSkills();
       setModalOpened(false);
@@ -54,9 +54,9 @@ const Skills = () => {
       .eq("id", editSkillId);
 
     if (error) {
-      showToast("Error updating skill", "error");
+      showToast("Failed to update Skill record, please tey again!", "error");
     } else {
-      showToast("Successfully updated skill", "updated");
+      showToast("Skill record updated successfully!", "updated");
       form.reset();
       setEditSkillId(null);
       loadSkills();
@@ -68,9 +68,9 @@ const Skills = () => {
     const { error } = await supabaseClient.from("skills").delete().eq("id", id);
 
     if (error) {
-      showToast("Error deleting skill", "error");
+      showToast("Failed to delete Skill record, please try again!", "error");
     } else {
-      showToast("Successfully deleted skill", "deleted");
+      showToast("Skill record deleted successfully!", "deleted");
       loadSkills();
     }
   };

@@ -262,10 +262,10 @@ const UserDetailsForm = () => {
         .eq('user_id', userId);
 
       if (error) {
-        showToast("Error in updation of user","error");
+        showToast("Failed to update User record, please try again!","error");
         console.log('Error updating user details', error);
       } else {
-        showToast("User updated successfully","updated");
+        showToast("User record updated successfully!","updated");
         setUserDetails(payload);
         console.log(payload);
       }
@@ -275,12 +275,12 @@ const UserDetailsForm = () => {
         .insert(payload);
 
       if (error) {
-        showToast("Error in this process","error");
+        showToast("Failed to add User record, please try again!","error");
         console.log('Error inserting user details', error);
       } else {
-        showToast("User details saved successfully", "success");
+        showToast("User record added successfully!", "success");
         setUserDetails(payload);
-        alert('User details saved successfully');
+        // alert('User details saved successfully');
       }
     }
   };
@@ -337,16 +337,16 @@ const UserDetailsForm = () => {
         .eq('user_id', userId);
 
       if (error) {
-        showToast("Error updating user settings","error");
+        showToast("Failed to update User Theme record, please tey again!","error");
         console.error("Error updating user settings:", error);
         return;
       }
-      showToast("User settings updated successfully","updated");
+      showToast("User Theme record updated successfully!","updated");
       console.log("User settings updated successfully:", data);
       // Additional success logic here (e.g., notifying the user)
 
     } catch (err) {
-      showToast("Error updating user settings","error");
+      showToast("Failed to update User theme record, please tey again!","error");
       console.error("Unexpected error occurred:", err);
     }
   };

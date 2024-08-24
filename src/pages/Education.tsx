@@ -83,15 +83,15 @@ const Education = () => {
 
       if (error) {
         console.log(`Error adding education: ${error}`);
-        showToast("Error adding education","error");
+        showToast("Failed to add Education record, please try again!","error");
       } else {
-        showToast("Success adding education","success");
+        showToast("Education record added successfully!","success");
         loadEducations();
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Error adding education","error");
+      showToast("Failed to add Education record, please try again!","error");
       console.log(`Error in Add Education part: ${error}`);
     }
   };
@@ -108,7 +108,7 @@ const Education = () => {
         .single();
 
       if (fetchError) {
-        showToast("error while fetching data","error");
+        // showToast("error while fetching data","error");
         console.log(
           `Error fetching current education data: ${fetchError.message}`
         );
@@ -162,17 +162,17 @@ const Education = () => {
         .select();
 
       if (error) {
-        showToast("Error updating","error");
+        showToast("Failed to update Education record, please tey again!","error");
         console.log(`Error editing education: ${error.message}`);
       } else {
-        showToast("Education updated","updated");
+        showToast("Education record updated successfully!","updated");
         loadEducations();
         setEditEducationId(null);
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Error updating","error");
+      showToast("Failed to update Education record, please tey again!","error");
       console.log(`Error in Edit Education part: ${error}`);
     }
   };
@@ -191,14 +191,14 @@ const Education = () => {
         .eq("id", id);
 
       if (error) {
-        showToast("Error deleting education","error");
+        showToast("Failed to delete Education record, please try again!","error");
         console.log(`Error deleting education: ${error.message}`);
       } else {
-        showToast("Education deleted successfully","deleted");
+        showToast("Education record deleted successfully!","deleted");
         loadEducations();
       }
     } catch (error) {
-      showToast("Error deleting education","error");
+      showToast("Failed to delete Education record, please try again!","error");
       console.log(`Error in Delete Education part: ${error}`);
     }
   };

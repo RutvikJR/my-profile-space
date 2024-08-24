@@ -99,16 +99,16 @@ const Experience = () => {
         .select();
 
       if (error) {
-        showToast("Error in adding experience","error");
+        showToast("Failed to add Experience record, please try again!","error");
         console.log(`Error adding experience: ${error.message}`);
       } else {
-        showToast("Successfully added experience", "success");
+        showToast("Experience record added successfully!", "success");
         loadExperiences();
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Error adding experience", "error");
+      showToast("Failed to add Education record, please try again!", "error");
       console.log(`Error in Add Experience part: ${error}`);
     }
   };
@@ -124,7 +124,7 @@ const Experience = () => {
         .single();
 
       if (fetchError) {
-        showToast("Error while fetching the Experience","error");
+        // showToast("Error while fetching the Experience","error");
         console.log(
 
           `Error fetching current experience data: ${fetchError.message}`
@@ -170,17 +170,17 @@ const Experience = () => {
         .select();
 
       if (error) {
-        showToast("Error for updating experience","error");
+        showToast("Failed to update Experience record, please tey again!","error");
         console.log(`Error editing experience: ${error.message}`);
       } else {
-        showToast("Successfully updated experience","updated");
+        showToast("Experience record updated successfully!","updated");
         setEditExperienceId(null);
         form.reset();
         loadExperiences();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Error in updateing experience", "error");
+      showToast("Failed to update Experience record, please tey again!", "error");
       console.log(`Error in Edit Experience part: ${error}`);
     }
   };
@@ -193,14 +193,14 @@ const Experience = () => {
         .eq("id", id);
 
       if (error) {
-        showToast("Error in delete Experience","error");
+        showToast("Failed to delete Experience record, please try again!","error");
         console.log(`Error deleting experience: ${error.message}`);
       } else {
-        showToast("Successfully deleted","deleted");
+        showToast("Experience record deleted successfully!","deleted");
         loadExperiences();
       }
     } catch (error) {
-      showToast("Error in delete Experience","error");
+      showToast("Failed to delete Experience record, please try again!","error");
       console.log(`Error in Delete Experience part: ${error}`);
     }
   };

@@ -133,16 +133,16 @@ const Projects = () => {
       ]);
 
       if (error) {
-        showToast("Error for adding project","error");
+        showToast("Failed to add Project record, please try again!","error");
         console.log("Error adding project", error);
       } else {
-        showToast("Project added successfully", "success");
+        showToast("Project record added successfully!", "success");
         form.reset();
         loadProjects();
         setModalOpened(false);
       }
     } catch (err) {
-      showToast("Failed for adding project", "error");
+      showToast("Failed to add Project record, please try again!", "error");
       console.error("Error uploading files or adding project", err);
     }
   };
@@ -190,17 +190,17 @@ const Projects = () => {
         .eq("id", editProjectId);
 
       if (error) {
-        showToast("Error in updation of project", "error");
+        showToast("Failed to update Project record, please tey again!", "error");
         console.log("Error updating project", error);
       } else {
-        showToast("Project updated successfully","updated");
+        showToast("Project record updated successfully!","updated");
         form.reset();
         setEditProjectId(null);
         loadProjects();
         setModalOpened(false);
       }
     } catch (err) {
-      showToast("Error updating project","error");
+      showToast("Failed to update Project record, please tey again!","error");
       console.error("Error uploading files or updating project", err);
     }
   };
@@ -212,10 +212,10 @@ const Projects = () => {
       .eq("id", id);
 
     if (error) {
-      showToast("Error in deletion of project","error");
+      showToast("Failed to delete Project record, please try again!","error");
       console.log("Error deleting project", error);
     } else {
-      showToast("Successfully deleted","deleted");
+      showToast("Project record deleted successfully!","deleted");
       loadProjects();
     }
   };

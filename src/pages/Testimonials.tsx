@@ -57,16 +57,16 @@ const Testimonials = () => {
         .select();
 
       if (error) {
-        showToast("Error inserting testimonials","error");
+        showToast("Failed to add Testimonial record, please try again!","error");
         console.log(`Error adding testimonial: ${error.message}`);
       } else {
-        showToast("Successfully inserted testimonials","success");
+        showToast("Testimonial record added successfully!","success");
         loadTestimonials();
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Error inserting testimonials","error");
+      showToast("Failed to add Testimonial record, please try again!","error");
       if (error instanceof Error) {
         console.error(error.message);
       } else {
@@ -94,17 +94,17 @@ const Testimonials = () => {
         .select();
 
       if (error) {
-        showToast("Error updating testimonials", "error");
+        showToast("Failed to update Testimonial record, please tey again!", "error");
         console.log(`Error editing testimonial: ${error}`);
       } else {
-        showToast("Successfully updated testimonials", "updated");
+        showToast("Testimonial record updated successfully!", "updated");
         loadTestimonials();
         setEditTestimonialId(null);
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Failure updating testimonials", "error");
+      showToast("Failed to update Testimonial record, please tey again!", "error");
       console.log(`Error in Edit Testimonial part: ${error}`);
     }
   };
@@ -117,14 +117,14 @@ const Testimonials = () => {
         .eq("id", id);
 
       if (error) {
-        showToast("Error deleting testimonial","error");
+        showToast("Failed to delete Testimonial record, please try again!","error");
         console.log(`Error deleting testimonial: ${error}`);
       } else {
-        showToast("Successfully deleted testimonial", "deleted");
+        showToast("Testimonial record deleted successfully!", "deleted");
         loadTestimonials();
       }
     } catch (error) {
-      showToast("Failed to delete testimonial", "error");
+      showToast("Failed to delete Testimonial record, please try again!", "error");
       console.log(`Error in Delete Testimonial part: ${error}`);
     }
   };
