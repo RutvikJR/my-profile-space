@@ -14,7 +14,8 @@ interface userStoreInterface {
   testimonials: Tables<"testimonials">[];
   projects: Tables<"projects">[];
   userSocials: Tables<"user_socials">[];
-  user_detail: Tables<"user_details"> | null;
+  userDetails: Tables<"user_details"> | [];
+  userSettings: Tables<"user_setting"> | [];
   platformSocials: Tables<"platform_socials">[]; // Add this line
   setUserId: (userId: string) => void;
   initializeUser: () => Promise<void>;
@@ -36,6 +37,10 @@ interface userStoreInterface {
   loadUserSocials: () => Promise<void>;
   setPlatformSocials: (platformSocials: Tables<"platform_socials">[]) => void; // Add this line
   loadPlatformSocials: () => Promise<void>; // Add this line
+  loadUserDetails: () => Promise<void>;
+  setUserDetails: (userDetails: Tables<"user_details">[])=> void; 
+  loadUserSettings: () => Promise<void>;
+  setUserSettings:(userSettings:Tables<"user_setting">[])=>void;
 }
 
 const userStore = create<userStoreInterface>((set) => ({
@@ -49,7 +54,8 @@ const userStore = create<userStoreInterface>((set) => ({
   testimonials: [],
   projects: [],
   userSocials: [],
-  user_detail: null,
+  userDetails: [],
+  userSettings: [],
   platformSocials: [], // Add this line
   setUserId: (userId: string) => set(() => ({ id: userId })),
   initializeUser: async () => {
@@ -181,6 +187,33 @@ const userStore = create<userStoreInterface>((set) => ({
       userStore.getState().setPlatformSocials(data);
     }
   },
+  setUserDetails: (userDetails: Tables<"user_details">[]) => set({ userDetails }),
+  loadUserDetails: async () => {
+    const { data, error } = await supabaseClient
+      .from("user_details")
+      .select()
+      .eq("user_id", userStore.getState().id ?? "");
+
+    if (error) {
+      console.log("Error fetching user details: " + error);
+    } else {
+      userStore.getState().setUserDetails(data);
+    }
+  },
+  setUserSettings: (userSettings: Tables<"user_setting">[]) => set({ userSettings }),
+  loadUserSettings: async () => {
+    const { data, error } = await supabaseClient
+      .from("user_setting")
+      .select()
+      .eq("user_id", userStore.getState().id ?? "");
+
+    if (error) {
+      console.log("Error fetching projects: " + error);
+    } else {
+      userStore.getState().setUserSettings(data);
+    }
+  },
+        
   // add your other state properties here
 }));
 

@@ -13,6 +13,7 @@ import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { showToast } from "../utils/toast";
 
 type Testimonial = Database["public"]["Tables"]["testimonials"]["Row"];
 
@@ -56,13 +57,16 @@ const Testimonials = () => {
         .select();
 
       if (error) {
+        showToast("Failed to add Testimonial record, please try again!","error");
         console.log(`Error adding testimonial: ${error.message}`);
       } else {
+        showToast("Testimonial record added successfully!","success");
         loadTestimonials();
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
+      showToast("Failed to add Testimonial record, please try again!","error");
       if (error instanceof Error) {
         console.error(error.message);
       } else {
@@ -90,14 +94,17 @@ const Testimonials = () => {
         .select();
 
       if (error) {
+        showToast("Failed to update Testimonial record, please tey again!", "error");
         console.log(`Error editing testimonial: ${error}`);
       } else {
+        showToast("Testimonial record updated successfully!", "updated");
         loadTestimonials();
         setEditTestimonialId(null);
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
+      showToast("Failed to update Testimonial record, please tey again!", "error");
       console.log(`Error in Edit Testimonial part: ${error}`);
     }
   };
@@ -110,11 +117,14 @@ const Testimonials = () => {
         .eq("id", id);
 
       if (error) {
+        showToast("Failed to delete Testimonial record, please try again!","error");
         console.log(`Error deleting testimonial: ${error}`);
       } else {
+        showToast("Testimonial record deleted successfully!", "deleted");
         loadTestimonials();
       }
     } catch (error) {
+      showToast("Failed to delete Testimonial record, please try again!", "error");
       console.log(`Error in Delete Testimonial part: ${error}`);
     }
   };

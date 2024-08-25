@@ -1,52 +1,65 @@
-import { toast } from "react-toastify";
+import { notifications } from '@mantine/notifications';
+import { Icon, IconX } from '@tabler/icons-react';
 
 export const showToast = (
   message: string,
-  type: "success" | "error" | "info" | "warning"
+  type: "success" | "error" | "updated" | "deleted"
 ) => {
   if (type === "success") {
-    toast.success(message, {
-      position: "top-right",
+    notifications.show({
+      id: 'hello-there',
+      position: 'bottom-right',
+      withCloseButton: true,
+      onClose: () => console.log('unmounted'),
+      onOpen: () => console.log('mounted'),
       autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
+      title: "Success",
+      message: message,
+      color: 'green',
+      className: 'my-notification-class',
+      loading: false,
     });
   } else if (type === "error") {
-    toast.error(message, {
-      position: "top-right",
+    notifications.show({
+      id: 'hello-there',
+      position: 'bottom-right',
+      withCloseButton: true,
       autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  } else if (type === "info") {
-    toast.info(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  } else if (type === "warning") {
-    toast.warning(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
+      title: "Error",
+      message: message,
+      color: 'red',
+      className: 'my-notification-class',
+      loading: false,
     });
   }
+  else if (type === "updated") {
+    notifications.show({
+      id: 'hello-there',
+      position: 'bottom-right',
+      withCloseButton: true,
+      autoClose: 5000,
+      title: "Updated",
+      message: message,
+      color: 'blue',
+      className: 'my-notification-class',
+      loading: false,
+    });
+  }
+  else if (type === "deleted") {
+    notifications.show({
+      id: 'hello-there',
+      position: 'bottom-right',
+      withCloseButton: true,
+      onClose: () => console.log('unmounted'),
+      onOpen: () => console.log('mounted'),
+      autoClose: 5000,
+      title: "Deleted",
+      message: message,
+      color: 'grape',
+      className: 'my-notification-class',
+      loading: false,
+    });
+  }
+
+  
 };

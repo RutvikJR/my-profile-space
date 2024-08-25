@@ -5,11 +5,14 @@ import AppRoutes from "./AppRoutes";
 import "@mantine/dates/styles.css";
 import userStore from "./store/userStore";
 import { useEffect } from "react";
+import { Notifications } from "@mantine/notifications";
 
 function App() {
   const {
     isInitializing,
     loadFaqs,
+    loadUserDetails,
+    loadUserSettings,
     loadServices,
     loadSkills,
     loadExperiences,
@@ -31,12 +34,16 @@ function App() {
       loadProjects();
       loadUserSocials();
       loadPlatformSocials();
+      loadUserSettings();
+      loadUserDetails();
     }
   }, [isInitializing]);
   return (
     <>
+    
       <AppRoutes></AppRoutes>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
+      
     </>
   );
 }

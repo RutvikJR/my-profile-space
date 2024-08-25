@@ -13,6 +13,7 @@ import { useState } from "react";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from "react-icons/fa"; // Importing icons from react-icons
+import { showToast } from "../utils/toast";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
@@ -47,8 +48,10 @@ const Services = () => {
       .insert([{ ...values, user_id: userId }]);
 
     if (error) {
+      showToast("Failed to add Service record, please try again!","error");
       console.log("Error adding service", error);
     } else {
+      showToast("Service record added successfully!", "success");
       form.reset();
       loadServices();
       setModalOpened(false);
@@ -67,8 +70,10 @@ const Services = () => {
       .eq("id", editServiceId);
 
     if (error) {
+      showToast("Failed to update Service record, please tey again! " ,"error");
       console.log("Error updating service", error);
     } else {
+      showToast("Service record updated successfully!","updated");
       form.reset();
       setEditServiceId(null);
       loadServices();
@@ -83,8 +88,10 @@ const Services = () => {
       .eq("id", id);
 
     if (error) {
+      showToast("Failed to delete Service record, please try again!","error");
       console.log("Error deleting service", error);
     } else {
+      showToast("Service record deleted successfully!","deleted");
       loadServices();
     }
   };

@@ -4,14 +4,14 @@ import { useState } from "react";
 import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
-import { FaEdit, FaTrashAlt } from "react-icons/fa"; // Importing icons from react-icons
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { showToast } from "../utils/toast"; // Using the updated showToast function
+
 
 type Skill = Database["public"]["Tables"]["skills"]["Row"];
 
 const Skills = () => {
   const userId = userStore((store) => store.id);
-
-  // const [skills, setSkills] = useState<Skill[] | null>(null);
   const [editSkillId, setEditSkillId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
 
@@ -20,11 +20,11 @@ const Skills = () => {
   const form = useForm({
     initialValues: {
       name: "",
-      rating: 1, // Default rating is now set to 1
+      rating: 1, // Default rating is set to 1
     },
     validate: {
       name: (value) => (value.length > 0 ? null : "Name is required"),
-      rating: (value) => (value > 0 ? null : "Rating is required more than 1"),
+      rating: (value) => (value > 0 ? null : "Rating must be more than 1"),
     },
   });
 
@@ -36,8 +36,9 @@ const Skills = () => {
       .insert([{ ...values, user_id: userId }]);
 
     if (error) {
-      console.log("Error adding skill", error);
+      showToast("Failed to add Skill record, please try again!", "error");
     } else {
+      showToast("Skill record added successfully!", "success");
       form.reset();
       loadSkills();
       setModalOpened(false);
@@ -53,8 +54,9 @@ const Skills = () => {
       .eq("id", editSkillId);
 
     if (error) {
-      console.log("Error updating skill", error);
+      showToast("Failed to update Skill record, please tey again!", "error");
     } else {
+      showToast("Skill record updated successfully!", "updated");
       form.reset();
       setEditSkillId(null);
       loadSkills();
@@ -66,8 +68,9 @@ const Skills = () => {
     const { error } = await supabaseClient.from("skills").delete().eq("id", id);
 
     if (error) {
-      console.log("Error deleting skill", error);
+      showToast("Failed to delete Skill record, please try again!", "error");
     } else {
+      showToast("Skill record deleted successfully!", "deleted");
       loadSkills();
     }
   };
@@ -114,6 +117,7 @@ const Skills = () => {
 
   return (
     <div>
+      
       <Text>Skills</Text>
       <Button onClick={openAddSkillModal} color="cyan" mb="xl">
         Add Skill
@@ -174,6 +178,9 @@ const Skills = () => {
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       )}
+      <Button onClick={() => showToast('This is a test notification', 'success')}>
+      Show Test Notification
+    </Button>
     </div>
   );
 };
