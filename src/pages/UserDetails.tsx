@@ -1,177 +1,48 @@
-import React, { useState, useEffect } from "react";
-import { Button, Text, TextInput, Box, Textarea, Group, Image, Select, Collapse } from "@mantine/core";
+import {
+  Button,
+  Text,
+  TextInput,
+  Box,
+  Textarea,
+  Group,
+  Image,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
-import { Database } from "../types/supabase";
 import { DatePickerInput } from "@mantine/dates";
-import { useDisclosure } from "@mantine/hooks";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
-import Contact from "./Contact";
-import { showNotification } from "@mantine/notifications";
 import { showToast } from "../utils/toast";
-
-type UserDetails = Database['public']['Tables']['user_details']['Row'];
-type UserSettings = Database['public']['Tables']['user_setting']['Row'];
 
 const UserDetailsForm = () => {
   const userId = userStore((store) => store.id);
   // const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   // const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
-  const [slugError, setSlugError] = useState('');
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [opened, { toggle }] = useDisclosure(false);
 
-  const { userDetails, setUserDetails } = userStore();
-  const { userSettings, setUserSettings } = userStore();
+  const { userDetails } = userStore();
 
   const form = useForm({
     initialValues: {
-      first_name: '',
-      last_name: '',
-      location: '',
-      designations: '',
-      description: '',
-      business_email: '',
-      date_of_birth: '',
+      first_name: "",
+      last_name: "",
+      location: "",
+      designations: "",
+      description: "",
+      business_email: "",
+      date_of_birth: "",
       years_of_experience: null,
       contact: null,
       resume: null as File | null,
       profile_image: null as File | null,
-      resume_preview: '',
-      profile_image_preview: '',
+      resume_preview: "",
+      profile_image_preview: "",
     },
     validate: {
-      first_name: (value) => (value.length > 0 ? null : 'First name is required'),
-      business_email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      first_name: (value) =>
+        value.length > 0 ? null : "First name is required",
+      business_email: (value) =>
+        /^\S+@\S+$/.test(value) ? null : "Invalid email",
     },
   });
-
-  useEffect(() => {
-    const loadUserDetails = async () => {
-      if (!userId) return;
-
-      const { data, error } = await supabaseClient
-        .from('user_details')
-        .select()
-        .eq('user_id', userId)
-        .single();
-
-      if (error) {
-        showToast("Error loading user details", "error");
-        console.log("Error fetching user details", error);
-      } else if (data) {
-        const fetchedData: UserDetails = {
-          first_name: data.first_name || '',
-          last_name: data.last_name || '',
-          location: data.location || '',
-          designations: data.designations || '',
-          description: data.description || '',
-          business_email: data.business_email || '',
-          date_of_birth: data.date_of_birth || '',
-          years_of_experience: data.years_of_experience || null,
-          contact: data.contact || null,
-          resume: data.resume,
-          profile_image: data.profile_image,
-          created_at: data.created_at || '',
-          id: data.id || 0,
-          user_id: data.user_id || ''
-        };
-        setUserDetails(fetchedData);
-        form.setValues({
-          first_name: fetchedData.first_name || '',
-          last_name: fetchedData.last_name || '',
-          location: fetchedData.location || '',
-          designations: fetchedData.designations || '',
-          description: fetchedData.description || '',
-          business_email: fetchedData.business_email || '',
-          date_of_birth: fetchedData.date_of_birth || null,
-          years_of_experience: fetchedData.years_of_experience || null,
-          contact: fetchedData.contact || null,
-          resume_preview: data.resume ? await fetchFilePreview(data.resume) : '',
-          profile_image_preview: data.profile_image ? await fetchFilePreview(data.profile_image) : '',
-        });
-      }
-    };
-
-    loadUserDetails();
-  }, [userId]);
-  useEffect(() => {
-    const loadUserSetting = async () => {
-      if (!userId) return;
-
-      const { data, error } = await supabaseClient
-        .from('user_setting')
-        .select()
-        .eq('user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        showToast("Error in theme retrival", "error");
-        console.log("Error retrieving user setting", error);
-        return;
-      }
-
-      if (!data) {
-        const { data: newData, error: insertError } = await supabaseClient
-          .from('user_setting')
-          .insert({ user_id: userId })
-          .select()
-          .single();
-
-        if (insertError) {
-          console.log("Error inserting new user setting", insertError);
-          return;
-        }
-
-        formm.setValues({
-          theme_color: newData.theme_color || 'yellow',
-          slug: newData.slug || '',
-        });
-      } else {
-        formm.setValues({
-          theme_color: data.theme_color || 'yellow',
-          slug: data.slug || '',
-        });
-        setUserSettings([data]);
-      }
-    };
-
-    loadUserSetting();
-  }, [userId]);
-
-
-
-
-  const fetchFilePreview = async (filePath: string) => {
-    const S3_BUCKET = "rutvikjr-bucket";
-    const REGION = "ap-south-1";
-
-    window.AWS.config.update({
-      accessKeyId: "AKIAU6GDZUMEVOJSCS6Q",
-      secretAccessKey: "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",
-    });
-
-    const s3 = new window.AWS.S3({
-      params: { Bucket: S3_BUCKET },
-      region: REGION,
-    });
-
-    const params = {
-      Bucket: S3_BUCKET,
-      Key: filePath,
-    };
-
-    try {
-      const url = s3.getSignedUrl('getObject', params);
-      return url;
-    } catch (err) {
-
-      console.error("Error fetching file preview", err);
-      return '';
-    }
-  };
 
   const handleFileUpload = async (file: File, path: string) => {
     const S3_BUCKET = "rutvikjr-bucket";
@@ -230,16 +101,25 @@ const UserDetailsForm = () => {
     }
 
     if (values.profile_image) {
-      const shortProfileImagePath = `user_detail/${userId}/profile_image_${Date.now()}.${values.profile_image.name.split('.').pop()}`;
-      profileImagePath = await handleFileUpload(values.profile_image, shortProfileImagePath);
+      const shortProfileImagePath = `user_detail/${userId}/profile_image_${Date.now()}.${values.profile_image.name.split(".").pop()}`;
+      profileImagePath = await handleFileUpload(
+        values.profile_image,
+        shortProfileImagePath
+      );
     }
 
-    var temp_date = valuess.date_of_birth ? new Date(new Date(valuess.date_of_birth).setDate(new Date(valuess.date_of_birth).getDate() + 1)) : null;
-    var temp_years = valuess.years_of_experience;
+    const temp_date = valuess.date_of_birth
+      ? new Date(
+          new Date(valuess.date_of_birth).setDate(
+            new Date(valuess.date_of_birth).getDate() + 1
+          )
+        ).toISOString()
+      : null;
+    let temp_years = valuess.years_of_experience;
     if (valuess.years_of_experience == 0) {
       temp_years = null;
     }
-    var temp_contact = valuess.contact;
+    let temp_contact = valuess.contact;
     if (valuess.contact == 0) {
       temp_contact = null;
     }
@@ -257,138 +137,34 @@ const UserDetailsForm = () => {
 
     if (userDetails) {
       const { error } = await supabaseClient
-        .from('user_details')
+        .from("user_details")
         .update(payload)
-        .eq('user_id', userId);
+        .eq("user_id", userId);
 
       if (error) {
-        showToast("Failed to update User record, please try again!","error");
-        console.log('Error updating user details', error);
+        showToast("Failed to update User record, please try again!", "error");
+        console.log("Error updating user details", error);
       } else {
-        showToast("User record updated successfully!","updated");
-        setUserDetails(payload);
+        showToast("User record updated successfully!", "updated");
         console.log(payload);
       }
     } else {
       const { error } = await supabaseClient
-        .from('user_details')
+        .from("user_details")
         .insert(payload);
 
       if (error) {
-        showToast("Failed to add User record, please try again!","error");
-        console.log('Error inserting user details', error);
+        showToast("Failed to add User record, please try again!", "error");
+        console.log("Error inserting user details", error);
       } else {
         showToast("User record added successfully!", "success");
-        setUserDetails(payload);
         // alert('User details saved successfully');
       }
     }
   };
 
-
-  const formm = useForm({
-    initialValues: {
-      theme_color: 'yellow', // Default theme color
-      slug: '', // Slug field
-    },
-
-    validate: {
-      theme_color: (value) => (value ? null : 'Theme color is required'),
-      slug: (value) => (value ? null : 'Slug is required'),
-    },
-  })
-
-  const checkSlug = async (values) => {
-    try {
-      setSlugError('');
-      const { data: newData, error: newError } = await supabaseClient
-        .from('user_setting')
-        .select()
-        .eq('slug', values.slug);
-      if (newError) {
-        showToast("Error in fetching of slug: " ,"error");
-        console.error("Error checking slug:", newError);
-        return;
-      }
-      if (newData && newData.length > 0) {
-
-        // Set the slug error to display above the slug input
-        setSlugError("The slug is already in use. Please try a different one.");
-        return;
-      }
-    }
-    catch (error) {
-      showToast("Error in slug validation","error");
-      console.log("error for checking the slug finder", error);
-
-    }
-  }
-  const handleSubmit = async (values) => {
-    try {
-      console.log("Form values:", values);
-
-      // Proceed to update the user settings if the slug is unique
-      const { data, error } = await supabaseClient
-        .from('user_setting')
-        .update({
-          slug: values.slug,
-          theme_color: values.theme_color,
-        })
-        .eq('user_id', userId);
-
-      if (error) {
-        showToast("Failed to update User Theme record, please tey again!","error");
-        console.error("Error updating user settings:", error);
-        return;
-      }
-      showToast("User Theme record updated successfully!","updated");
-      console.log("User settings updated successfully:", data);
-      // Additional success logic here (e.g., notifying the user)
-
-    } catch (err) {
-      showToast("Failed to update User theme record, please tey again!","error");
-      console.error("Unexpected error occurred:", err);
-    }
-  };
-
-
   return (
     <Box>
-      <Group justify="left" mb={5}>
-        <Button onClick={toggle} color="cyan">
-          Theme setting for template{' '}
-          <FontAwesomeIcon icon={opened ? faCaretUp : faCaretDown} className="ml-4" />
-        </Button>
-      </Group>
-      <Collapse in={opened}>
-        <form onSubmit={formm.onSubmit(handleSubmit)}>
-          <Select
-            label="Theme Color"
-            placeholder="Pick a color"
-            data={[
-              { value: 'red', label: 'Red' },
-              { value: 'yellow', label: 'Yellow' },
-              { value: 'blue', label: 'Blue' },
-            ]}
-            {...formm.getInputProps('theme_color')}
-            mb="md"
-          />
-
-          <Group spacing="xs" align="flex-end" mb="md">
-            <TextInput
-              label="Slug"
-              placeholder="Enter your slug"
-              {...formm.getInputProps('slug')}
-              error={slugError && <Text color="red" size="sm">{slugError}</Text>}
-            />
-            <Button color="cyan" onClick={() => checkSlug(formm.values)}>Available</Button>
-          </Group>
-
-          <Button type="submit" color="cyan">
-            Save Settings
-          </Button>
-        </form>
-      </Collapse>
       <form
         onSubmit={form.onSubmit((values) => {
           handleSave(values);
@@ -397,51 +173,56 @@ const UserDetailsForm = () => {
         <TextInput
           label="First Name"
           placeholder="First Name"
-          {...form.getInputProps('first_name')}
+          {...form.getInputProps("first_name")}
         />
         <TextInput
           label="Last Name"
           placeholder="Last Name"
-          {...form.getInputProps('last_name')}
+          {...form.getInputProps("last_name")}
         />
         <TextInput
           label="Location"
           placeholder="Location"
-          {...form.getInputProps('location')}
+          {...form.getInputProps("location")}
         />
         <TextInput
           label="Designations"
           placeholder="Designations"
-          {...form.getInputProps('designations')}
+          {...form.getInputProps("designations")}
         />
         <Textarea
           label="Description"
           placeholder="Description"
-          {...form.getInputProps('description')}
+          {...form.getInputProps("description")}
         />
         <TextInput
           label="Business Email"
           placeholder="Business Email"
-          {...form.getInputProps('business_email')}
+          {...form.getInputProps("business_email")}
         />
         <DatePickerInput
           label="Date of Birth"
           placeholder="Select date"
-          value={form.values.date_of_birth ? new Date(form.values.date_of_birth) : null}
-          onChange={(date) => form.setFieldValue('date_of_birth', date ? date.toISOString() : "")} // Custom onChange
+          value={
+            form.values.date_of_birth
+              ? new Date(form.values.date_of_birth)
+              : null
+          }
+          onChange={(date) =>
+            form.setFieldValue("date_of_birth", date ? date.toISOString() : "")
+          } // Custom onChange
           withAsterisk
         />
-
 
         <TextInput
           label="Years of Experience"
           placeholder="Years of Experience"
-          {...form.getInputProps('years_of_experience')}
+          {...form.getInputProps("years_of_experience")}
         />
         <TextInput
           label="Contact"
           placeholder="Contact"
-          {...form.getInputProps('contact')}
+          {...form.getInputProps("contact")}
         />
         <div>
           <Text>Resume (PDF only)</Text>
@@ -450,14 +231,21 @@ const UserDetailsForm = () => {
             accept="application/pdf"
             onChange={(e) => {
               if (e.target.files && e.target.files.length > 0) {
-                form.setFieldValue('resume', e.target.files[0]);
-                form.setFieldValue('resume_preview', URL.createObjectURL(e.target.files[0]));
+                form.setFieldValue("resume", e.target.files[0]);
+                form.setFieldValue(
+                  "resume_preview",
+                  URL.createObjectURL(e.target.files[0])
+                );
               }
             }}
           />
           {form.values.resume_preview && (
             <Group mt="xs">
-              <a href={form.values.resume_preview} target="_blank" rel="noopener noreferrer">
+              <a
+                href={form.values.resume_preview}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 View Resume
               </a>
             </Group>
@@ -470,24 +258,28 @@ const UserDetailsForm = () => {
             accept="image/jpeg, image/jpg, image/png"
             onChange={(e) => {
               if (e.target.files && e.target.files.length > 0) {
-                form.setFieldValue('profile_image', e.target.files[0]);
-                form.setFieldValue('profile_image_preview', URL.createObjectURL(e.target.files[0]));
+                form.setFieldValue("profile_image", e.target.files[0]);
+                form.setFieldValue(
+                  "profile_image_preview",
+                  URL.createObjectURL(e.target.files[0])
+                );
               }
             }}
           />
           {form.values.profile_image_preview && (
-            <Image src={form.values.profile_image_preview} width={100} height={100} mt="xs" />
+            <Image
+              src={form.values.profile_image_preview}
+              width={100}
+              height={100}
+              mt="xs"
+            />
           )}
         </div>
         <Button type="submit" color="cyan" mt="md">
           Save
         </Button>
       </form>
-
-
-
     </Box>
-
   );
 };
 

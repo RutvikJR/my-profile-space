@@ -14,8 +14,8 @@ interface userStoreInterface {
   testimonials: Tables<"testimonials">[];
   projects: Tables<"projects">[];
   userSocials: Tables<"user_socials">[];
-  userDetails: Tables<"user_details"> | [];
-  userSettings: Tables<"user_setting"> | [];
+  userDetails: Tables<"user_details"> | null;
+  userSettings: Tables<"user_setting"> | null;
   platformSocials: Tables<"platform_socials">[]; // Add this line
   setUserId: (userId: string) => void;
   initializeUser: () => Promise<void>;
@@ -38,9 +38,9 @@ interface userStoreInterface {
   setPlatformSocials: (platformSocials: Tables<"platform_socials">[]) => void; // Add this line
   loadPlatformSocials: () => Promise<void>; // Add this line
   loadUserDetails: () => Promise<void>;
-  setUserDetails: (userDetails: Tables<"user_details">[])=> void; 
+  setUserDetails: (userDetails: Tables<"user_details">) => void;
   loadUserSettings: () => Promise<void>;
-  setUserSettings:(userSettings:Tables<"user_setting">[])=>void;
+  setUserSettings: (userSettings: Tables<"user_setting">) => void;
 }
 
 const userStore = create<userStoreInterface>((set) => ({
@@ -54,8 +54,8 @@ const userStore = create<userStoreInterface>((set) => ({
   testimonials: [],
   projects: [],
   userSocials: [],
-  userDetails: [],
-  userSettings: [],
+  userDetails: null,
+  userSettings: null,
   platformSocials: [], // Add this line
   setUserId: (userId: string) => set(() => ({ id: userId })),
   initializeUser: async () => {
@@ -187,12 +187,13 @@ const userStore = create<userStoreInterface>((set) => ({
       userStore.getState().setPlatformSocials(data);
     }
   },
-  setUserDetails: (userDetails: Tables<"user_details">[]) => set({ userDetails }),
+  setUserDetails: (userDetails: Tables<"user_details">) => set({ userDetails }),
   loadUserDetails: async () => {
     const { data, error } = await supabaseClient
       .from("user_details")
       .select()
-      .eq("user_id", userStore.getState().id ?? "");
+      .eq("user_id", userStore.getState().id ?? "")
+      .single();
 
     if (error) {
       console.log("Error fetching user details: " + error);
@@ -200,12 +201,14 @@ const userStore = create<userStoreInterface>((set) => ({
       userStore.getState().setUserDetails(data);
     }
   },
-  setUserSettings: (userSettings: Tables<"user_setting">[]) => set({ userSettings }),
+  setUserSettings: (userSettings: Tables<"user_setting">) =>
+    set({ userSettings }),
   loadUserSettings: async () => {
     const { data, error } = await supabaseClient
       .from("user_setting")
       .select()
-      .eq("user_id", userStore.getState().id ?? "");
+      .eq("user_id", userStore.getState().id ?? "")
+      .single();
 
     if (error) {
       console.log("Error fetching projects: " + error);
@@ -213,7 +216,7 @@ const userStore = create<userStoreInterface>((set) => ({
       userStore.getState().setUserSettings(data);
     }
   },
-        
+
   // add your other state properties here
 }));
 

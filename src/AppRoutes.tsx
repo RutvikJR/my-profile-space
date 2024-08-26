@@ -15,6 +15,7 @@ import Testimonials from "./pages/Testimonials";
 import UserDetails from "./pages/UserDetails";
 
 import SocialMediaDetails from "./pages/SocialMediaDetails";
+import UserSettings from "./pages/UserSettings";
 
 const AppRoutes = () => {
   return (
@@ -93,7 +94,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="userdetails"
+          path="user-details"
           element={
             <AuthGuard>
               <UserDetails />
@@ -106,6 +107,14 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <SocialMediaDetails />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="profile"
+          element={
+            <AuthGuard>
+              <UserSettings />
             </AuthGuard>
           }
         />
