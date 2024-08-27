@@ -1,6 +1,5 @@
 import Home from "./pages/Home";
 import { Route, Routes } from "react-router-dom";
-import Contact from "./pages/Contact";
 import NoPage from "./pages/NoPage";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
@@ -26,14 +25,6 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <Home />
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="contact"
-          element={
-            <AuthGuard>
-              <Contact />
             </AuthGuard>
           }
         />

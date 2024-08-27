@@ -78,7 +78,10 @@ const SocialMediaDetails = () => {
         .select();
 
       if (error) {
-        showToast("Failed to add Social Media record, please try again!","error");
+        showToast(
+          "Failed to add Social Media record, please try again!",
+          "error"
+        );
         console.log(`Error adding social media detail: ${error.message}`);
       } else {
         showToast("Social Media record added successfully!", "success");
@@ -87,7 +90,10 @@ const SocialMediaDetails = () => {
         close();
       }
     } catch (error) {
-      showToast("Failed to add Social Media record, please try again!","error")
+      showToast(
+        "Failed to add Social Media record, please try again!",
+        "error"
+      );
       console.log(`Error in Add Social Media Detail part: ${error}`);
     }
   };
@@ -106,7 +112,10 @@ const SocialMediaDetails = () => {
         .select();
 
       if (error) {
-        showToast("Failed to update Social Media record, please tey again!", "error");
+        showToast(
+          "Failed to update Social Media record, please tey again!",
+          "error"
+        );
         console.log(`Error editing social media detail: ${error}`);
       } else {
         showToast("Social Media record updated successfully!", "updated");
@@ -122,7 +131,10 @@ const SocialMediaDetails = () => {
         close();
       }
     } catch (error) {
-      showToast("Failed to update Social Media record, please tey again!", "error");
+      showToast(
+        "Failed to update Social Media record, please tey again!",
+        "error"
+      );
       console.log(`Error in Edit Social Media Detail part: ${error}`);
     }
   };
@@ -135,14 +147,20 @@ const SocialMediaDetails = () => {
         .eq("id", id);
 
       if (error) {
-        showToast("Failed to delete Social Media record, please try again!","error");
+        showToast(
+          "Failed to delete Social Media record, please try again!",
+          "error"
+        );
         console.log(`Error deleting social media detail: ${error}`);
       } else {
-        showToast("Social Media record deleted successfully!","deleted");
+        showToast("Social Media record deleted successfully!", "deleted");
         loadUserSocials();
       }
     } catch (error) {
-      showToast("Failed to delete Social Media record, please try again!","error");
+      showToast(
+        "Failed to delete Social Media record, please try again!",
+        "error"
+      );
       console.log(`Error in Delete Social Media Detail part: ${error}`);
     }
   };
@@ -264,7 +282,7 @@ const SocialMediaDetails = () => {
               placeholder="Select a platform"
               data={platformSocials.map((platform) => ({
                 value: platform.id,
-                label: platform.name,
+                label: platform.name ?? "",
               }))}
               {...form.getInputProps("social_id")}
               mb="md"

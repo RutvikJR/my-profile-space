@@ -12,6 +12,8 @@ import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { DatePickerInput } from "@mantine/dates";
 import { showToast } from "../utils/toast";
+import { useEffect } from "react";
+import Heading from "../components/Heading";
 
 const UserDetailsForm = () => {
   const userId = userStore((store) => store.id);
@@ -29,8 +31,8 @@ const UserDetailsForm = () => {
       description: "",
       business_email: "",
       date_of_birth: "",
-      years_of_experience: null,
-      contact: null,
+      years_of_experience: null as number | null,
+      contact: null as number | null,
       resume: null as File | null,
       profile_image: null as File | null,
       resume_preview: "",
@@ -43,6 +45,24 @@ const UserDetailsForm = () => {
         /^\S+@\S+$/.test(value) ? null : "Invalid email",
     },
   });
+
+  useEffect(() => {
+    if (userDetails) {
+      form.setValues({
+        first_name: userDetails.first_name ?? undefined,
+        last_name: userDetails.last_name ?? undefined,
+        location: userDetails.location ?? undefined,
+        designations: userDetails.designations ?? undefined,
+        description: userDetails.description ?? undefined,
+        business_email: userDetails.business_email ?? undefined,
+        date_of_birth: userDetails.date_of_birth ?? undefined,
+        years_of_experience: userDetails.years_of_experience ?? undefined,
+        contact: userDetails.contact ?? undefined,
+        resume: userDetails.resume ?? undefined,
+        profile_image: userDetails.profile_image ?? undefined,
+      });
+    }
+  }, [userDetails]);
 
   const handleFileUpload = async (file: File, path: string) => {
     const S3_BUCKET = "rutvikjr-bucket";
@@ -165,6 +185,7 @@ const UserDetailsForm = () => {
 
   return (
     <Box>
+      <Heading title="User Details" />
       <form
         onSubmit={form.onSubmit((values) => {
           handleSave(values);

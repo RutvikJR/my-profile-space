@@ -31,7 +31,7 @@ declare global {
 const Projects = () => {
   const userId = userStore((store) => store.id);
   const { projects, loadProjects } = userStore();
-  const [editProjectId, setEditProjectId] = useState<number | null>(null);
+  const [editProjectId, setEditProjectId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
 
   const form = useForm({
@@ -87,7 +87,7 @@ const Projects = () => {
 
         urls.push(url);
       } catch (err) {
-        showToast("Error uploading","error");
+        showToast("Error uploading", "error");
         console.error("Error uploading file", err);
         throw err;
       }
@@ -133,7 +133,7 @@ const Projects = () => {
       ]);
 
       if (error) {
-        showToast("Failed to add Project record, please try again!","error");
+        showToast("Failed to add Project record, please try again!", "error");
         console.log("Error adding project", error);
       } else {
         showToast("Project record added successfully!", "success");
@@ -190,32 +190,35 @@ const Projects = () => {
         .eq("id", editProjectId);
 
       if (error) {
-        showToast("Failed to update Project record, please tey again!", "error");
+        showToast(
+          "Failed to update Project record, please tey again!",
+          "error"
+        );
         console.log("Error updating project", error);
       } else {
-        showToast("Project record updated successfully!","updated");
+        showToast("Project record updated successfully!", "updated");
         form.reset();
         setEditProjectId(null);
         loadProjects();
         setModalOpened(false);
       }
     } catch (err) {
-      showToast("Failed to update Project record, please tey again!","error");
+      showToast("Failed to update Project record, please tey again!", "error");
       console.error("Error uploading files or updating project", err);
     }
   };
 
-  const handleDeleteProject = async (id: number) => {
+  const handleDeleteProject = async (id: string) => {
     const { error } = await supabaseClient
       .from("projects")
       .delete()
       .eq("id", id);
 
     if (error) {
-      showToast("Failed to delete Project record, please try again!","error");
+      showToast("Failed to delete Project record, please try again!", "error");
       console.log("Error deleting project", error);
     } else {
-      showToast("Project record deleted successfully!","deleted");
+      showToast("Project record deleted successfully!", "deleted");
       loadProjects();
     }
   };

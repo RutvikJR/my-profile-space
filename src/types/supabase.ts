@@ -16,7 +16,7 @@ export type Database = {
           description: string | null
           end_date: string | null
           field_of_study: string
-          id: number
+          id: string
           is_present: boolean
           school: string
           start_date: string
@@ -29,7 +29,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           field_of_study: string
-          id?: number
+          id?: string
           is_present?: boolean
           school: string
           start_date: string
@@ -42,7 +42,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           field_of_study?: string
-          id?: number
+          id?: string
           is_present?: boolean
           school?: string
           start_date?: string
@@ -65,7 +65,7 @@ export type Database = {
           created_at: string
           description: string
           end_date: string | null
-          id: number
+          id: string
           is_present: boolean
           position: string
           start_date: string
@@ -77,7 +77,7 @@ export type Database = {
           created_at?: string
           description: string
           end_date?: string | null
-          id?: number
+          id?: string
           is_present?: boolean
           position: string
           start_date: string
@@ -89,7 +89,7 @@ export type Database = {
           created_at?: string
           description?: string
           end_date?: string | null
-          id?: number
+          id?: string
           is_present?: boolean
           position?: string
           start_date?: string
@@ -110,7 +110,7 @@ export type Database = {
         Row: {
           answer: string
           created_at: string
-          id: number
+          id: string
           question: string
           updated_at: string | null
           user_id: string | null
@@ -118,7 +118,7 @@ export type Database = {
         Insert: {
           answer: string
           created_at?: string
-          id?: number
+          id?: string
           question: string
           updated_at?: string | null
           user_id?: string | null
@@ -126,7 +126,7 @@ export type Database = {
         Update: {
           answer?: string
           created_at?: string
-          id?: number
+          id?: string
           question?: string
           updated_at?: string | null
           user_id?: string | null
@@ -171,7 +171,7 @@ export type Database = {
           created_at: string
           date: string | null
           description: string | null
-          id: number
+          id: string
           images: string[] | null
           industry: string | null
           technology: string[] | null
@@ -184,7 +184,7 @@ export type Database = {
           created_at?: string
           date?: string | null
           description?: string | null
-          id?: number
+          id?: string
           images?: string[] | null
           industry?: string | null
           technology?: string[] | null
@@ -197,7 +197,7 @@ export type Database = {
           created_at?: string
           date?: string | null
           description?: string | null
-          id?: number
+          id?: string
           images?: string[] | null
           industry?: string | null
           technology?: string[] | null
@@ -219,21 +219,21 @@ export type Database = {
         Row: {
           created_at: string
           description: string
-          id: number
+          id: string
           name: string
           user_id: string
         }
         Insert: {
           created_at?: string
           description: string
-          id?: number
+          id?: string
           name: string
           user_id: string
         }
         Update: {
           created_at?: string
           description?: string
-          id?: number
+          id?: string
           name?: string
           user_id?: string
         }
@@ -250,21 +250,21 @@ export type Database = {
       skills: {
         Row: {
           created_at: string
-          id: number
+          id: string
           name: string
           rating: number
           user_id: string
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           name: string
           rating: number
           user_id: string
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string
           rating?: number
           user_id?: string
@@ -282,7 +282,7 @@ export type Database = {
       testimonials: {
         Row: {
           created_at: string
-          id: number
+          id: string
           is_male: boolean
           name: string
           position: string
@@ -291,7 +291,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           is_male?: boolean
           name: string
           position: string
@@ -300,7 +300,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           is_male?: boolean
           name?: string
           position?: string
@@ -326,7 +326,7 @@ export type Database = {
           description: string | null
           designations: string | null
           first_name: string | null
-          id: number
+          id: string
           last_name: string | null
           location: string | null
           profile_image: string | null
@@ -342,7 +342,7 @@ export type Database = {
           description?: string | null
           designations?: string | null
           first_name?: string | null
-          id?: number
+          id?: string
           last_name?: string | null
           location?: string | null
           profile_image?: string | null
@@ -358,7 +358,7 @@ export type Database = {
           description?: string | null
           designations?: string | null
           first_name?: string | null
-          id?: number
+          id?: string
           last_name?: string | null
           location?: string | null
           profile_image?: string | null
@@ -379,30 +379,30 @@ export type Database = {
       user_setting: {
         Row: {
           created_at: string
-          id: number
+          id: string
           slug: string | null
-          theme_color: string | null
-          user_id: string | null
+          theme_color: string
+          user_id: string
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           slug?: string | null
-          theme_color?: string | null
-          user_id?: string | null
+          theme_color?: string
+          user_id: string
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           slug?: string | null
-          theme_color?: string | null
-          user_id?: string | null
+          theme_color?: string
+          user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "user_setting_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },

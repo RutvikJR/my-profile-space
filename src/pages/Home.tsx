@@ -118,9 +118,8 @@ const Home = () => {
               <Link
                 to={"/user-details"}
                 className={
-                  "font-semibold " + userDetails
-                    ? "text-green-600"
-                    : "text-red-600"
+                  "font-semibold " +
+                  (!userDetails ? "text-red-600" : "text-green-600")
                 }
               >
                 Complete your basic info to make a strong first impression.
@@ -144,9 +143,8 @@ const Home = () => {
               <Link
                 to={"/profile"}
                 className={
-                  "font-semibold " + userSettings
-                    ? "text-green-600"
-                    : "text-red-600"
+                  "font-semibold " +
+                  (!userSettings ? "text-red-600" : "text-green-600")
                 }
               >
                 Personalize your profile settings.
@@ -155,7 +153,7 @@ const Home = () => {
           </div>
         )}
       </div>
-      <div className="col-span-5 md:col-span-4 grid grid-cols-2 md:grid-cols-3 gap-8">
+      <div className="col-span-5 md:col-span-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         <Link
           to={"/user-details"}
           className={
