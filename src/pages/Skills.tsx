@@ -178,9 +178,7 @@ const Skills = () => {
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       )}
-      <Button onClick={() => showToast('This is a test notification', 'success')}>
-      Show Test Notification
-    </Button>
+      
     </div>
   );
 };

@@ -152,7 +152,7 @@ const UserDetailsForm = () => {
       profile_image: profileImagePath || null,
       user_id: userId,
       created_at: userDetails?.created_at || new Date().toISOString(),
-      id: userDetails?.id || 0,
+      id: userDetails?.id ,
     };
 
     if (userDetails) {

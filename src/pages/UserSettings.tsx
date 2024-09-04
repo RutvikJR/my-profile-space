@@ -29,15 +29,37 @@ function UserSettings() {
         theme_color: userSettings.theme_color ?? "",
         slug: userSettings.slug ?? "",
       });
+    } else {
+      
+      
+      const insertDefaultUserSettings = async () => {
+        const { data, error } = await supabaseClient
+          .from("user_setting")
+          .insert([
+            {
+              theme_color: "yellow",
+              slug: "",
+              user_id: userId, // Ensure that userId is available in your scope
+            },
+          ]);
+  
+        if (error) {
+          console.error("Error inserting default user settings:", error);
+        } else {
+          console.log("Default user settings inserted successfully:", data);
+        }
+      };
+      insertDefaultUserSettings();
     }
 
-    return () => {};
+    return () => { };
   }, [userSettings]);
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
       console.log("Form values:", values);
 
+      console.log(userId);
       // Proceed to update the user settings if the slug is unique
       const { data, error } = await supabaseClient
         .from("user_setting")
@@ -45,7 +67,7 @@ function UserSettings() {
           slug: values.slug,
           theme_color: values.theme_color,
         })
-        .eq("user_id", userId ?? "");
+        .eq("user_id", userId || "");
 
       if (error) {
         showToast("Failed to update User Settings, please try again!", "error");
