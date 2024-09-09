@@ -4,16 +4,19 @@ import {
   TextInput,
   Box,
   Textarea,
-  Group,
-  Image,
+  FileInput,
+  rem,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { DatePickerInput } from "@mantine/dates";
 import { showToast } from "../utils/toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Heading from "../components/Heading";
+import { IconFileCv, IconPhotoUp } from "@tabler/icons-react";
+import { myBucket, S3_BUCKET } from "../config/awsConfig";
+import DocViewer from "@cyntler/react-doc-viewer";
 
 const UserDetailsForm = () => {
   const userId = userStore((store) => store.id);
@@ -21,6 +24,9 @@ const UserDetailsForm = () => {
   // const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
 
   const { userDetails } = userStore();
+
+  const [imageUploadProgress, setImageUploadProgress] = useState(0);
+  const [fileUploadProgress, setFileUploadProgress] = useState(0);
 
   const form = useForm({
     initialValues: {
@@ -33,10 +39,8 @@ const UserDetailsForm = () => {
       date_of_birth: "",
       years_of_experience: null as number | null,
       contact: null as number | null,
-      resume: null as File | null,
-      profile_image: null as File | null,
-      resume_preview: "",
-      profile_image_preview: "",
+      resume: "",
+      profile_image: "",
     },
     validate: {
       first_name: (value) =>
@@ -64,34 +68,40 @@ const UserDetailsForm = () => {
     }
   }, [userDetails]);
 
-  const handleFileUpload = async (file: File, path: string) => {
-    const S3_BUCKET = "rutvikjr-bucket";
-    const REGION = "ap-south-1";
+  const handleFileUpload = async (
+    file: File,
+    uploadPath: string,
+    fileType: "image" | "pdf"
+  ) => {
+    console.log("s3 bucket", S3_BUCKET);
+    if (S3_BUCKET) {
+      const params: AWS.S3.Types.PutObjectRequest = {
+        ACL: "public-read",
+        Body: file,
+        Bucket: S3_BUCKET,
+        Key: uploadPath,
+      };
 
-    window.AWS.config.update({
-      accessKeyId: "AKIAU6GDZUMEVOJSCS6Q",
-      secretAccessKey: "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",
-    });
-
-    const s3 = new window.AWS.S3({
-      params: { Bucket: S3_BUCKET },
-      region: REGION,
-    });
-
-    const params = {
-      Bucket: S3_BUCKET,
-      Key: path,
-      Body: file,
-      ContentType: file.type,
-    };
-
-    try {
-      await s3.putObject(params).promise();
-      return path;
-    } catch (err) {
-      showToast("Error for uploading file", "error");
-      console.error("Error uploading file", err);
-      throw err;
+      myBucket
+        .putObject(params)
+        .on("httpUploadProgress", (evt) => {
+          if (fileType === "image") {
+            setImageUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+          } else {
+            setFileUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+          }
+        })
+        .send((err) => {
+          if (err) console.log("s3 upload error", err);
+          else {
+            const fileURL = `https://${S3_BUCKET}.s3.amazonaws.com/${uploadPath}`;
+            if (fileType === "pdf") form.setFieldValue("resume", fileURL);
+            else if (fileType === "image") {
+              console.log("image upload success", fileURL);
+              form.setFieldValue("profile_image", fileURL);
+            }
+          }
+        });
     }
   };
 
@@ -112,21 +122,21 @@ const UserDetailsForm = () => {
       profile_image: valuess.profile_image,
     };
 
-    let resumePath = userDetails?.resume;
-    let profileImagePath = userDetails?.profile_image;
+    // let resumePath = userDetails?.resume;
+    // let profileImagePath = userDetails?.profile_image;
 
-    if (values.resume) {
-      const shortResumePath = `user_detail/${userId}/resume_${Date.now()}.pdf`;
-      resumePath = await handleFileUpload(values.resume, shortResumePath);
-    }
+    // if (values.resume) {
+    //   const shortResumePath = `user_detail/${userId}/resume_${Date.now()}.pdf`;
+    //   resumePath = await handleFileUpload(values.resume, shortResumePath);
+    // }
 
-    if (values.profile_image) {
-      const shortProfileImagePath = `user_detail/${userId}/profile_image_${Date.now()}.${values.profile_image.name.split(".").pop()}`;
-      profileImagePath = await handleFileUpload(
-        values.profile_image,
-        shortProfileImagePath
-      );
-    }
+    // if (values.profile_image) {
+    //   const shortProfileImagePath = `user_detail/${userId}/profile_image_${Date.now()}.${values.profile_image.name.split(".").pop()}`;
+    //   profileImagePath = await handleFileUpload(
+    //     values.profile_image,
+    //     shortProfileImagePath
+    //   );
+    // }
 
     const temp_date = valuess.date_of_birth
       ? new Date(
@@ -148,11 +158,10 @@ const UserDetailsForm = () => {
       years_of_experience: temp_years,
       contact: temp_contact,
       date_of_birth: temp_date,
-      resume: resumePath || null,
-      profile_image: profileImagePath || null,
+      resume: null,
+      profile_image: null,
       user_id: userId,
       created_at: userDetails?.created_at || new Date().toISOString(),
-      id: userDetails?.id || 0,
     };
 
     if (userDetails) {
@@ -247,52 +256,81 @@ const UserDetailsForm = () => {
         />
         <div>
           <Text>Resume (PDF only)</Text>
-          <input
-            type="file"
+          <FileInput
+            leftSection={
+              <IconFileCv
+                style={{ width: rem(18), height: rem(18) }}
+                stroke={1.5}
+              />
+            }
             accept="application/pdf"
-            onChange={(e) => {
-              if (e.target.files && e.target.files.length > 0) {
-                form.setFieldValue("resume", e.target.files[0]);
-                form.setFieldValue(
-                  "resume_preview",
-                  URL.createObjectURL(e.target.files[0])
+            onChange={async (file) => {
+              console.log("pdf upload onchagne called");
+              if (file) {
+                await handleFileUpload(
+                  file,
+                  `user_detail/${userId}/resume_${Date.now()}.pdf`,
+                  "pdf"
                 );
               }
             }}
           />
-          {form.values.resume_preview && (
-            <Group mt="xs">
-              <a
-                href={form.values.resume_preview}
-                target="_blank"
-                rel="noopener noreferrer"
+          {form.values.resume && (
+            <div>
+              {/* <Document
+                file={
+                  "https://rutvikjr-bucket.s3.ap-south-1.amazonaws.com/user_detail/4fdf2acb-cbe6-439c-a1b9-e8098c48b86a/resume_1724830733742.pdf"
+                }
               >
-                View Resume
-              </a>
-            </Group>
+                <Page pageNumber={0}></Page>
+              </Document> */}
+              <DocViewer
+                style={{ width: "30vw" }}
+                documents={[
+                  {
+                    uri: form.values.resume,
+                  },
+                ]}
+                config={{
+                  pdfZoom: {
+                    defaultZoom: 0.5,
+                    zoomJump: 0.2,
+                  },
+
+                  header: {
+                    disableHeader: true,
+                  },
+                }}
+              />
+            </div>
           )}
         </div>
         <div>
           <Text>Profile Image (JPEG, JPG, PNG only)</Text>
-          <input
-            type="file"
+          <FileInput
+            leftSection={
+              <IconPhotoUp
+                style={{ width: rem(18), height: rem(18) }}
+                stroke={1.5}
+              />
+            }
             accept="image/jpeg, image/jpg, image/png"
-            onChange={(e) => {
-              if (e.target.files && e.target.files.length > 0) {
-                form.setFieldValue("profile_image", e.target.files[0]);
-                form.setFieldValue(
-                  "profile_image_preview",
-                  URL.createObjectURL(e.target.files[0])
+            onChange={async (file) => {
+              console.log("image upload onchagne called");
+              if (file) {
+                await handleFileUpload(
+                  file,
+                  `user_detail/${userId}/profile_image_${Date.now()}.${file.type.split("/")[1]}`,
+                  "image"
                 );
               }
             }}
           />
-          {form.values.profile_image_preview && (
-            <Image
-              src={form.values.profile_image_preview}
-              width={100}
-              height={100}
-              mt="xs"
+          {form.values.profile_image && (
+            <img
+              className="w-96 my-4"
+              src={form.values.profile_image}
+              alt="profile"
             />
           )}
         </div>
