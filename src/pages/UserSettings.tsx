@@ -37,7 +37,7 @@ function UserSettings() {
           .from("user_setting")
           .insert([
             {
-              theme_color: "yellow",
+              theme_color: "cyan",
               slug: "",
               user_id: userId, // Ensure that userId is available in your scope
             },
@@ -115,9 +115,14 @@ function UserSettings() {
         label="Theme Color"
         placeholder="Pick a color"
         data={[
-          { value: "red", label: "Red" },
-          { value: "yellow", label: "Yellow" },
-          { value: "blue", label: "Blue" },
+          { value: "green-yellow", label: "Green yellow" },
+          { value: "cyan", label: "Cyan" },
+          { value: "lime-punch", label: "Lime punch" },
+          { value: "orange", label: "Orange" },
+          { value: "pale-golden-rod", label: "Pale golden rod" },
+          { value: "spring-green", label: "Spring green" },
+          { value: "violet", label: "Violet" },
+
         ]}
         {...form.getInputProps("theme_color")}
         mb="md"
