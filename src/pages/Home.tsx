@@ -1,9 +1,12 @@
 import { RingProgress, Text } from "@mantine/core";
 import userStore from "../store/userStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { supabaseClient } from "../config/supabaseConfig";
 
 const Home = () => {
+  const { id: userId } = userStore();
+  const navigate = useNavigate();
   const {
     services,
     experience,
@@ -69,7 +72,24 @@ const Home = () => {
     },
   ];
 
+  const checkNewUser=async ()=>{
+    if(userId)
+    {
+      const {data,error}=await supabaseClient
+      .from("user_setting")
+      .select()
+      .eq('user_id',userId);
+      if(data?.length==0)
+      {
+        navigate('/set-slug');
+      }
+    }
+    
+  }
   useEffect(() => {
+
+    checkNewUser();
+
     let total = 0;
     cards.forEach((card) => {
       if (card.quantity > 0) {
