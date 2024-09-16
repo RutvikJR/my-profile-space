@@ -15,6 +15,7 @@ import UserDetails from "./pages/UserDetails";
 
 import SocialMediaDetails from "./pages/SocialMediaDetails";
 import UserSettings from "./pages/UserSettings";
+import SetSlug from "./pages/SetSlug";
 
 const AppRoutes = () => {
   return (
@@ -25,6 +26,14 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <Home />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/set-slug"
+          element={
+            <AuthGuard>
+              <SetSlug />
             </AuthGuard>
           }
         />
