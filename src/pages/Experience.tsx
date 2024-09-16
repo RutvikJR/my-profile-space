@@ -1,6 +1,5 @@
 import {
   Button,
-  Text,
   Modal,
   TextInput,
   Checkbox,
@@ -15,6 +14,8 @@ import { supabaseClient } from "../config/supabaseConfig";
 import { Database, TablesInsert, TablesUpdate } from "../types/supabase";
 import { FaCheckCircle, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { showToast } from "../utils/toast";
+import PageTitle from "../components/PageTitle";
+import NotFoundErrorSection from "../components/NotFoundErrorSection";
 
 type Experience = Database["public"]["Tables"]["experience"]["Row"];
 
@@ -99,7 +100,10 @@ const Experience = () => {
         .select();
 
       if (error) {
-        showToast("Failed to add Experience record, please try again!","error");
+        showToast(
+          "Failed to add Experience record, please try again!",
+          "error"
+        );
         console.log(`Error adding experience: ${error.message}`);
       } else {
         showToast("Experience record added successfully!", "success");
@@ -126,7 +130,6 @@ const Experience = () => {
       if (fetchError) {
         // showToast("Error while fetching the Experience","error");
         console.log(
-
           `Error fetching current experience data: ${fetchError.message}`
         );
         return;
@@ -170,17 +173,23 @@ const Experience = () => {
         .select();
 
       if (error) {
-        showToast("Failed to update Experience record, please tey again!","error");
+        showToast(
+          "Failed to update Experience record, please tey again!",
+          "error"
+        );
         console.log(`Error editing experience: ${error.message}`);
       } else {
-        showToast("Experience record updated successfully!","updated");
+        showToast("Experience record updated successfully!", "updated");
         setEditExperienceId(null);
         form.reset();
         loadExperiences();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Failed to update Experience record, please tey again!", "error");
+      showToast(
+        "Failed to update Experience record, please tey again!",
+        "error"
+      );
       console.log(`Error in Edit Experience part: ${error}`);
     }
   };
@@ -193,14 +202,20 @@ const Experience = () => {
         .eq("id", id);
 
       if (error) {
-        showToast("Failed to delete Experience record, please try again!","error");
+        showToast(
+          "Failed to delete Experience record, please try again!",
+          "error"
+        );
         console.log(`Error deleting experience: ${error.message}`);
       } else {
-        showToast("Experience record deleted successfully!","deleted");
+        showToast("Experience record deleted successfully!", "deleted");
         loadExperiences();
       }
     } catch (error) {
-      showToast("Failed to delete Experience record, please try again!","error");
+      showToast(
+        "Failed to delete Experience record, please try again!",
+        "error"
+      );
       console.log(`Error in Delete Experience part: ${error}`);
     }
   };
@@ -280,12 +295,8 @@ const Experience = () => {
 
   return (
     <>
-      <Text size="xl" mb="md">
-        Experience
-      </Text>
-      <Button onClick={openAddExperienceModal} color="cyan" mb="xl">
-        Add Experience
-      </Button>
+      <PageTitle title="Experience" />
+
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
@@ -346,22 +357,25 @@ const Experience = () => {
             {...form.getInputProps("description")}
             mb="md"
           />
-          <Button type="submit" color="cyan" mt="md">
+          <Button type="submit">
             {editExperienceId ? "Save Changes" : "Add Experience"}
           </Button>
         </form>
       </Modal>
 
       {experience && experience?.length === 0 ? (
-        <Text>There are no experiences you added</Text>
+        <NotFoundErrorSection title="There are no experiences you added" />
       ) : (
-        <div>
+        <div className="overflow-y-scroll py-4">
           <Table striped highlightOnHover withTableBorder>
             <Table.Thead>{ths}</Table.Thead>
             <Table.Tbody>{rows}</Table.Tbody>
           </Table>
         </div>
       )}
+      <Button onClick={openAddExperienceModal} mt={10}>
+        Add Experience
+      </Button>
     </>
   );
 };
