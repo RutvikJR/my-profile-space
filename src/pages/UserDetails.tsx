@@ -162,6 +162,7 @@ const UserDetailsForm = () => {
       profile_image: null,
       user_id: userId,
       created_at: userDetails?.created_at || new Date().toISOString(),
+      id: userDetails?.id ,
     };
 
     if (userDetails) {
