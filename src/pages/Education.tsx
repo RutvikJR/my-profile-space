@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { Database, TablesInsert, TablesUpdate } from "../types/supabase";
@@ -15,6 +15,8 @@ import { useForm } from "@mantine/form";
 import { MonthPickerInput } from "@mantine/dates";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { showToast } from "../utils/toast";
+import NotFoundErrorSection from "../components/NotFoundErrorSection";
+import PageTitle from "../components/PageTitle";
 
 type Education = Database["public"]["Tables"]["education"]["Row"];
 
@@ -83,15 +85,15 @@ const Education = () => {
 
       if (error) {
         console.log(`Error adding education: ${error}`);
-        showToast("Failed to add Education record, please try again!","error");
+        showToast("Failed to add Education record, please try again!", "error");
       } else {
-        showToast("Education record added successfully!","success");
+        showToast("Education record added successfully!", "success");
         loadEducations();
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Failed to add Education record, please try again!","error");
+      showToast("Failed to add Education record, please try again!", "error");
       console.log(`Error in Add Education part: ${error}`);
     }
   };
@@ -162,17 +164,23 @@ const Education = () => {
         .select();
 
       if (error) {
-        showToast("Failed to update Education record, please tey again!","error");
+        showToast(
+          "Failed to update Education record, please tey again!",
+          "error"
+        );
         console.log(`Error editing education: ${error.message}`);
       } else {
-        showToast("Education record updated successfully!","updated");
+        showToast("Education record updated successfully!", "updated");
         loadEducations();
         setEditEducationId(null);
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Failed to update Education record, please tey again!","error");
+      showToast(
+        "Failed to update Education record, please tey again!",
+        "error"
+      );
       console.log(`Error in Edit Education part: ${error}`);
     }
   };
@@ -191,14 +199,20 @@ const Education = () => {
         .eq("id", id);
 
       if (error) {
-        showToast("Failed to delete Education record, please try again!","error");
+        showToast(
+          "Failed to delete Education record, please try again!",
+          "error"
+        );
         console.log(`Error deleting education: ${error.message}`);
       } else {
-        showToast("Education record deleted successfully!","deleted");
+        showToast("Education record deleted successfully!", "deleted");
         loadEducations();
       }
     } catch (error) {
-      showToast("Failed to delete Education record, please try again!","error");
+      showToast(
+        "Failed to delete Education record, please try again!",
+        "error"
+      );
       console.log(`Error in Delete Education part: ${error}`);
     }
   };
@@ -265,15 +279,9 @@ const Education = () => {
     </Table.Tr>
   );
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">Education</h1>
-      <Button
-        onClick={openAddEducationModal}
-        size="md"
-        className="mb-4 bg-cyan-500 text-white hover:bg-cyan-600"
-      >
-        Add Education
-      </Button>
+    <>
+      <PageTitle title="Education" />
+
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
@@ -337,28 +345,25 @@ const Education = () => {
             required
           />
           <Group mt="md">
-            <Button
-              type="submit"
-              className="bg-cyan-500 text-white hover:bg-cyan-600"
-            >
-              {editEducationId ? "Update" : "Save"}
-            </Button>
+            <Button type="submit">{editEducationId ? "Update" : "Save"}</Button>
           </Group>
         </form>
       </Modal>
       {educations?.length === 0 ? (
-        <h4 className="text-2xl font-bold text-gray-800 mt-4">
-          There is no Education you added
-        </h4>
+        <NotFoundErrorSection title="There are no educations you added" />
       ) : (
-        <div>
+        <div className="overflow-y-scroll py-4">
           <Table striped highlightOnHover withTableBorder>
             <Table.Thead>{ths}</Table.Thead>
             <Table.Tbody>{rows}</Table.Tbody>
           </Table>
         </div>
       )}
-    </div>
+
+      <Button onClick={openAddEducationModal} mt={10}>
+        Add Education
+      </Button>
+    </>
   );
 };
 
