@@ -14,6 +14,8 @@ import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { showToast } from "../utils/toast";
+import PageTitle from "../components/PageTitle";
+import NotFoundErrorSection from "../components/NotFoundErrorSection";
 
 type Testimonial = Database["public"]["Tables"]["testimonials"]["Row"];
 
@@ -186,12 +188,8 @@ const Testimonials = () => {
   );
   return (
     <>
-      <Text size="xl" mb="md">
-        Testimonials
-      </Text>
-      <Button onClick={openAddTestimonialModal} color="cyan" mb="xl">
-        Add Testimonial
-      </Button>
+     <PageTitle title="Testimonials" />
+      
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
@@ -240,14 +238,15 @@ const Testimonials = () => {
             mb="md"
             value={form.values.is_male}
           />
-          <Button type="submit" color="cyan" mt="md">
+          <Button type="submit" mt={10}>
             {editTestimonialId ? "Save Changes" : "Add Testimonial"}
           </Button>
         </form>
       </Modal>
 
       {testimonials?.length === 0 ? (
-        <Text>There are no testimonials you added</Text>
+        <NotFoundErrorSection title="There are no testimonials you added" />
+      
       ) : (
         <div>
           <Table striped highlightOnHover withTableBorder>
@@ -256,6 +255,10 @@ const Testimonials = () => {
           </Table>
         </div>
       )}
+
+<Button onClick={openAddTestimonialModal} mt={10}>
+        Add Testimonial
+      </Button>
     </>
   );
 };
