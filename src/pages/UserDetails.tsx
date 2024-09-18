@@ -40,7 +40,7 @@ const UserDetailsForm = () => {
       years_of_experience: null as number | null,
       contact: null as number | null,
       resume: "",
-      profile_image: "",
+      logo: "",
     },
     validate: {
       first_name: (value) =>
@@ -63,7 +63,7 @@ const UserDetailsForm = () => {
         years_of_experience: userDetails.years_of_experience ?? undefined,
         contact: userDetails.contact ?? undefined,
         resume: userDetails.resume ?? undefined,
-        profile_image: userDetails.profile_image ?? undefined,
+        logo: userDetails.logo ?? undefined,
       });
     }
   }, [userDetails]);
@@ -119,7 +119,7 @@ const UserDetailsForm = () => {
       years_of_experience: valuess.years_of_experience,
       contact: valuess.contact,
       resume: valuess.resume,
-      profile_image: valuess.profile_image,
+      logo: valuess.logo,
     };
 
     // let resumePath = userDetails?.resume;
@@ -159,7 +159,7 @@ const UserDetailsForm = () => {
       contact: temp_contact,
       date_of_birth: temp_date,
       resume: null,
-      profile_image: null,
+      logo: null,
       user_id: userId,
       created_at: userDetails?.created_at || new Date().toISOString(),
       id: userDetails?.id ,
@@ -307,7 +307,7 @@ const UserDetailsForm = () => {
           )}
         </div>
         <div>
-          <Text>Profile Image (JPEG, JPG, PNG only)</Text>
+          <Text>Logo Image(JPEG, JPG, PNG only)</Text>
           <FileInput
             leftSection={
               <IconPhotoUp
@@ -321,16 +321,16 @@ const UserDetailsForm = () => {
               if (file) {
                 await handleFileUpload(
                   file,
-                  `user_detail/${userId}/profile_image_${Date.now()}.${file.type.split("/")[1]}`,
+                  `user_detail/${userId}/logo_${Date.now()}.${file.type.split("/")[1]}`,
                   "image"
                 );
               }
             }}
           />
-          {form.values.profile_image && (
+          {form.values.logo && (
             <img
               className="w-96 my-4"
-              src={form.values.profile_image}
+              src={form.values.logo}
               alt="profile"
             />
           )}

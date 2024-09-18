@@ -329,7 +329,7 @@ export type Database = {
           id: string
           last_name: string | null
           location: string | null
-          profile_image: string | null
+          logo: string | null
           resume: string | null
           user_id: string | null
           years_of_experience: number | null
@@ -345,7 +345,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           location?: string | null
-          profile_image?: string | null
+          logo?: string | null
           resume?: string | null
           user_id?: string | null
           years_of_experience?: number | null
@@ -361,7 +361,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           location?: string | null
-          profile_image?: string | null
+          logo?: string | null
           resume?: string | null
           user_id?: string | null
           years_of_experience?: number | null
