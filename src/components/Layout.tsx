@@ -6,7 +6,7 @@ const Layout = () => {
     <>
       <main className="">
         <Navbar />
-        <div className=" p-4 h-full overflow-y-scroll w-full">
+        <div className=" p-4 h-full w-full">
           <Outlet></Outlet>
         </div>
       </main>

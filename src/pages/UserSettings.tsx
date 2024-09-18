@@ -29,34 +29,75 @@ function UserSettings() {
         theme_color: userSettings.theme_color ?? "",
         slug: userSettings.slug ?? "",
       });
+    } else {
+      const insertDefaultUserSettings = async () => {
+        const { data, error } = await supabaseClient
+          .from("user_setting")
+          .insert([
+            {
+              theme_color: "cyan",
+              slug: "",
+              user_id: userId, // Ensure that userId is available in your scope
+            },
+          ]);
+
+        if (error) {
+          console.error("Error inserting default user settings:", error);
+        } else {
+          console.log("Default user settings inserted successfully:", data);
+        }
+      };
+      insertDefaultUserSettings();
     }
 
     return () => {};
   }, [userSettings]);
 
-  const handleSubmit = async (values: typeof form.values) => {
+  
+  const handleThemeColorChange = async (color: string) => {
     try {
-      console.log("Form values:", values);
-
-      // Proceed to update the user settings if the slug is unique
       const { data, error } = await supabaseClient
         .from("user_setting")
         .update({
-          slug: values.slug,
-          theme_color: values.theme_color,
+          theme_color: color,
         })
-        .eq("user_id", userId ?? "");
+        .eq("user_id", userId || "");
 
       if (error) {
-        showToast("Failed to update User Settings, please try again!", "error");
-        console.error("Error updating user settings:", error);
+        showToast("Failed to update Theme Color, please try again!", "error");
+        console.error("Error updating theme color:", error);
         return;
       }
-      showToast("User Settings updated successfully!", "updated");
-      console.log("User settings updated successfully:", data);
-      // Additional success logic here (e.g., notifying the user)
+      showToast("Theme Color updated successfully!", "updated");
+      console.log("Theme color updated successfully:", data);
     } catch (err) {
-      showToast("Failed to update User Settings, please tey again!", "error");
+      showToast("Failed to update Theme Color, please try again!", "error");
+      console.error("Unexpected error occurred:", err);
+    }
+  };
+
+  const handleSubmit = async (values: typeof form.values) => {
+    try {
+      if (values.slug) {
+        // Slug submission logic
+        const { data, error } = await supabaseClient
+          .from("user_setting")
+          .update({
+            slug: values.slug,
+            theme_color: values.theme_color,
+          })
+          .eq("user_id", userId || "");
+
+        if (error) {
+          showToast("Failed to update Slug, please try again!", "error");
+          console.error("Error updating Slug:", error);
+          return;
+        }
+        showToast("Slug updated successfully!", "updated");
+        console.log("Slug updated successfully:", data);
+      }
+    } catch (err) {
+      showToast("Failed to update Slug, please try again!", "error");
       console.error("Unexpected error occurred:", err);
     }
   };
@@ -69,7 +110,7 @@ function UserSettings() {
         .select()
         .eq("slug", values.slug);
       if (error) {
-        showToast("Error in fetching of slug: ", "error");
+        showToast("Error in fetching slug: ", "error");
         console.error("Error checking slug:", error);
         return;
       }
@@ -83,70 +124,84 @@ function UserSettings() {
       }
     } catch (error) {
       showToast("Error in slug validation", "error");
-      console.log("error for checking the slug finder", error);
+      console.log("Error checking slug availability:", error);
     }
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Select
-        label="Theme Color"
-        placeholder="Pick a color"
-        data={[
-          { value: "red", label: "Red" },
-          { value: "yellow", label: "Yellow" },
-          { value: "blue", label: "Blue" },
-        ]}
-        {...form.getInputProps("theme_color")}
-        mb="md"
-      />
-
-      <TextInput
-        disabled={slugAvailability}
-        label="Slug"
-        placeholder="Enter your slug"
-        {...form.getInputProps("slug")}
-        error={
-          slugError && (
-            <Text color="red" size="sm">
-              {slugError}
-            </Text>
-          )
-        }
-      />
-      {slugAvailability && (
-        <Text color="green" size="sm">
-          Slug is available
-        </Text>
-      )}
-      <div className="flex gap-4 my-4">
-        <Button size="xs" color="cyan" onClick={() => checkSlug(form.values)}>
-          Check availibity
-        </Button>
-        <Button
-          variant="outline"
-          size="xs"
-          color="cyan"
-          onClick={() => {
-            setSlugAvailability(false);
-            setSlugError("");
-            form.setFieldValue("slug", "");
+    <>
+      {/* Theme Color Form */}
+      <form>
+        <Select
+          label="Theme Color"
+          placeholder="Pick a color"
+          data={[
+            { value: "green-yellow", label: "Green yellow" },
+            { value: "cyan", label: "Cyan" },
+            { value: "lime-punch", label: "Lime punch" },
+            { value: "orange", label: "Orange" },
+            { value: "pale-golden-rod", label: "Pale golden rod" },
+            { value: "spring-green", label: "Spring green" },
+            { value: "violet", label: "Violet" },
+          ]}
+          {...form.getInputProps("theme_color")}
+          mb="md"
+          onChange={(value) => {
+            form.setFieldValue("theme_color", value);
+            handleThemeColorChange(value);
           }}
-        >
-          Clear slug
-        </Button>
-      </div>
+        />
+      </form>
 
-      <div className="mt-4">
-        <Button
-          disabled={!slugAvailability || !form.isValid}
-          type="submit"
-          color="cyan"
-        >
-          Save Settings
-        </Button>
-      </div>
-    </form>
+      {/* Slug Form */}
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <TextInput
+          disabled={slugAvailability}
+          label="Slug"
+          placeholder="Enter your slug"
+          {...form.getInputProps("slug")}
+          error={
+            slugError && (
+              <Text color="red" size="sm">
+                {slugError}
+              </Text>
+            )
+          }
+        />
+        {slugAvailability && (
+          <Text color="green" size="sm">
+            Slug is available
+          </Text>
+        )}
+        <div className="flex gap-4 my-4">
+          <Button size="xs" color="cyan" onClick={() => checkSlug(form.values)}>
+            Check availability
+          </Button>
+          <Button
+            variant="outline"
+            size="xs"
+            color="cyan"
+            onClick={() => {
+              setSlugAvailability(false);
+              setSlugError("");
+              form.setFieldValue("slug", "");
+            }}
+          >
+            Clear slug
+          </Button>
+        </div>
+
+        <div className="mt-4">
+          <Button
+            disabled={!slugAvailability || !form.isValid}
+            type="submit"
+            color="cyan"
+          >
+            Save Slug
+          </Button>
+        </div>
+      </form>
+    </>
   );
 }
 
