@@ -1,11 +1,9 @@
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import AppRoutes from "./AppRoutes";
 import "@mantine/dates/styles.css";
 import userStore from "./store/userStore";
 import { useEffect } from "react";
-import { Notifications } from "@mantine/notifications";
 
 function App() {
   const {
@@ -40,10 +38,8 @@ function App() {
   }, [isInitializing]);
   return (
     <>
-    
       <AppRoutes></AppRoutes>
       {/* <ToastContainer /> */}
-      
     </>
   );
 }
