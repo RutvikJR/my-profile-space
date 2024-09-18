@@ -74,7 +74,7 @@ const Home = () => {
 
   const checkNewUser = async () => {
     if (userId) {
-      const { data, error } = await supabaseClient
+      const { data } = await supabaseClient
         .from("user_setting")
         .select()
         .eq("user_id", userId);

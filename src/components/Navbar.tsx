@@ -1,7 +1,7 @@
-import { Group, Button, Text, Box, Menu, Avatar } from "@mantine/core";
+import { Group, Text, Box, Menu, Avatar } from "@mantine/core";
 import classes from "./Navbar.module.css";
 import { supabaseClient } from "../config/supabaseConfig";
-import { Form, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { showToast } from "../utils/toast";
 import { IconExternalLink } from "@tabler/icons-react";
 import userStore from "../store/userStore";
