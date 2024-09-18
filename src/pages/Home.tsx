@@ -72,22 +72,18 @@ const Home = () => {
     },
   ];
 
-  const checkNewUser=async ()=>{
-    if(userId)
-    {
-      const {data,error}=await supabaseClient
-      .from("user_setting")
-      .select()
-      .eq('user_id',userId);
-      if(data?.length==0)
-      {
-        navigate('/set-slug');
+  const checkNewUser = async () => {
+    if (userId) {
+      const { data, error } = await supabaseClient
+        .from("user_setting")
+        .select()
+        .eq("user_id", userId);
+      if (data?.length == 0) {
+        navigate("/set-slug");
       }
     }
-    
-  }
+  };
   useEffect(() => {
-
     checkNewUser();
 
     let total = 0;
@@ -132,14 +128,14 @@ const Home = () => {
           />
         </div>
         {percentage < 100 && (
-          <div className="flex flex-col items-center justify-center gap-4 text-center">
-            <h2 className="text-center text-2xl font-bold">Todos</h2>
+          <div className="flex flex-col items-start justify-start gap-4 text-left w-full">
+            <h2 className="text-center text-2xl font-bold w-full">Todos</h2>
             <p>
               <Link
                 to={"/user-details"}
                 className={
                   "font-semibold " +
-                  (!userDetails ? "text-red-600" : "text-green-600")
+                  (!userDetails ? "text-red-600" : "text-green-600 hidden")
                 }
               >
                 Complete your basic info to make a strong first impression.
@@ -152,7 +148,9 @@ const Home = () => {
                   to={card.link}
                   className={
                     "font-semibold " +
-                    (card.quantity !== 0 ? "text-green-600" : "text-red-600")
+                    (card.quantity !== 0
+                      ? "text-green-600 hidden"
+                      : "text-red-600")
                   }
                 >
                   {card.text}
@@ -164,7 +162,7 @@ const Home = () => {
                 to={"/profile"}
                 className={
                   "font-semibold " +
-                  (!userSettings ? "text-red-600" : "text-green-600")
+                  (!userSettings ? "text-red-600" : "text-green-600 hidden")
                 }
               >
                 Personalize your profile settings.
