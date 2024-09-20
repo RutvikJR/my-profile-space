@@ -21,7 +21,7 @@ Deno.serve(async (_req) => {
     await new Promise<void>((resolve, reject) => {
       transport.sendMail({
         from: Deno.env.get('SMTP_FROM')!,
-        to: 'testr@test.de',
+        to: 'rachhadiyarutvik09040@gmail.com',
         subject: `Hello from Supabase Edge Functions`,
         text: `Hello Functions \\o/`,
       }, error => {

@@ -12,11 +12,10 @@ import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { DatePickerInput } from "@mantine/dates";
 import { showToast } from "../utils/toast";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Heading from "../components/Heading";
 import { IconFileCv, IconPhotoUp } from "@tabler/icons-react";
 import { myBucket, S3_BUCKET } from "../config/awsConfig";
-import DocViewer from "@cyntler/react-doc-viewer";
 
 const UserDetailsForm = () => {
   const userId = userStore((store) => store.id);
@@ -24,9 +23,6 @@ const UserDetailsForm = () => {
   // const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
 
   const { userDetails } = userStore();
-
-  const [imageUploadProgress, setImageUploadProgress] = useState(0);
-  const [fileUploadProgress, setFileUploadProgress] = useState(0);
 
   const form = useForm({
     initialValues: {
@@ -84,11 +80,11 @@ const UserDetailsForm = () => {
 
       myBucket
         .putObject(params)
-        .on("httpUploadProgress", (evt) => {
+        .on("httpUploadProgress", () => {
           if (fileType === "image") {
-            setImageUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+            // setImageUploadProgress(Math.round((evt.loaded / evt.total) * 100));
           } else {
-            setFileUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+            // setFileUploadProgress(Math.round((evt.loaded / evt.total) * 100));
           }
         })
         .send((err) => {
@@ -97,9 +93,8 @@ const UserDetailsForm = () => {
             const fileURL = `https://${S3_BUCKET}.s3.amazonaws.com/${uploadPath}`;
             if (fileType === "pdf") form.setFieldValue("resume", fileURL);
             else if (fileType === "image") {
-              console.log("image upload success", typeof (fileURL));
+              console.log("image upload success", typeof fileURL);
               form.setFieldValue("logo", fileURL);
-
             }
           }
         });
@@ -141,10 +136,10 @@ const UserDetailsForm = () => {
 
     const temp_date = valuess.date_of_birth
       ? new Date(
-        new Date(valuess.date_of_birth).setDate(
-          new Date(valuess.date_of_birth).getDate() + 1
-        )
-      ).toISOString()
+          new Date(valuess.date_of_birth).setDate(
+            new Date(valuess.date_of_birth).getDate() + 1
+          )
+        ).toISOString()
       : null;
     let temp_years = valuess.years_of_experience;
     if (valuess.years_of_experience == 0) {
@@ -166,8 +161,8 @@ const UserDetailsForm = () => {
     const payload = {
       ...values,
       years_of_experience: temp_years,
-      contact: temp_contact,
-      date_of_birth: temp_date,
+      contact: temp_contact ?? 0,
+      date_of_birth: temp_date ?? "",
       resume: tempresume,
       logo: templogo,
       user_id: userId,
@@ -342,11 +337,7 @@ const UserDetailsForm = () => {
             }}
           />
           {form.values.logo && (
-            <img
-              className="w-96 my-4"
-              src={form.values.logo}
-              alt="profile"
-            />
+            <img className="w-96 my-4" src={form.values.logo} alt="profile" />
           )}
         </div>
         <Button type="submit" color="cyan" mt="md">
