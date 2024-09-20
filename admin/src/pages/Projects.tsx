@@ -123,8 +123,8 @@ const Projects = () => {
           date:
             date instanceof Date
               ? new Date(
-                  new Date(date).setMonth(new Date(date).getMonth() + 1)
-                ).toISOString()
+                new Date(date).setMonth(new Date(date).getMonth() + 1)
+              ).toISOString()
               : null,
           url,
           images: imageUrls,
@@ -181,8 +181,8 @@ const Projects = () => {
           date:
             date instanceof Date
               ? new Date(
-                  new Date(date).setMonth(new Date(date).getMonth() + 1)
-                ).toISOString()
+                new Date(date).setMonth(new Date(date).getMonth() + 1)
+              ).toISOString()
               : null,
           url,
           images: imageUrls,
@@ -256,18 +256,24 @@ const Projects = () => {
     );
   };
 
-  const handleImageUpload = (file: File) => {
-    form.setFieldValue("images", [...form.values.images, file]);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      form.setFieldValue("imagePreviews", [
-        ...form.values.imagePreviews,
-        e.target?.result as string,
-      ]);
-    };
-    reader.readAsDataURL(file);
+  const handleImageUpload = (files: File[]) => {
+    const updatedImages = [...form.values.images];
+    const updatedPreviews = [...form.values.imagePreviews];
+  
+    files.forEach((file) => {
+      updatedImages.push(file);
+  
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        updatedPreviews.push(e.target?.result as string);
+        form.setFieldValue("imagePreviews", updatedPreviews); // Update after reading each image
+      };
+      reader.readAsDataURL(file);
+    });
+  
+    form.setFieldValue("images", updatedImages);
   };
-
+  
   const handleRemoveImage = (index: number) => {
     form.setFieldValue(
       "images",
@@ -366,11 +372,14 @@ const Projects = () => {
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
-                      handleImageUpload(e.target.files[0]);
+                      const files = Array.from(e.target.files);
+                      handleImageUpload(files);
                     }
                   }}
+                  
                 />
               </Group>
               <div style={{ marginTop: "10px" }}>
