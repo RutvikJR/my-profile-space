@@ -340,9 +340,7 @@ const UserDetailsForm = () => {
             <img className="w-96 my-4" src={form.values.logo} alt="profile" />
           )}
         </div>
-        <Button type="submit" color="cyan" mt="md">
-          Save
-        </Button>
+        <Button type="submit">Save</Button>
       </form>
     </Box>
   );
