@@ -122,8 +122,8 @@ const SocialMediaDetails = () => {
         setUserSocials(
           userSocials
             ? userSocials.map((detail) =>
-                detail.id === data[0].id ? data[0] : detail
-              )
+              detail.id === data[0].id ? data[0] : detail
+            )
             : [data[0]]
         );
         setEditDetailId(null);
@@ -236,6 +236,7 @@ const SocialMediaDetails = () => {
           })}
         >
           <Select
+            required
             label="Platform"
             placeholder="Select a platform"
             data={platformSocials.map((platform) => ({
@@ -246,6 +247,7 @@ const SocialMediaDetails = () => {
             mb="md"
           />
           <TextInput
+            required
             label="URL"
             placeholder="Enter the URL"
             {...form.getInputProps("url")}

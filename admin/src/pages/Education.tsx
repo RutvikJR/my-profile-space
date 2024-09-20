@@ -64,15 +64,15 @@ const Education = () => {
         field_of_study: values.fieldOfStudy,
         start_date: values.startDate
           ? new Date(
-              values.startDate.setMonth(values.startDate.getMonth() + 1)
-            ).toISOString()
+            values.startDate.setMonth(values.startDate.getMonth() + 1)
+          ).toISOString()
           : "",
         end_date: values.isPresent
           ? null
           : values.endDate
             ? new Date(
-                values.endDate.setMonth(values.endDate.getMonth() + 1)
-              ).toISOString()
+              values.endDate.setMonth(values.endDate.getMonth() + 1)
+            ).toISOString()
             : null,
         description: values.description,
         user_id: userId,
@@ -135,7 +135,7 @@ const Education = () => {
         if (
           startDate &&
           startDate.toISOString() !==
-            new Date(currentData.start_date).toISOString()
+          new Date(currentData.start_date).toISOString()
         ) {
           startDate.setMonth(startDate.getMonth() + 1); // Adjust month
           adjustedValues.start_date = startDate.toISOString();
@@ -148,7 +148,7 @@ const Education = () => {
         if (
           endDate &&
           endDate.toISOString() !==
-            new Date(currentData.end_date ?? "").toISOString()
+          new Date(currentData.end_date ?? "").toISOString()
         ) {
           endDate.setMonth(endDate.getMonth() + 1); // Adjust month
           adjustedValues.end_date = endDate.toISOString();
@@ -318,6 +318,7 @@ const Education = () => {
             required
           />
           <MonthPickerInput
+            required
             label="Start Date"
             placeholder="Start date"
             value={form.values.startDate}

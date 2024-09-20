@@ -195,6 +195,7 @@ const Services = () => {
           className="space-y-4"
         >
           <TextInput
+          
             label="Service Name"
             placeholder="Enter service name"
             {...form.getInputProps("name")}
