@@ -11,8 +11,8 @@ const LandingPage = () => {
   return (
     <div className="landing-page">
       {/* Header */}
-      <header className="header">
-        <div className="navbar-area">
+      <header className="header" >
+        <div className="navbar-area" style={{ paddingLeft: '4rem' }}>
           <div className="container">
             <div className="row align-items-center">
               <div className="col-lg-12">
@@ -55,7 +55,7 @@ const LandingPage = () => {
                             Features
                           </a>
                         </li>
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                           <a className="" href="#0">
                             Pricing
                           </a>
@@ -64,15 +64,15 @@ const LandingPage = () => {
                           <a className="" href="#0">
                             Team
                           </a>
-                        </li>
+                        </li> */}
                       </ul>
                     </div>
                   </div>
-                  <div className="header-btn">
+                  {/* <div className="header-btn">
                     <a href="#0" className="main-btn btn-hover">
                       Download
                     </a>
-                  </div>
+                  </div> */}
                 </nav>
               </div>
             </div>
@@ -81,18 +81,17 @@ const LandingPage = () => {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="hero-section">
+      <section id="home" className="hero-section" style={{ paddingLeft: '4rem' }}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-xl-6 col-lg-6 col-md-10">
               <div className="hero-content">
-                <h1>You are using free lite version of SaaSIntro</h1>
+                <h1>Showcase Your Talent, Effortlessly</h1>
                 <p>
-                  Please, purchase full version of the template to get all
-                  sections, elements and permission to remove footer credits.
+                  MyProfileSpace gives you the tools to create a stunning portfolio that stands out. Choose from beautiful templates, customize your content, and generate a shareable link in just a few clicks.
                 </p>
-                <a href="#0" className="main-btn btn-hover">
-                  Buy Now
+                <a href="https://www.app.myprofilespace.com" className="main-btn btn-hover">
+                  Try Now
                 </a>
               </div>
             </div>
@@ -106,30 +105,24 @@ const LandingPage = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="about-section">
+      <section id="about" className="about-section" style={{ paddingLeft: '4rem' }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-6 order-last order-lg-first">
               <div className="about-image">
-                <img src={aboutImg} alt="about-image" />
+                <img src={aboutImg} alt="about-image" style={{ paddingLeft: '4rem' }} />
               </div>
             </div>
             <div className="col-lg-6">
               <div className="about-content-wrapper">
                 <div className="section-title">
                   <h2 className="mb-20">
-                    Perfect Solution Thriving Online Business
+                    A Portfolio Solution for Everyone
                   </h2>
                   <p className="mb-30">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    dinonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat, sed diam voluptua. At vero eos et accusam et
-                    justo duo dolores et ea rebum. Stet clita kasd gubergren, no
-                    sea takimata sanctus est Lorem.Lorem ipsum dolor sit amet.
+                    MyProfileSpace is your go-to platform for creating personalized and professional portfolios. We know that presenting your work online should be both easy and impactful, which is why we offer an intuitive interface, mobile-friendly templates, and customizable features to suit your style. Our mission is to empower professionals with the tools to craft a compelling digital presence that stands out. No coding, no hassle just your story, beautifully presented.
                   </p>
-                  <a href="#0" className="main-btn btn-hover border-btn">
-                    Discover More
-                  </a>
+
                 </div>
               </div>
             </div>
@@ -139,73 +132,68 @@ const LandingPage = () => {
 
       {/* Feature Section */}
 
-      <section id="features" className="feature-section">
+      <section id="features" className="feature-section" style={{ paddingLeft: '4rem' }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-5 col-md-10">
               <div className="section-title mb-60">
                 <h2 className="mb-20">Modern design with Essential Features</h2>
                 <p>
-                  Lorem ipsum dolor amet, consetetur sadipscing elitr, sed diam
-                  nonumy eirmod te invidunt, Lorem ipsum dolor sit amet.
+                MyProfileSpace combines sleek, modern design with all the essential features you need to create a professional portfolio. Each template is crafted with attention to detail, ensuring that your portfolio not only looks visually stunning but also functions seamlessly. From easy customization options to responsive layouts that adapt to any device, our platform prioritizes both aesthetics and usability. Whether you’re updating your achievements or sharing your latest projects, our feature-rich templates ensure your digital presence stays polished and up-to-date effortlessly.
                 </p>
               </div>
             </div>
 
-            <div className="col-lg-7">
+            <div className="col-lg-7" style={{paddingLeft:"2rem"}}>
               <div className="row">
-                <div className="col-lg-6 col-md-6">
-                  <div className="single-feature">
-                    <div className="feature-icon">
-                      <i className="lni lni-display"></i>
-                    </div>
-                    <div className="feature-content">
-                      <h4>SaaS Focused</h4>
-                      <p>
-                        Lorem ipsum dolor amet, consetetur sadipscing elitr,
-                        diam nonu eirmod tem invidunt.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-6">
-                  <div className="single-feature">
-                    <div className="feature-icon">
-                      <i className="lni lni-compass"></i>
-                    </div>
-                    <div className="feature-content">
-                      <h4>Awesome Design</h4>
-                      <p>
-                        Lorem ipsum dolor amet, consetetur sadipscing elitr,
-                        diam nonu eirmod tem invidunt.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-6">
-                  <div className="single-feature">
-                    <div className="feature-icon">
-                      <i className="lni lni-grid-alt"></i>
-                    </div>
-                    <div className="feature-content">
-                      <h4>Ready to Use</h4>
-                      <p>
-                        Lorem ipsum dolor amet, consetetur sadipscing elitr,
-                        diam nonu eirmod tem invidunt.
-                      </p>
-                    </div>
-                  </div>
-                </div>
                 <div className="col-lg-6 col-md-6">
                   <div className="single-feature">
                     <div className="feature-icon">
                       <i className="lni lni-layers"></i>
                     </div>
                     <div className="feature-content">
-                      <h4>Essential Sections</h4>
+                      <h4>Easy Customization</h4>
                       <p>
-                        Lorem ipsum dolor amet, consetetur sadipscing elitr,
-                        diam nonu eirmod tem invidunt.
+                        Personalize your portfolio with ease. Add your bio, work experience, projects, and social links, and adjust the design to reflect your brand.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <div className="single-feature">
+                    <div className="feature-icon">
+                      <i className="lni lni-link"></i>
+                    </div>
+                    <div className="feature-content">
+                      <h4>Instant Public Link</h4>
+                      <p>
+                        Generate a shareable link to your portfolio with just one click. Showcase your work to potential clients, employers, or peers anywhere online.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <div className="single-feature">
+                    <div className="feature-icon">
+                      <i className="lni lni-mobile"></i>
+                    </div>
+                    <div className="feature-content">
+                      <h4>Mobile-Friendly Design</h4>
+                      <p>
+                        All our templates are fully responsive, ensuring your portfolio looks great on any device-desktop, tablet, or mobile.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <div className="single-feature">
+                    <div className="feature-icon">
+                      <i className="lni lni-pencil-alt"></i>
+                    </div>
+                    <div className="feature-content">
+                      <h4>Easy Updates</h4>
+                      <p>
+                        Quickly update your portfolio anytime to reflect new projects, achievements, or changes in your career.
                       </p>
                     </div>
                   </div>
@@ -217,24 +205,21 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section id="cta" className="cta-section pt-130 pb-100">
+      <section id="cta" className="cta-section pt-130 pb-100" style={{ paddingLeft: '4rem' }}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 col-md-10">
               <div className="cta-content-wrapper">
                 <div className="section-title">
                   <h2 className="mb-20">
-                    Quick & Easy to <br className="d-none d-lg-block" /> Use
-                    Bootstrap Template
+                    Quick & Easy to  Use
+                    Predefined Template
                   </h2>
                   <p className="mb-30">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    dinonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat, sed diam voluptua. At vero eos et accusam et
-                    justo duo dolores et ea rebum. Stet clita kasd gubergre.
+                    At MyProfileSpace, we make it simple to get started with your portfolio. Our predefined templates are carefully designed to suit a wide range of industries and styles. You don’t need to worry about design or layout just add your content, and you're ready to go. Whether you’re an artist, developer, or business professional, our templates provide a clean, modern foundation that lets your work shine. With minimal effort, you can create a professional portfolio that highlights your talent and achievements in no time.
                   </p>
-                  <a href="#0" className="main-btn btn-hover border-btn">
-                    Try it Free
+                  <a href="https://www.app.myprofilespace.com" className="main-btn btn-hover border-btn">
+                    Try it Now
                   </a>
                 </div>
               </div>
@@ -249,7 +234,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="footer pt-120">
+      <footer className="footer pt-120" style={{ paddingLeft: '4rem' }}>
         <div className="container">
           <div className="row">
             <div className="col-xl-3 col-lg-4 col-md-6 col-sm-10">
