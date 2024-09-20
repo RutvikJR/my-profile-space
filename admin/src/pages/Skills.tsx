@@ -6,6 +6,8 @@ import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { showToast } from "../utils/toast"; // Using the updated showToast function
+import NotFoundErrorSection from "../components/NotFoundErrorSection";
+import PageTitle from "../components/PageTitle";
 
 
 type Skill = Database["public"]["Tables"]["skills"]["Row"];
@@ -118,10 +120,8 @@ const Skills = () => {
   return (
     <div>
       
-      <Text>Skills</Text>
-      <Button onClick={openAddSkillModal} color="cyan" mb="xl">
-        Add Skill
-      </Button>
+      <PageTitle title="Skills" />
+
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
@@ -164,21 +164,25 @@ const Skills = () => {
             mb="md"
           />
           {form.errors.rating && <Text color="red">{form.errors.rating}</Text>}
-          <Button type="submit" color="cyan" mt="md">
+          <Button type="submit" mt={10}>
             {editSkillId ? "Save Changes" : "Add Skill"}
           </Button>
         </form>
       </Modal>
 
       {skills == null || skills.length === 0 ? (
-        <Text>There are no skills you added</Text>
+        <NotFoundErrorSection title="There are no Skills you added" />
       ) : (
+        <div className="overflow-y-scroll py-4">
         <Table striped highlightOnHover withTableBorder>
           <Table.Thead>{ths}</Table.Thead>
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
+        </div>
       )}
-      
+       <Button onClick={openAddSkillModal}  mt={10}>
+        Add Skill
+      </Button>
     </div>
   );
 };

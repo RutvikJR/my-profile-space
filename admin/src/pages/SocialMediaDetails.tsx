@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import { Box, Button, TextInput, Select, Text, Table } from "@mantine/core";
+import {
+  Button,
+  Modal,
+  TextInput,
+  Select,
+  Table,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { Modal } from "@mantine/core";
 import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { showToast } from "../utils/toast";
+import PageTitle from "../components/PageTitle";
+import NotFoundErrorSection from "../components/NotFoundErrorSection";
 
 type SocialMediaDetail = Database["public"]["Tables"]["user_socials"]["Row"];
 type PlatformSocial = Database["public"]["Tables"]["platform_socials"]["Row"];
@@ -32,7 +38,7 @@ const mergeUserAndPlatformSocials = (
 const SocialMediaDetails = () => {
   const userId = userStore((store) => store.id);
   const [editDetailId, setEditDetailId] = useState<string | null>(null);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [modalOpened, setModalOpened] = useState(false);
   const { userSocials, setUserSocials, platformSocials, loadUserSocials } =
     userStore();
 
@@ -87,7 +93,7 @@ const SocialMediaDetails = () => {
         showToast("Social Media record added successfully!", "success");
         setUserSocials(userSocials ? [...userSocials, data[0]] : [data[0]]);
         form.reset();
-        close();
+        setModalOpened(false);
       }
     } catch (error) {
       showToast(
@@ -113,7 +119,7 @@ const SocialMediaDetails = () => {
 
       if (error) {
         showToast(
-          "Failed to update Social Media record, please tey again!",
+          "Failed to update Social Media record, please try again!",
           "error"
         );
         console.log(`Error editing social media detail: ${error}`);
@@ -128,11 +134,11 @@ const SocialMediaDetails = () => {
         );
         setEditDetailId(null);
         form.reset();
-        close();
+        setModalOpened(false);
       }
     } catch (error) {
       showToast(
-        "Failed to update Social Media record, please tey again!",
+        "Failed to update Social Media record, please try again!",
         "error"
       );
       console.log(`Error in Edit Social Media Detail part: ${error}`);
@@ -171,37 +177,14 @@ const SocialMediaDetails = () => {
       url: detail.url ?? undefined,
     });
     setEditDetailId(detail.id.toString());
-    open();
+    setModalOpened(true);
   };
 
-  const handleAddClick = () => {
+  const openAddSocialMediaDetailModal = () => {
     form.reset();
     setEditDetailId(null);
-    open();
+    setModalOpened(true);
   };
-  const rows =
-    mergedSocials?.map((social) => (
-      <Table.Tr key={social.id} className="text-center">
-        <Table.Td className="px-4 truncate max-w-xs">
-          {social.platform.name}
-        </Table.Td>
-        <Table.Td className="px-4 truncate max-w-xs">{social.url}</Table.Td>
-        <Table.Td className="px-4">
-          <div className="flex justify-end mx-3">
-            <FaEdit
-              onClick={() => handleEditClick(social)}
-              className="cursor-pointer text-blue-500 mx-3"
-            />
-            <FaTrashAlt
-              onClick={() =>
-                handleDeleteSocialMediaDetail(social.id.toString())
-              }
-              className="cursor-pointer text-red-500 mx-3"
-            />
-          </div>
-        </Table.Td>
-      </Table.Tr>
-    )) || [];
 
   const ths = (
     <Table.Tr className="text-center">
@@ -211,94 +194,80 @@ const SocialMediaDetails = () => {
     </Table.Tr>
   );
 
+  const rows = mergedSocials.map((social) => (
+    <Table.Tr key={social.id} className="text-center">
+      <Table.Td className="px-4 truncate max-w-xs">
+        {social.platform.name}
+      </Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{social.url}</Table.Td>
+      <Table.Td className="px-4">
+        <div className="flex justify-end mx-3">
+          <FaEdit
+            onClick={() => handleEditClick(social)}
+            className="cursor-pointer text-blue-500 mx-3"
+          />
+          <FaTrashAlt
+            onClick={() => handleDeleteSocialMediaDetail(social.id.toString())}
+            className="cursor-pointer text-red-500 mx-3"
+          />
+        </div>
+      </Table.Td>
+    </Table.Tr>
+  ));
+
   return (
     <>
-      <Box>
-        <Text size="xl" mb="md">
-          Social Media Details
-        </Text>
-        <Button onClick={handleAddClick} color="cyan" mb="md">
-          Add Social Media Detail
-        </Button>
+      <PageTitle title="Social Media Details" />
 
-        {mergedSocials.length === 0 ? (
-          <Text>There are no social media details added by you.</Text>
-        ) : (
-          // <ul>
-          //   {mergedSocials.map((detail) => (
-          //     <div className="group" key={detail.id}>
-          //       <li className="rounded-lg shadow-md border border-black bg-cream p-4 mb-4 overflow-hidden h-28">
-          //         <div>
-          //           <strong>Platform: </strong>
-          //           {detail.platform.name}
-          //         </div>
-          //         <div>
-          //           <strong>URL: </strong> {detail.url}
-          //         </div>
-          //         <div className="">
-          //           <Button
-          //             onClick={() => handleEditClick(detail)}
-          //             className="mr-2 mt-2 rounded-full"
-          //           >
-          //             Edit
-          //           </Button>
-          //           <Button
-          //             color="red"
-          //             className="ml-2 mt-2 rounded-full"
-          //             onClick={() => handleDeleteSocialMediaDetail(detail.id.toString())}
-          //           >
-          //             Delete
-          //           </Button>
-          //         </div>
-          //       </li>
-          //     </div>
-          //   ))}
-          // </ul>
+      <Modal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        title={editDetailId ? "Edit Social Media Detail" : "Add Social Media Detail"}
+      >
+        <form
+          onSubmit={form.onSubmit((values) => {
+            if (editDetailId) {
+              handleEditSocialMediaDetail(values);
+            } else {
+              handleAddSocialMediaDetail(values);
+            }
+          })}
+        >
+          <Select
+            label="Platform"
+            placeholder="Select a platform"
+            data={platformSocials.map((platform) => ({
+              value: platform.id,
+              label: platform.name ?? "",
+            }))}
+            {...form.getInputProps("social_id")}
+            mb="md"
+          />
+          <TextInput
+            label="URL"
+            placeholder="Enter the URL"
+            {...form.getInputProps("url")}
+            mb="md"
+          />
+          <Button type="submit">
+            {editDetailId ? "Save Changes" : "Add Social Media Detail"}
+          </Button>
+        </form>
+      </Modal>
+
+      {mergedSocials.length === 0 ? (
+        <NotFoundErrorSection title="There are no social media details you added" />
+      ) : (
+        <div className="overflow-y-scroll py-4">
           <Table striped highlightOnHover withTableBorder>
             <Table.Thead>{ths}</Table.Thead>
             <Table.Tbody>{rows}</Table.Tbody>
           </Table>
-        )}
-      </Box>
-
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Social Media Detail Form"
-        centered
-      >
-        <Box mb="xl">
-          <form
-            onSubmit={form.onSubmit((values) => {
-              if (editDetailId) {
-                handleEditSocialMediaDetail(values);
-              } else {
-                handleAddSocialMediaDetail(values);
-              }
-            })}
-          >
-            <Select
-              label="Platform"
-              placeholder="Select a platform"
-              data={platformSocials.map((platform) => ({
-                value: platform.id,
-                label: platform.name ?? "",
-              }))}
-              {...form.getInputProps("social_id")}
-              mb="md"
-            />
-            <TextInput
-              label="URL"
-              placeholder="URL"
-              {...form.getInputProps("url")}
-              mb="md"
-            />
-            <Button type="submit" color="cyan" mt="md">
-              {editDetailId ? "Save Changes" : "Add Detail"}
-            </Button>
-          </form>
-        </Box>
-      </Modal>
+        </div>
+      )}
+      <Button onClick={openAddSocialMediaDetailModal} mt={10}>
+        Add Social Media Detail
+      </Button>
     </>
   );
 };
