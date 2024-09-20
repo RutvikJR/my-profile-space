@@ -39,7 +39,11 @@ const StandardMenuHeader = () => {
                 setIsNavModalClose(true);
               }}
             >
-              <img src="images/logo.png" alt="Callum" />
+              <img
+                src={userDetails[0]?.logo || "images/logo.png"}
+                style={{ height: "60px", width: "100px" }}
+                alt="MyProfileSpace"
+              />
             </Link>
             {/* Logo End */}
           </div>
