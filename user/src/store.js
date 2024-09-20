@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { supabaseClient } from "./config/supabaseConfig.js";
 
 const userStore = create((set, get) => ({
+  // State properties
   id: null,
   skills: [],
   services: [],
@@ -14,6 +15,7 @@ const userStore = create((set, get) => ({
   platformSocials: [],
   userSettings: [],
   userDetails: [],
+  theme: null,
 
   // Setters
   setUserId: (userId) => set({ id: userId }),
@@ -28,6 +30,7 @@ const userStore = create((set, get) => ({
   setPlatformSocials: (platformSocials) => set({ platformSocials }),
   setUserSettings: (userSettings) => set({ userSettings }),
   setUserDetails: (userDetails) => set({ userDetails }),
+  setTheme: (theme) => set({ theme }),
 
   // Load functions with user_id validation
   loadSkills: async () => {
@@ -39,7 +42,6 @@ const userStore = create((set, get) => ({
       .from("skills")
       .select()
       .eq("user_id", userId);
-
     if (error) {
       console.error(`Error fetching Skills: ${error.message}`);
     } else {
@@ -56,7 +58,6 @@ const userStore = create((set, get) => ({
       .from("services")
       .select()
       .eq("user_id", userId);
-
     if (error) {
       console.error(`Error fetching Services: ${error.message}`);
     } else {
@@ -73,7 +74,6 @@ const userStore = create((set, get) => ({
       .from("education")
       .select()
       .eq("user_id", userId);
-
     if (error) {
       console.error(`Error fetching Education: ${error.message}`);
     } else {
@@ -90,7 +90,6 @@ const userStore = create((set, get) => ({
       .from("experience")
       .select()
       .eq("user_id", userId);
-
     if (error) {
       console.error(`Error fetching Experience: ${error.message}`);
     } else {
@@ -107,7 +106,6 @@ const userStore = create((set, get) => ({
       .from("faqs")
       .select()
       .eq("user_id", userId);
-
     if (error) {
       console.error(`Error fetching FAQs: ${error.message}`);
     } else {
@@ -124,7 +122,6 @@ const userStore = create((set, get) => ({
       .from("testimonials")
       .select()
       .eq("user_id", userId);
-
     if (error) {
       console.error(`Error fetching Testimonials: ${error.message}`);
     } else {
@@ -141,7 +138,6 @@ const userStore = create((set, get) => ({
       .from("projects")
       .select()
       .eq("user_id", userId);
-
     if (error) {
       console.error(`Error fetching Projects: ${error.message}`);
     } else {
@@ -156,15 +152,8 @@ const userStore = create((set, get) => ({
 
     const { data, error } = await supabaseClient
       .from("user_socials")
-      .select(
-        `
-        id,
-        url,
-        social_id,
-        platform_socials(fa_class, li_class, name)
-        `
-      )
-      .eq("user_id", get().id);
+      .select(`id, url, social_id, platform_socials(fa_class, li_class, name)`)
+      .eq("user_id", userId);
 
     if (error) {
       console.error(`Error fetching User Socials: ${error.message}`);
@@ -177,7 +166,6 @@ const userStore = create((set, get) => ({
     const { data, error } = await supabaseClient
       .from("platform_socials")
       .select();
-
     if (error) {
       console.error(`Error fetching Platform Socials: ${error.message}`);
     } else {
@@ -187,7 +175,6 @@ const userStore = create((set, get) => ({
 
   loadUserSettings: async () => {
     const { data, error } = await supabaseClient.from("user_setting").select();
-
     if (error) {
       console.error(`Error fetching User Settings: ${error.message}`);
     } else {
@@ -204,7 +191,6 @@ const userStore = create((set, get) => ({
       .from("user_details")
       .select()
       .eq("user_id", userId);
-
     if (error) {
       console.error(`Error fetching User Details: ${error.message}`);
     } else {
@@ -234,6 +220,42 @@ const userStore = create((set, get) => ({
       get().loadUserSettings(),
       get().loadUserDetails(),
     ]);
+
+    // Set the theme after loading user settings
+    get().setThemeFromUserSettings();
+  },
+
+  // Function to set theme from userSettings based on the current user ID
+  setThemeFromUserSettings: () => {
+    const userId = get().id;
+    const userSettings = get().userSettings;
+
+    if (!userId) {
+      console.warn("User ID is undefined, skipping theme setting.");
+      return;
+    }
+
+    if (!userSettings || userSettings.length === 0) {
+      console.warn(
+        "User settings are empty or undefined. Skipping theme setting."
+      );
+      return;
+    }
+
+    // Find the user setting that matches the current user ID
+    const currentUserSetting = userSettings.find(
+      (setting) => setting.user_id === userId
+    );
+
+    if (!currentUserSetting || !currentUserSetting.theme_color) {
+      console.warn(
+        "Theme color is not found for the current user in user settings. Skipping theme setting."
+      );
+      return;
+    }
+
+    // Set the theme in the store
+    set({ theme: currentUserSetting.theme_color });
   },
 }));
 

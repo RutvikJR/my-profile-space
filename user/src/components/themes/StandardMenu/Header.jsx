@@ -7,7 +7,17 @@ import userStore from "../../../store";
 const StandardMenuHeader = () => {
   const [isNavModalClose, setIsNavModalClose] = useState(true);
 
-  const { userSocials } = userStore();
+  const {
+    skills,
+    services,
+    education,
+    experience,
+    testimonials,
+    faqs,
+    projects,
+    userDetails,
+    userSocials,
+  } = userStore();
 
   return (
     <header id="header" className="sticky-top">
@@ -72,108 +82,134 @@ const StandardMenuHeader = () => {
                     Home
                   </Link>
                 </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link "
-                    smooth="easeInOutQuint"
-                    duration={scrollDuration}
-                    style={{ cursor: "pointer" }}
-                    activeClass="active"
-                    spy
-                    to="about"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsNavModalClose(true);
-                    }}
-                  >
-                    About
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link "
-                    smooth="easeInOutQuint"
-                    duration={scrollDuration}
-                    style={{ cursor: "pointer" }}
-                    activeClass="active"
-                    spy
-                    to="services"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsNavModalClose(true);
-                    }}
-                  >
-                    Services
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link "
-                    smooth="easeInOutQuint"
-                    duration={scrollDuration}
-                    style={{ cursor: "pointer" }}
-                    activeClass="active"
-                    spy
-                    to="resume"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsNavModalClose(true);
-                    }}
-                  >
-                    Resume
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link "
-                    smooth="easeInOutQuint"
-                    duration={scrollDuration}
-                    style={{ cursor: "pointer" }}
-                    activeClass="active"
-                    spy
-                    to="portfolio"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsNavModalClose(true);
-                    }}
-                  >
-                    Portfolio
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link "
-                    smooth="easeInOutQuint"
-                    duration={scrollDuration}
-                    style={{ cursor: "pointer" }}
-                    activeClass="active"
-                    spy
-                    to="faq"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsNavModalClose(true);
-                    }}
-                  >
-                    FAQ
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link "
-                    smooth="easeInOutQuint"
-                    duration={scrollDuration}
-                    style={{ cursor: "pointer" }}
-                    activeClass="active"
-                    spy
-                    to="testimonial"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsNavModalClose(true);
-                    }}
-                  >
-                    Client
-                  </Link>
-                </li>
+                {userDetails.length > 0 ? (
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link "
+                      smooth="easeInOutQuint"
+                      duration={scrollDuration}
+                      style={{ cursor: "pointer" }}
+                      activeClass="active"
+                      spy
+                      to="about"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsNavModalClose(true);
+                      }}
+                    >
+                      About
+                    </Link>
+                  </li>
+                ) : (
+                  <></>
+                )}
+                {services.length > 0 ? (
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link "
+                      smooth="easeInOutQuint"
+                      duration={scrollDuration}
+                      style={{ cursor: "pointer" }}
+                      activeClass="active"
+                      spy
+                      to="services"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsNavModalClose(true);
+                      }}
+                    >
+                      Services
+                    </Link>
+                  </li>
+                ) : (
+                  <></>
+                )}
+                {education.length > 0 ||
+                experience.length > 0 ||
+                skills.length > 0 ? (
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link "
+                      smooth="easeInOutQuint"
+                      duration={scrollDuration}
+                      style={{ cursor: "pointer" }}
+                      activeClass="active"
+                      spy
+                      to="resume"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsNavModalClose(true);
+                      }}
+                    >
+                      Resume
+                    </Link>
+                  </li>
+                ) : (
+                  <></>
+                )}
+                {projects.length > 0 ? (
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link "
+                      smooth="easeInOutQuint"
+                      duration={scrollDuration}
+                      style={{ cursor: "pointer" }}
+                      activeClass="active"
+                      spy
+                      to="portfolio"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsNavModalClose(true);
+                      }}
+                    >
+                      Portfolio
+                    </Link>
+                  </li>
+                ) : (
+                  <></>
+                )}
+                {faqs.length > 0 ? (
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link "
+                      smooth="easeInOutQuint"
+                      duration={scrollDuration}
+                      style={{ cursor: "pointer" }}
+                      activeClass="active"
+                      spy
+                      to="faq"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsNavModalClose(true);
+                      }}
+                    >
+                      FAQ
+                    </Link>
+                  </li>
+                ) : (
+                  <></>
+                )}
+                {testimonials.length > 0 ? (
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link "
+                      smooth="easeInOutQuint"
+                      duration={scrollDuration}
+                      style={{ cursor: "pointer" }}
+                      activeClass="active"
+                      spy
+                      to="testimonial"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsNavModalClose(true);
+                      }}
+                    >
+                      Client
+                    </Link>
+                  </li>
+                ) : (
+                  <></>
+                )}
                 <li className="nav-item">
                   <Link
                     className="nav-link "

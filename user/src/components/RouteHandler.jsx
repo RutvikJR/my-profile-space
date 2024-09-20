@@ -6,31 +6,79 @@ import UserDataNotFound from "./UserDataNotFound.jsx";
 import useStore from "../store.js";
 
 const RouteHandler = () => {
-  const { userSettings } = useStore();
+  const { userSettings, loadAllData, theme } = useStore();
   const { slug } = useParams();
   const [validSlug, setValidSlug] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (slug) {
-      // Simulate loading delay if needed
-      setLoading(false); 
+      setLoading(true);
+      loadAllData(slug)
+        .then(async () => {
+          if (theme) {
+            await importThemeStyles(theme);
+            setLoading(false);
+          } else {
+            setLoading(false);
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading data:", error);
+          setLoading(false);
+        });
     } else {
-      setLoading(false); 
+      setLoading(false);
     }
-  }, [slug]);
+  }, [slug, loadAllData, theme]);
 
   useEffect(() => {
     if (!loading && userSettings) {
-      const isSlugPresent = userSettings.some(setting => setting.slug === slug);
+      const isSlugPresent = userSettings.some(
+        (setting) => setting.slug === slug
+      );
       setValidSlug(isSlugPresent);
     } else if (!slug) {
       setValidSlug(false);
     }
   }, [slug, userSettings, loading]);
 
+  const importThemeStyles = async (theme) => {
+    try {
+      switch (theme) {
+        case "cyan":
+          await import("../sass/color-cyan.scss");
+          break;
+        case "green-yellow":
+          await import("../sass/color-green-yellow.scss");
+          break;
+        case "lime-punch":
+          await import("../sass/color-lime-punch.scss");
+          break;
+        case "orange":
+          await import("../sass/color-orange.scss");
+          break;
+        case "pale-golden-rod":
+          await import("../sass/color-pale-golden-rod.scss");
+          break;
+        case "spring-green":
+          await import("../sass/color-spring-green.scss");
+          break;
+        case "violet":
+          await import("../sass/color-violet.scss");
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.error("Error loading theme:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
-    return <FullTemplet />; 
+    return <div className="loading">Loading...</div>;
   }
 
   if (validSlug) {
