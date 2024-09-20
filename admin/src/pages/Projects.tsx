@@ -1,15 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Text,
   TextInput,
   Box,
-  Card,
   Textarea,
   Modal,
   Group,
   Badge,
   Image,
+  Table,
 } from "@mantine/core";
 import { MonthPickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
@@ -18,6 +18,8 @@ import { supabaseClient } from "../config/supabaseConfig";
 import { Database } from "../types/supabase";
 import { FaEdit, FaTrashAlt, FaPlus, FaTimes } from "react-icons/fa";
 import { showToast } from "../utils/toast";
+import PageTitle from "../components/PageTitle";
+import NotFoundErrorSection from "../components/NotFoundErrorSection";
 
 type Project = Database["public"]["Tables"]["projects"]["Row"];
 
@@ -123,8 +125,8 @@ const Projects = () => {
           date:
             date instanceof Date
               ? new Date(
-                new Date(date).setMonth(new Date(date).getMonth() + 1)
-              ).toISOString()
+                  new Date(date).setMonth(new Date(date).getMonth() + 1)
+                ).toISOString()
               : null,
           url,
           images: imageUrls,
@@ -181,8 +183,8 @@ const Projects = () => {
           date:
             date instanceof Date
               ? new Date(
-                new Date(date).setMonth(new Date(date).getMonth() + 1)
-              ).toISOString()
+                  new Date(date).setMonth(new Date(date).getMonth() + 1)
+                ).toISOString()
               : null,
           url,
           images: imageUrls,
@@ -256,22 +258,16 @@ const Projects = () => {
     );
   };
 
-  const handleImageUpload = (files: File[]) => {
-    const updatedImages = [...form.values.images];
-    const updatedPreviews = [...form.values.imagePreviews];
-
-    files.forEach((file) => {
-      updatedImages.push(file);
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        updatedPreviews.push(e.target?.result as string);
-        form.setFieldValue("imagePreviews", updatedPreviews); // Update after reading each image
-      };
-      reader.readAsDataURL(file);
-    });
-
-    form.setFieldValue("images", updatedImages);
+  const handleImageUpload = (file: File) => {
+    form.setFieldValue("images", [...form.values.images, file]);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      form.setFieldValue("imagePreviews", [
+        ...form.values.imagePreviews,
+        e.target?.result as string,
+      ]);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleRemoveImage = (index: number) => {
@@ -285,39 +281,66 @@ const Projects = () => {
     );
   };
 
-  const projectCards =
-    projects?.map((project) => (
-      <Card
-        key={project.id}
-        shadow="sm"
-        padding="lg"
-        style={{ marginBottom: "20px" }}
-      >
-        <Text fw={500}>{project.title}</Text>
-        <Text size="sm">{project.description}</Text>
-        <Group justify="right" mt="md">
+  const ths = (
+    <Table.Tr className="text-center">
+      <Table.Th className="px-4 text-center">Title</Table.Th>
+      <Table.Th className="px-4 text-center">Description</Table.Th>
+      <Table.Th className="px-4 text-center">Client</Table.Th>
+      <Table.Th className="px-4 text-center">Industry</Table.Th>
+      <Table.Th className="px-4 text-center">Technologies</Table.Th>
+      <Table.Th className="px-4 text-center">Date</Table.Th>
+      <Table.Th className="px-4 text-center">URL</Table.Th>
+      <Table.Th className="px-4 text-center"></Table.Th>
+    </Table.Tr>
+  );
+
+  const rows = projects?.map((project) => (
+    <Table.Tr key={project.id} className="text-center">
+      <Table.Td className="px-4 truncate max-w-xs">{project.title}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">
+        {project.description}
+      </Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">
+        {project.client_name}
+      </Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{project.industry}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">
+        {project.technology?.join(", ")}
+      </Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{project.date}</Table.Td>
+      <Table.Td className="px-4 truncate max-w-xs">{project.url}</Table.Td>
+      <Table.Td className="px-4">
+        <div className="flex justify-end mx-3">
           <FaEdit
             onClick={() => handleEditClick(project)}
-            className="cursor-pointer text-blue-500"
+            className="cursor-pointer text-blue-500 mx-3"
           />
           <FaTrashAlt
             onClick={() => handleDeleteProject(project.id)}
-            className="cursor-pointer text-red-500"
+            className="cursor-pointer text-red-500 mx-3"
           />
-        </Group>
-      </Card>
-    )) || [];
+        </div>
+      </Table.Td>
+    </Table.Tr>
+  ));
 
   return (
-    <div>
-      <Text>Projects</Text>
-      <Button onClick={openAddProjectModal} mb="md">
+    <>
+      <PageTitle title="Projects" />
+
+      <Button onClick={openAddProjectModal} mt={10} mb={10}>
         Add Project
       </Button>
+
       {projects == null || projects.length === 0 ? (
-        <Text>There are no projects you added</Text>
+        <NotFoundErrorSection title="There are no projects you added" />
       ) : (
-        <div>{projectCards}</div>
+        <div className="overflow-y-scroll py-4">
+          <Table striped highlightOnHover withTableBorder>
+            <Table.Thead>{ths}</Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
+        </div>
       )}
       <Modal
         opened={modalOpened}
@@ -335,13 +358,11 @@ const Projects = () => {
             })}
           >
             <TextInput
-              required
               label="Project Title"
               placeholder="Project Title"
               {...form.getInputProps("title")}
             />
             <Textarea
-              required
               label="Project Description"
               placeholder="Project Description"
               {...form.getInputProps("description")}
@@ -374,14 +395,11 @@ const Projects = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  multiple
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
-                      const files = Array.from(e.target.files);
-                      handleImageUpload(files);
+                      handleImageUpload(e.target.files[0]);
                     }
                   }}
-
                 />
               </Group>
               <div style={{ marginTop: "10px" }}>
@@ -453,7 +471,7 @@ const Projects = () => {
           </form>
         </Box>
       </Modal>
-    </div>
+    </>
   );
 };
 
