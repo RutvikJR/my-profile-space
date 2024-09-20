@@ -137,6 +137,7 @@ const Skills = () => {
           })}
         >
           <TextInput
+          required
             label="Skill Name"
             placeholder="Skill Name"
             {...form.getInputProps("name")}
@@ -144,6 +145,7 @@ const Skills = () => {
           />
           <Text>Rating</Text>
           <Slider
+          
             value={form.values.rating}
             onChange={(value) => form.setFieldValue("rating", value)}
             min={1}

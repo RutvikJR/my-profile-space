@@ -81,15 +81,15 @@ const Experience = () => {
         ...values,
         start_date: values.start_date
           ? new Date(
-              values.start_date.setMonth(values.start_date.getMonth() + 1)
-            ).toISOString()
+            values.start_date.setMonth(values.start_date.getMonth() + 1)
+          ).toISOString()
           : "",
         end_date: values.is_present
           ? null
           : values.end_date
             ? new Date(
-                values.end_date.setMonth(values.end_date.getMonth() + 1)
-              ).toISOString()
+              values.end_date.setMonth(values.end_date.getMonth() + 1)
+            ).toISOString()
             : null,
         user_id: userId,
       };
@@ -145,7 +145,7 @@ const Experience = () => {
       if (
         values.start_date !== null &&
         new Date(values.start_date).toISOString() !==
-          new Date(currentData.start_date).toISOString()
+        new Date(currentData.start_date).toISOString()
       ) {
         const start_date = new Date(values.start_date);
         start_date.setMonth(start_date.getMonth() + 1);
@@ -157,7 +157,7 @@ const Experience = () => {
         values.end_date !== null &&
         currentData.end_date &&
         new Date(values.end_date).toISOString() !==
-          new Date(currentData.end_date).toISOString()
+        new Date(currentData.end_date).toISOString()
       ) {
         const end_date = new Date(values.end_date);
         end_date.setMonth(end_date.getMonth() + 1);
@@ -312,18 +312,21 @@ const Experience = () => {
           })}
         >
           <TextInput
+            required
             label="Job Title"
             placeholder="Job Title"
             {...form.getInputProps("position")}
             mb="md"
           />
           <TextInput
+            required
             label="Job Location/Company"
             placeholder="Job Location/Company"
             {...form.getInputProps("company")}
             mb="md"
           />
           <MonthPickerInput
+            required
             label="Start Date"
             placeholder="Pick start date"
             value={form.values.start_date}
@@ -352,6 +355,7 @@ const Experience = () => {
             disabled={form.values.is_present}
           />
           <Textarea
+            required
             label="Description"
             placeholder="Job Description"
             {...form.getInputProps("description")}

@@ -13,7 +13,7 @@ export type Database = {
         Row: {
           created_at: string
           degree: string
-          description: string | null
+          description: string
           end_date: string | null
           field_of_study: string
           id: string
@@ -26,7 +26,7 @@ export type Database = {
         Insert: {
           created_at?: string
           degree: string
-          description?: string | null
+          description?: string
           end_date?: string | null
           field_of_study: string
           id?: string
@@ -39,7 +39,7 @@ export type Database = {
         Update: {
           created_at?: string
           degree?: string
-          description?: string | null
+          description?: string
           end_date?: string | null
           field_of_study?: string
           id?: string
@@ -61,7 +61,7 @@ export type Database = {
       }
       experience: {
         Row: {
-          company: string | null
+          company: string
           created_at: string
           description: string
           end_date: string | null
@@ -73,7 +73,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          company?: string | null
+          company: string
           created_at?: string
           description: string
           end_date?: string | null
@@ -85,7 +85,7 @@ export type Database = {
           user_id: string
         }
         Update: {
-          company?: string | null
+          company?: string
           created_at?: string
           description?: string
           end_date?: string | null
@@ -144,24 +144,24 @@ export type Database = {
       platform_socials: {
         Row: {
           created_at: string
-          fa_class: string | null
+          fa_class: string
           id: string
-          li_class: string | null
-          name: string | null
+          li_class: string
+          name: string
         }
         Insert: {
           created_at?: string
-          fa_class?: string | null
+          fa_class: string
           id?: string
-          li_class?: string | null
-          name?: string | null
+          li_class: string
+          name: string
         }
         Update: {
           created_at?: string
-          fa_class?: string | null
+          fa_class?: string
           id?: string
-          li_class?: string | null
-          name?: string | null
+          li_class?: string
+          name?: string
         }
         Relationships: []
       }
@@ -170,12 +170,12 @@ export type Database = {
           client_name: string | null
           created_at: string
           date: string | null
-          description: string | null
+          description: string
           id: string
           images: string[] | null
           industry: string | null
           technology: string[] | null
-          title: string | null
+          title: string
           url: string | null
           user_id: string | null
         }
@@ -183,12 +183,12 @@ export type Database = {
           client_name?: string | null
           created_at?: string
           date?: string | null
-          description?: string | null
+          description: string
           id?: string
           images?: string[] | null
           industry?: string | null
           technology?: string[] | null
-          title?: string | null
+          title: string
           url?: string | null
           user_id?: string | null
         }
@@ -196,12 +196,12 @@ export type Database = {
           client_name?: string | null
           created_at?: string
           date?: string | null
-          description?: string | null
+          description?: string
           id?: string
           images?: string[] | null
           industry?: string | null
           technology?: string[] | null
-          title?: string | null
+          title?: string
           url?: string | null
           user_id?: string | null
         }
@@ -319,15 +319,15 @@ export type Database = {
       }
       user_details: {
         Row: {
-          business_email: string | null
-          contact: number | null
+          business_email: string
+          contact: number
           created_at: string
-          date_of_birth: string | null
+          date_of_birth: string
           description: string | null
           designations: string | null
-          first_name: string | null
+          first_name: string
           id: string
-          last_name: string | null
+          last_name: string
           location: string | null
           logo: string | null
           resume: string | null
@@ -335,15 +335,15 @@ export type Database = {
           years_of_experience: number | null
         }
         Insert: {
-          business_email?: string | null
-          contact?: number | null
+          business_email: string
+          contact: number
           created_at?: string
-          date_of_birth?: string | null
+          date_of_birth: string
           description?: string | null
           designations?: string | null
-          first_name?: string | null
+          first_name: string
           id?: string
-          last_name?: string | null
+          last_name: string
           location?: string | null
           logo?: string | null
           resume?: string | null
@@ -351,15 +351,15 @@ export type Database = {
           years_of_experience?: number | null
         }
         Update: {
-          business_email?: string | null
-          contact?: number | null
+          business_email?: string
+          contact?: number
           created_at?: string
-          date_of_birth?: string | null
+          date_of_birth?: string
           description?: string | null
           designations?: string | null
-          first_name?: string | null
+          first_name?: string
           id?: string
-          last_name?: string | null
+          last_name?: string
           location?: string | null
           logo?: string | null
           resume?: string | null
@@ -380,21 +380,21 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          slug: string | null
+          slug: string
           theme_color: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          slug?: string | null
+          slug: string
           theme_color?: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          slug?: string | null
+          slug?: string
           theme_color?: string
           user_id?: string
         }

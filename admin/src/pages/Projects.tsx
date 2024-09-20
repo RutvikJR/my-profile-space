@@ -259,10 +259,10 @@ const Projects = () => {
   const handleImageUpload = (files: File[]) => {
     const updatedImages = [...form.values.images];
     const updatedPreviews = [...form.values.imagePreviews];
-  
+
     files.forEach((file) => {
       updatedImages.push(file);
-  
+
       const reader = new FileReader();
       reader.onload = (e) => {
         updatedPreviews.push(e.target?.result as string);
@@ -270,10 +270,10 @@ const Projects = () => {
       };
       reader.readAsDataURL(file);
     });
-  
+
     form.setFieldValue("images", updatedImages);
   };
-  
+
   const handleRemoveImage = (index: number) => {
     form.setFieldValue(
       "images",
@@ -335,11 +335,13 @@ const Projects = () => {
             })}
           >
             <TextInput
+              required
               label="Project Title"
               placeholder="Project Title"
               {...form.getInputProps("title")}
             />
             <Textarea
+              required
               label="Project Description"
               placeholder="Project Description"
               {...form.getInputProps("description")}
@@ -379,7 +381,7 @@ const Projects = () => {
                       handleImageUpload(files);
                     }
                   }}
-                  
+
                 />
               </Group>
               <div style={{ marginTop: "10px" }}>
