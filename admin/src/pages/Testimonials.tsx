@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Button,
-  Text,
   Textarea,
   Modal,
   TextInput,
@@ -59,16 +58,19 @@ const Testimonials = () => {
         .select();
 
       if (error) {
-        showToast("Failed to add Testimonial record, please try again!","error");
+        showToast(
+          "Failed to add Testimonial record, please try again!",
+          "error"
+        );
         console.log(`Error adding testimonial: ${error.message}`);
       } else {
-        showToast("Testimonial record added successfully!","success");
+        showToast("Testimonial record added successfully!", "success");
         loadTestimonials();
         form.reset();
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Failed to add Testimonial record, please try again!","error");
+      showToast("Failed to add Testimonial record, please try again!", "error");
       if (error instanceof Error) {
         console.error(error.message);
       } else {
@@ -96,7 +98,10 @@ const Testimonials = () => {
         .select();
 
       if (error) {
-        showToast("Failed to update Testimonial record, please tey again!", "error");
+        showToast(
+          "Failed to update Testimonial record, please tey again!",
+          "error"
+        );
         console.log(`Error editing testimonial: ${error}`);
       } else {
         showToast("Testimonial record updated successfully!", "updated");
@@ -106,7 +111,10 @@ const Testimonials = () => {
         setModalOpened(false);
       }
     } catch (error) {
-      showToast("Failed to update Testimonial record, please tey again!", "error");
+      showToast(
+        "Failed to update Testimonial record, please tey again!",
+        "error"
+      );
       console.log(`Error in Edit Testimonial part: ${error}`);
     }
   };
@@ -119,14 +127,20 @@ const Testimonials = () => {
         .eq("id", id);
 
       if (error) {
-        showToast("Failed to delete Testimonial record, please try again!","error");
+        showToast(
+          "Failed to delete Testimonial record, please try again!",
+          "error"
+        );
         console.log(`Error deleting testimonial: ${error}`);
       } else {
         showToast("Testimonial record deleted successfully!", "deleted");
         loadTestimonials();
       }
     } catch (error) {
-      showToast("Failed to delete Testimonial record, please try again!", "error");
+      showToast(
+        "Failed to delete Testimonial record, please try again!",
+        "error"
+      );
       console.log(`Error in Delete Testimonial part: ${error}`);
     }
   };
@@ -188,8 +202,8 @@ const Testimonials = () => {
   );
   return (
     <>
-     <PageTitle title="Testimonials" />
-      
+      <PageTitle title="Testimonials" />
+
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
@@ -246,7 +260,6 @@ const Testimonials = () => {
 
       {testimonials?.length === 0 ? (
         <NotFoundErrorSection title="There are no testimonials you added" />
-      
       ) : (
         <div>
           <Table striped highlightOnHover withTableBorder>
@@ -256,7 +269,7 @@ const Testimonials = () => {
         </div>
       )}
 
-<Button onClick={openAddTestimonialModal} mt={10}>
+      <Button onClick={openAddTestimonialModal} mt={10}>
         Add Testimonial
       </Button>
     </>

@@ -1,16 +1,10 @@
 import { useState } from "react";
-import {
-  Button,
-  Modal,
-  TextInput,
-  Textarea,
-  Table,
-} from "@mantine/core";
+import { Button, Modal, TextInput, Textarea, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
 import { Database } from "../types/supabase";
-import { FaCheckCircle, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { showToast } from "../utils/toast";
 import PageTitle from "../components/PageTitle";
 import NotFoundErrorSection from "../components/NotFoundErrorSection";
@@ -59,7 +53,10 @@ const FAQs = () => {
     }
   };
 
-  const handleEditFAQ = async (values: { question: string; answer: string }) => {
+  const handleEditFAQ = async (values: {
+    question: string;
+    answer: string;
+  }) => {
     if (!userId || !editFAQId) return;
 
     try {
@@ -128,7 +125,7 @@ const FAQs = () => {
       <Table.Th className="px-4 text-center"></Table.Th>
     </Table.Tr>
   );
-  
+
   const rows = faqs?.map((faq) => (
     <Table.Tr key={faq.id} className="text-center">
       <Table.Td className="px-4 truncate max-w-xs">{faq.question}</Table.Td>

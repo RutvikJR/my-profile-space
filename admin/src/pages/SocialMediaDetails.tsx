@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Modal,
-  TextInput,
-  Select,
-  Table,
-} from "@mantine/core";
+import { Button, Modal, TextInput, Select, Table } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
@@ -31,7 +25,7 @@ const mergeUserAndPlatformSocials = (
         platform: platformData,
       };
     }
-    return userSocial;
+    return null;
   });
 };
 
@@ -194,26 +188,32 @@ const SocialMediaDetails = () => {
     </Table.Tr>
   );
 
-  const rows = mergedSocials.map((social) => (
-    <Table.Tr key={social.id} className="text-center">
-      <Table.Td className="px-4 truncate max-w-xs">
-        {social.platform.name}
-      </Table.Td>
-      <Table.Td className="px-4 truncate max-w-xs">{social.url}</Table.Td>
-      <Table.Td className="px-4">
-        <div className="flex justify-end mx-3">
-          <FaEdit
-            onClick={() => handleEditClick(social)}
-            className="cursor-pointer text-blue-500 mx-3"
-          />
-          <FaTrashAlt
-            onClick={() => handleDeleteSocialMediaDetail(social.id.toString())}
-            className="cursor-pointer text-red-500 mx-3"
-          />
-        </div>
-      </Table.Td>
-    </Table.Tr>
-  ));
+  const rows = mergedSocials.map((social) =>
+    social ? (
+      <Table.Tr key={social?.id} className="text-center">
+        <Table.Td className="px-4 truncate max-w-xs">
+          {social?.platform.name}
+        </Table.Td>
+        <Table.Td className="px-4 truncate max-w-xs">{social?.url}</Table.Td>
+        <Table.Td className="px-4">
+          <div className="flex justify-end mx-3">
+            <FaEdit
+              onClick={() => handleEditClick(social)}
+              className="cursor-pointer text-blue-500 mx-3"
+            />
+            <FaTrashAlt
+              onClick={() =>
+                handleDeleteSocialMediaDetail(social.id.toString())
+              }
+              className="cursor-pointer text-red-500 mx-3"
+            />
+          </div>
+        </Table.Td>
+      </Table.Tr>
+    ) : (
+      <></>
+    )
+  );
 
   return (
     <>
@@ -222,7 +222,9 @@ const SocialMediaDetails = () => {
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
-        title={editDetailId ? "Edit Social Media Detail" : "Add Social Media Detail"}
+        title={
+          editDetailId ? "Edit Social Media Detail" : "Add Social Media Detail"
+        }
       >
         <form
           onSubmit={form.onSubmit((values) => {

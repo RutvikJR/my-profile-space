@@ -13,7 +13,7 @@ function UserSettings() {
 
   const form = useForm({
     initialValues: {
-      theme_color: "yellow", // Default theme color
+      theme_color: "yellow" as string, // Default theme color
       slug: "", // Slug field
     },
 
@@ -33,13 +33,11 @@ function UserSettings() {
       const insertDefaultUserSettings = async () => {
         const { data, error } = await supabaseClient
           .from("user_setting")
-          .insert([
-            {
-              theme_color: "cyan",
-              slug: "",
-              user_id: userId, // Ensure that userId is available in your scope
-            },
-          ]);
+          .insert({
+            theme_color: "cyan",
+            slug: "",
+            user_id: userId ?? "", // Ensure that userId is available in your scope
+          });
 
         if (error) {
           console.error("Error inserting default user settings:", error);
@@ -53,7 +51,6 @@ function UserSettings() {
     return () => {};
   }, [userSettings]);
 
-  
   const handleThemeColorChange = async (color: string) => {
     try {
       const { data, error } = await supabaseClient
@@ -147,8 +144,8 @@ function UserSettings() {
           {...form.getInputProps("theme_color")}
           mb="md"
           onChange={(value) => {
-            form.setFieldValue("theme_color", value);
-            handleThemeColorChange(value);
+            form.setFieldValue("theme_color", value ?? "yellow");
+            handleThemeColorChange(value ?? "yellow");
           }}
         />
       </form>

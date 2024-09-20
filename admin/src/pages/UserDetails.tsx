@@ -12,7 +12,7 @@ import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
 import { DatePickerInput } from "@mantine/dates";
 import { showToast } from "../utils/toast";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Heading from "../components/Heading";
 import { IconFileCv, IconPhotoUp } from "@tabler/icons-react";
 import { myBucket, S3_BUCKET } from "../config/awsConfig";
@@ -24,9 +24,6 @@ const UserDetailsForm = () => {
   // const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
 
   const { userDetails } = userStore();
-
-  const [imageUploadProgress, setImageUploadProgress] = useState(0);
-  const [fileUploadProgress, setFileUploadProgress] = useState(0);
 
   const form = useForm({
     initialValues: {
@@ -84,11 +81,11 @@ const UserDetailsForm = () => {
 
       myBucket
         .putObject(params)
-        .on("httpUploadProgress", (evt) => {
+        .on("httpUploadProgress", () => {
           if (fileType === "image") {
-            setImageUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+            // setImageUploadProgress(Math.round((evt.loaded / evt.total) * 100));
           } else {
-            setFileUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+            // setFileUploadProgress(Math.round((evt.loaded / evt.total) * 100));
           }
         })
         .send((err) => {
@@ -162,7 +159,7 @@ const UserDetailsForm = () => {
       logo: null,
       user_id: userId,
       created_at: userDetails?.created_at || new Date().toISOString(),
-      id: userDetails?.id ,
+      id: userDetails?.id,
     };
 
     if (userDetails) {
@@ -328,11 +325,7 @@ const UserDetailsForm = () => {
             }}
           />
           {form.values.logo && (
-            <img
-              className="w-96 my-4"
-              src={form.values.logo}
-              alt="profile"
-            />
+            <img className="w-96 my-4" src={form.values.logo} alt="profile" />
           )}
         </div>
         <Button type="submit" color="cyan" mt="md">
