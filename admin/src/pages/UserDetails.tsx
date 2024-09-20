@@ -41,8 +41,11 @@ const UserDetailsForm = () => {
     validate: {
       first_name: (value) =>
         value.length > 0 ? null : "First name is required",
+      last_name: (value) => value.length > 0 ? null : "Last name is required",
       business_email: (value) =>
         /^\S+@\S+$/.test(value) ? null : "Invalid email",
+      date_of_birth:(value)=>value==""&&"Date of birth required",
+      contact:(value)=>value==null||value<1000000000||value>9999999999?null:"Phone number is required with valid number"
     },
   });
 
@@ -207,13 +210,13 @@ const UserDetailsForm = () => {
         })}
       >
         <TextInput
-          required
+          withAsterisk
           label="First Name"
           placeholder="First Name"
           {...form.getInputProps("first_name")}
         />
         <TextInput
-          required
+          withAsterisk
           label="Last Name"
           placeholder="Last Name"
           {...form.getInputProps("last_name")}
@@ -234,7 +237,7 @@ const UserDetailsForm = () => {
           {...form.getInputProps("description")}
         />
         <TextInput
-          required
+          withAsterisk
           label="Business Email"
           placeholder="Business Email"
           {...form.getInputProps("business_email")}
@@ -250,7 +253,7 @@ const UserDetailsForm = () => {
           onChange={(date) =>
             form.setFieldValue("date_of_birth", date ? date.toISOString() : "")
           } // Custom onChange
-          required
+          withAsterisk
         />
 
         <TextInput
@@ -259,7 +262,7 @@ const UserDetailsForm = () => {
           {...form.getInputProps("years_of_experience")}
         />
         <TextInput
-          required
+          withAsterisk
           label="Contact"
           placeholder="Contact"
           {...form.getInputProps("contact")}

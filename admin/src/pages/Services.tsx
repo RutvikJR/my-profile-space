@@ -199,13 +199,13 @@ const Services = () => {
             label="Service Name"
             placeholder="Enter service name"
             {...form.getInputProps("name")}
-            required
+            withAsterisk
           />
           <Textarea
             label="Description"
             placeholder="Enter description"
             {...form.getInputProps("description")}
-            required
+            withAsterisk
           />
           <Group mt="md">
             <Button type="submit">{editServiceId ? "Update" : "Save"}</Button>
