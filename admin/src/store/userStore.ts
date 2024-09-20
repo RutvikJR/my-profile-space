@@ -220,5 +220,8 @@ const userStore = create<userStoreInterface>((set) => ({
   // add your other state properties here
 }));
 
+userStore.getState().initializeUser();
+
+
 
 export default userStore;

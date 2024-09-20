@@ -7,7 +7,6 @@ import { useEffect } from "react";
 
 function App() {
   const {
-    initializeUser,
     isInitializing,
     loadFaqs,
     loadUserDetails,
@@ -23,9 +22,6 @@ function App() {
   } = userStore();
 
   useEffect(() => {
-    if (isInitializing) {
-      initializeUser();
-    }
     if (!isInitializing) {
       loadSkills();
       loadExperiences();
@@ -40,10 +36,6 @@ function App() {
       loadUserDetails();
     }
   }, [isInitializing]);
-
-  if (isInitializing) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
