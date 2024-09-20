@@ -23,7 +23,7 @@ export default function Navbar() {
           <Group visibleFrom="sm">
             {userSettings && userSettings?.slug && (
               <a
-                href={`http://localhost:3000/${userSettings.slug}`}
+                href={`https://www.myprofilespace.com/${userSettings.slug}`}
                 rel={"noreferrer"}
                 target="_blank"
                 className="text-blue-900"
