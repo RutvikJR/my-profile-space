@@ -358,11 +358,13 @@ const Projects = () => {
             })}
           >
             <TextInput
+            withAsterisk
               label="Project Title"
               placeholder="Project Title"
               {...form.getInputProps("title")}
             />
             <Textarea
+            withAsterisk
               label="Project Description"
               placeholder="Project Description"
               {...form.getInputProps("description")}

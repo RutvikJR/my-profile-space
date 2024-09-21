@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabaseClient } from "../config/supabaseConfig";
 import userStore from "../store/userStore";
 import { showToast } from "../utils/toast";
@@ -8,7 +7,6 @@ import { showToast } from "../utils/toast";
 // import { AppDispatch } from "../../redux/store";
 
 function Login() {
-  const navigate = useNavigate();
   const { setUserId } = userStore();
 
   // const dispatch = useDispatch<AppDispatch>();
@@ -30,7 +28,7 @@ function Login() {
     if (data?.user) {
       showToast("Login successfull!", "success");
       setUserId(data?.user?.id);
-      navigate("/");
+      window.location.href = "/";
     } else if (error) {
       showToast("Invalid login credentials", "error");
     }

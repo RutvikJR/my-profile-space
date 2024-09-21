@@ -164,14 +164,14 @@ const FAQs = () => {
           })}
         >
           <TextInput
-          required
+          withAsterisk
             label="Question"
             placeholder="Enter the question"
             {...form.getInputProps("question")}
             mb="md"
           />
           <Textarea
-          required
+          withAsterisk
             label="Answer"
             placeholder="Enter the answer"
             {...form.getInputProps("answer")}

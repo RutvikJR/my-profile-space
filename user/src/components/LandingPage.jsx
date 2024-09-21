@@ -18,7 +18,7 @@ const LandingPage = () => {
               <div className="col-lg-12">
                 <nav className="navbar navbar-expand-lg">
                   <a className="navbar-brand" href="index.html">
-                    <img src={logoImg} alt="Logo" />
+                    <h2 style={{ color: '#37c2cc' }}>My Profile Space</h2>
                   </a>
                   <button
                     className="navbar-toggler"
@@ -55,12 +55,12 @@ const LandingPage = () => {
                             Features
                           </a>
                         </li>
-                        {/* <li className="nav-item">
+                        <li className="nav-item">
                           <a className="" href="#0">
-                            Pricing
+                            Team
                           </a>
                         </li>
-                        <li className="nav-item">
+                        {/*<li className="nav-item">
                           <a className="" href="#0">
                             Team
                           </a>
@@ -139,12 +139,12 @@ const LandingPage = () => {
               <div className="section-title mb-60">
                 <h2 className="mb-20">Modern design with Essential Features</h2>
                 <p>
-                MyProfileSpace combines sleek, modern design with all the essential features you need to create a professional portfolio. Each template is crafted with attention to detail, ensuring that your portfolio not only looks visually stunning but also functions seamlessly. From easy customization options to responsive layouts that adapt to any device, our platform prioritizes both aesthetics and usability. Whether you’re updating your achievements or sharing your latest projects, our feature-rich templates ensure your digital presence stays polished and up-to-date effortlessly.
+                  MyProfileSpace combines sleek, modern design with all the essential features you need to create a professional portfolio. Each template is crafted with attention to detail, ensuring that your portfolio not only looks visually stunning but also functions seamlessly. From easy customization options to responsive layouts that adapt to any device, our platform prioritizes both aesthetics and usability. Whether you’re updating your achievements or sharing your latest projects, our feature-rich templates ensure your digital presence stays polished and up-to-date effortlessly.
                 </p>
               </div>
             </div>
 
-            <div className="col-lg-7" style={{paddingLeft:"2rem"}}>
+            <div className="col-lg-7" style={{ paddingLeft: "2rem" }}>
               <div className="row">
                 <div className="col-lg-6 col-md-6">
                   <div className="single-feature">
@@ -234,98 +234,54 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="footer pt-120" style={{ paddingLeft: '4rem' }}>
-        <div className="container">
-          <div className="row">
-            <div className="col-xl-3 col-lg-4 col-md-6 col-sm-10">
-              <div className="footer-widget">
-                <div className="logo">
-                  <a href="index.html">
-                    {" "}
-                    <img src={logoImg} alt="logo" />{" "}
-                  </a>
-                </div>
-                <p className="desc">
-                  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                  dinonumy eirmod tempor invidunt.
-                </p>
-                <ul className="social-links">
-                  <li>
-                    <a href="#0">
-                      <i className="lni lni-facebook"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#0">
-                      <i className="lni lni-linkedin"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#0">
-                      <i className="lni lni-instagram"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#0">
-                      <i className="lni lni-twitter"></i>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 offset-xl-1">
-              <div className="footer-widget">
-                <h3>About Us</h3>
-                <ul className="links">
-                  <li>
-                    <a href="#0">Home</a>
-                  </li>
-                  <li>
-                    <a href="#0">About</a>
-                  </li>
-                  <li>
-                    <a href="#0">Features</a>
-                  </li>
-                  <li>
-                    <a href="#0">Pricing</a>
-                  </li>
-                  <li>
-                    <a href="#0">Contact</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="col-xl-3 col-lg-2 col-md-6 col-sm-6">
-              <div className="footer-widget">
-                <h3>Services</h3>
-                <ul className="links">
-                  <li>
-                    <a href="#0">SaaS Focused</a>
-                  </li>
-                  <li>
-                    <a href="#0">Awesome Design</a>
-                  </li>
-                  <li>
-                    <a href="#0">Ready to Use</a>
-                  </li>
-                  <li>
-                    <a href="#0">Essential Selection</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="col-xl-3 col-lg-4 col-md-6">
-              <div className="footer-widget">
-                <h3>Subscribe Newsletter</h3>
-                <form action="#">
-                  <input type="email" placeholder="Email" />
-                  <button className="main-btn btn-hover">Subscribe</button>
-                </form>
-              </div>
-            </div>
+      <footer className="footer pt-120" style={{ padding: '2rem 4rem' }}>
+        <div className="logo" style={{ paddingLeft: '35%' }}>
+          <h2 style={{ color: '#37c2cc' }}>My Profile Space</h2>
+        </div>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Section 1: Logo and Description */}
+
+
+          {/* Section 2: About Us Links */}
+          <div className="footer-widget" style={{ flex: '1 1 30%', marginBottom: '1.5rem', paddingRight: '5%', paddingLeft: '10%' }}>
+            <h3 style={{ color: 'black', fontSize: '30px' }}>About Us</h3>
+            <ul className="links">
+              <li>
+                <a href="#0">Home</a>
+              </li>
+              <li>
+                <a href="#0">About</a>
+              </li>
+              <li>
+                <a href="#0">Features</a>
+              </li>
+              <li>
+                <a href="#0">Team</a>
+              </li>
+            </ul>
           </div>
+
+          {/* Section 3: Contact Form */}
+          <div className="footer-widget" style={{ flex: '1 1 30%', marginBottom: '1.5rem' }}>
+            <h3 style={{ color: 'black', fontSize: '30px' }}>Contact us</h3>
+            <form action="#" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <input
+                type="email"
+                placeholder="Email"
+                className=""
+                style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem', borderRadius: '5px', border: '1px solid #ddd' }}
+              />
+              <button
+                className="main-btn btn-hover"
+                style={{ width: '22%', padding: '0.5rem', backgroundColor: '#37c2cc', color: 'white', borderRadius: '5px', textAlign: 'center' }}>
+                Connect
+              </button>
+            </form>
+          </div>
+
         </div>
       </footer>
+
 
       {/* Scroll Top Button */}
       <a href="#" className="scroll-top btn-hover">
