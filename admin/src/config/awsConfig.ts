@@ -1,11 +1,11 @@
 import AWS from "aws-sdk";
 
-export const S3_BUCKET = "rutvikjr-bucket";
-const REGION = "ap-south-1";
+export const S3_BUCKET = import.meta.env.VITE_S3_BUCKET;
+const REGION = import.meta.env.VITE_REGION;
 
 AWS.config.update({
-  accessKeyId: "AKIAU6GDZUMEVOJSCS6Q",
-  secretAccessKey: "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",
+  accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+  secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
 });
 
 export const myBucket = new AWS.S3({
