@@ -30,7 +30,7 @@ function Login() {
     if (data?.user) {
       showToast("Login successfull!", "success");
       setUserId(data?.user?.id);
-      navigate("/");
+      window.location.href = "/";
     } else if (error) {
       showToast("Invalid login credentials", "error");
     }
