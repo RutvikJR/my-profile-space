@@ -236,7 +236,7 @@ const SocialMediaDetails = () => {
           })}
         >
           <Select
-            required
+            withAsterisk
             label="Platform"
             placeholder="Select a platform"
             data={platformSocials.map((platform) => ({
@@ -247,7 +247,7 @@ const SocialMediaDetails = () => {
             mb="md"
           />
           <TextInput
-            required
+            withAsterisk
             label="URL"
             placeholder="Enter the URL"
             {...form.getInputProps("url")}

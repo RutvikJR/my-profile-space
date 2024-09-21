@@ -312,21 +312,21 @@ const Experience = () => {
           })}
         >
           <TextInput
-            required
+            withAsterisk
             label="Job Title"
             placeholder="Job Title"
             {...form.getInputProps("position")}
             mb="md"
           />
           <TextInput
-            required
+            withAsterisk
             label="Job Location/Company"
             placeholder="Job Location/Company"
             {...form.getInputProps("company")}
             mb="md"
           />
           <MonthPickerInput
-            required
+            withAsterisk
             label="Start Date"
             placeholder="Pick start date"
             value={form.values.start_date}
@@ -355,7 +355,7 @@ const Experience = () => {
             disabled={form.values.is_present}
           />
           <Textarea
-            required
+            withAsterisk
             label="Description"
             placeholder="Job Description"
             {...form.getInputProps("description")}

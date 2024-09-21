@@ -303,22 +303,22 @@ const Education = () => {
             label="School/University Name"
             placeholder="Enter name"
             {...form.getInputProps("schoolName")}
-            required
+            withAsterisk
           />
           <TextInput
             label="Degree"
             placeholder="Enter degree"
             {...form.getInputProps("degree")}
-            required
+            withAsterisk
           />
           <TextInput
             label="Field of Study"
             placeholder="Enter field of study"
             {...form.getInputProps("fieldOfStudy")}
-            required
+            withAsterisk
           />
           <MonthPickerInput
-            required
+            withAsterisk
             label="Start Date"
             placeholder="Start date"
             value={form.values.startDate}
@@ -343,7 +343,7 @@ const Education = () => {
             label="Description"
             placeholder="Enter description"
             {...form.getInputProps("description")}
-            required
+            withAsterisk
           />
           <Group mt="md">
             <Button type="submit">{editEducationId ? "Update" : "Save"}</Button>

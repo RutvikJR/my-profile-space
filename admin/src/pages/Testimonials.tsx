@@ -224,28 +224,28 @@ const Testimonials = () => {
           })}
         >
           <TextInput
-            required
+            withAsterisk
             label="Name"
             placeholder="Name"
             {...form.getInputProps("name")}
             mb="md"
           />
           <TextInput
-            required
+            withAsterisk
             label="Position"
             placeholder="Position"
             {...form.getInputProps("position")}
             mb="md"
           />
           <Textarea
-            required
+            withAsterisk
             label="Review"
             placeholder="Review"
             {...form.getInputProps("review")}
             mb="md"
           />
           <Select
-            required
+            withAsterisk
             label="Gender"
             placeholder={form.values.is_male ? "Male" : "Female"}
             data={[

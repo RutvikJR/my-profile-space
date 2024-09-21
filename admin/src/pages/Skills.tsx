@@ -119,7 +119,7 @@ const Skills = () => {
 
   return (
     <div>
-      
+
       <PageTitle title="Skills" />
 
       <Modal
@@ -137,7 +137,7 @@ const Skills = () => {
           })}
         >
           <TextInput
-          required
+            withAsterisk
             label="Skill Name"
             placeholder="Skill Name"
             {...form.getInputProps("name")}
@@ -145,7 +145,7 @@ const Skills = () => {
           />
           <Text>Rating</Text>
           <Slider
-          
+
             value={form.values.rating}
             onChange={(value) => form.setFieldValue("rating", value)}
             min={1}
@@ -176,13 +176,13 @@ const Skills = () => {
         <NotFoundErrorSection title="There are no Skills you added" />
       ) : (
         <div className="overflow-y-scroll py-4">
-        <Table striped highlightOnHover withTableBorder>
-          <Table.Thead>{ths}</Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
-        </Table>
+          <Table striped highlightOnHover withTableBorder>
+            <Table.Thead>{ths}</Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
         </div>
       )}
-       <Button onClick={openAddSkillModal}  mt={10}>
+      <Button onClick={openAddSkillModal} mt={10}>
         Add Skill
       </Button>
     </div>
