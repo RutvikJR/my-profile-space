@@ -14,8 +14,6 @@ import CallToAction from "./components/CallToAction";
 import FAQs from "./components/FAQs";
 import StandardMenuHeader from "./components/themes/StandardMenu/Header";
 import StandardMenuDefaultIntro from "./components/themes/StandardMenu/IntroDefault";
-import StandardMenuImgBgIntro from "./components/themes/StandardMenu/IntroImageBg";
-import StandardMenuVideoBgIntro from "./components/themes/StandardMenu/IntroVideoBg";
 import userStore from "./store.js";
 
 function FullTemplet() {

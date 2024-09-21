@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import emailjs from "@emailjs/browser";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Tooltip } from "./Tooltip";
@@ -21,47 +20,66 @@ const Contact = () => {
     }
   }, [userDetails, id]);
 
-  const sendEmail = (e) => {
+  const sendEmail = async (e) => {
     e.preventDefault();
     setSendingMail(true);
-    emailjs
-      .sendForm(
-        "service_i86k3ms",
-        "template_si6cin9",
-        form.current,
-        "c9HsDgGF0tvWyVnAL"
-      )
-      .then(
-        (result) => {
-          document.getElementById("contact-form").reset();
-          toast.success("Message sent successfully!", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-          console.log(result.text);
-          setSendingMail(false);
-        },
-        (error) => {
-          toast.error("Something went wrong!", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-          console.log(error.text);
-          setSendingMail(false);
+
+    const businessEmail = userDetails[0]?.business_email || "default@example.com"; // Default fallback email if not found
+
+    // Creating the HTML email body content
+    const formData = {
+      to: businessEmail,
+      subject: "Message from MyProfileSpace personal portfolio",
+      html: `
+        <h1>Message from MyProfileSpace</h1>
+        <p><strong>Full Name:</strong> ${e.currentTarget.fullName.value}</p>
+        <p><strong>Email:</strong> ${e.currentTarget.email.value}</p>
+        <p><strong>Message:</strong></p>
+        <p>${e.currentTarget.message.value}</p>
+      `,
+    };
+
+    try {
+      const response = await fetch(
+        "https://gismxluugmubyknnkdii.supabase.co/functions/v1/send-email-smtp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         }
       );
+
+      if (response.ok) {
+        document.getElementById("contact-form").reset();
+        toast.success("Message sent successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else {
+        throw new Error("Failed to send email");
+      }
+    } catch (error) {
+      toast.error("Something went wrong!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } finally {
+      setSendingMail(false);
+    }
   };
 
   return (
@@ -71,33 +89,25 @@ const Contact = () => {
           <div className="col-lg-5 text-center text-lg-start wow fadeInUp">
             <h2 className="text-10 fw-600 mb-5">Let's get in touch</h2>
 
-            {userData?.location ? (
+            {userData?.location && (
               <>
                 <h3 className="text-5 fw-600">Living In:</h3>
-                <address className="text-4">
-                  {userData ? userData.location : "Unknown Address"}
-                </address>
+                <address className="text-4">{userData.location}</address>
               </>
-            ) : (
-              <></>
             )}
-            {userData?.contact ? (
+
+            {userData?.contact && (
               <>
                 <h3 className="text-5 fw-600">Call:</h3>
-                <p className="text-4">{userData ? userData.contact : ""}</p>
+                <p className="text-4">{userData.contact}</p>
               </>
-            ) : (
-              <></>
             )}
-            {userData?.business_email ? (
+
+            {userData?.business_email && (
               <>
                 <h3 className="text-5 fw-600">Email:</h3>
-                <p className="text-4">
-                  {userData ? userData.business_email : ""}
-                </p>
+                <p className="text-4">{userData.business_email}</p>
               </>
-            ) : (
-              <></>
             )}
 
             <ul className="social-icons social-icons-lg justify-content-center justify-content-lg-start mt-5">
@@ -153,12 +163,12 @@ const Contact = () => {
             >
               <div className="row g-4">
                 <div className="col-12">
-                  <label className="form-label" htmlFor="name">
+                  <label className="form-label" htmlFor="fullName">
                     What is Your Name:
                   </label>
                   <input
-                    id="name"
-                    name="user_name"
+                    id="fullName"
+                    name="fullName"
                     type="text"
                     className="form-control py-1"
                     required
@@ -170,23 +180,22 @@ const Contact = () => {
                   </label>
                   <input
                     id="email"
-                    name="user_email"
+                    name="email"
                     type="email"
                     className="form-control py-1"
                     required
                   />
                 </div>
                 <div className="col-12">
-                  <label className="form-label" htmlFor="form-message">
+                  <label className="form-label" htmlFor="message">
                     How can I Help you?:
                   </label>
                   <textarea
-                    id="form-message"
+                    id="message"
                     name="message"
                     className="form-control py-1"
                     rows={4}
                     required
-                    defaultValue={""}
                   />
                 </div>
                 <div className="col-12 text-center text-lg-start">
