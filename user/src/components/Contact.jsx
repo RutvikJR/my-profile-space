@@ -24,7 +24,8 @@ const Contact = () => {
     e.preventDefault();
     setSendingMail(true);
 
-    const businessEmail = userDetails[0]?.business_email || "default@example.com"; // Default fallback email if not found
+    const businessEmail =
+      userDetails[0]?.business_email || "default@example.com"; // Default fallback email if not found
 
     // Creating the HTML email body content
     const formData = {
@@ -67,6 +68,7 @@ const Contact = () => {
         throw new Error("Failed to send email");
       }
     } catch (error) {
+      console.log(error);
       toast.error("Something went wrong!", {
         position: "top-right",
         autoClose: 5000,
