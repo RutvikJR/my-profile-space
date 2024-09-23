@@ -3,6 +3,7 @@
 // This enables autocomplete, go to definition, etc.
 
 import nodemailer from 'npm:nodemailer@6.9.10';
+import { corsHeaders } from '../_shared/cors.ts'
 
 const transport = nodemailer.createTransport({
   host: Deno.env.get('SMTP_HOSTNAME')!,
@@ -22,6 +23,12 @@ console.log(`SMTP_USERNAME: ${Deno.env.get('SMTP_USERNAME')}`);
 console.log(`SMTP_PASSWORD: ${Deno.env.get('SMTP_PASSWORD')}`);
 
 Deno.serve(async (req) => {
+
+  // This is needed if you're planning to invoke your function from a browser.
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+  
   if (req.method === 'POST') {
     try {
       // Parse the incoming request body as JSON
@@ -58,7 +65,7 @@ Deno.serve(async (req) => {
           message: 'Email sent successfully',
         }),
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200,
         }
       );
