@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Tooltip } from "./Tooltip";
@@ -7,18 +7,15 @@ import userStore from "../store";
 const Contact = () => {
   const form = useRef();
   const [sendingMail, setSendingMail] = useState(false);
+  const { userSocials, userDetails} = userStore();
 
-  const [userData, setUserData] = useState(null); // State to hold the user data
-
-  const { userSocials, userDetails, id } = userStore();
-
-  useEffect(() => {
-    // Find the specific user data based on the id
-    if (userDetails && id) {
-      const user = userDetails.find((user) => user.user_id === id);
-      setUserData(user || null); // If no user is found, set to null
-    }
-  }, [userDetails, id]);
+  // useEffect(() => {
+  //   // Find the specific user data based on the id
+  //   if (userDetails && id) {
+  //     const user = userDetails.find((user) => user.user_id === id);
+  //     setUserDetails[0](user || null); // If no user is found, set to null
+  //   }
+  // }, [userDetails, id]);
 
   const sendEmail = async (e) => {
     e.preventDefault();
@@ -91,24 +88,25 @@ const Contact = () => {
           <div className="col-lg-5 text-center text-lg-start wow fadeInUp">
             <h2 className="text-10 fw-600 mb-5">Let's get in touch</h2>
 
-            {userData?.location && (
+            {userDetails[0]?.city && (
               <>
                 <h3 className="text-5 fw-600">Living In:</h3>
-                <address className="text-4">{userData.location}</address>
+                <address className="text-4">{`${userDetails[0].city}, ${userDetails[0].state}, ${userDetails[0].country}`}</address>
               </>
             )}
 
-            {userData?.contact && (
+            {userDetails[0]?.contact && (
               <>
                 <h3 className="text-5 fw-600">Call:</h3>
-                <p className="text-4">{userData.contact}</p>
+                <p className="text-4">{`${userDetails[0].country_code}  ${userDetails[0].contact}`}</p>
+
               </>
             )}
 
-            {userData?.business_email && (
+            {userDetails[0]?.business_email && (
               <>
                 <h3 className="text-5 fw-600">Email:</h3>
-                <p className="text-4">{userData.business_email}</p>
+                <p className="text-4">{userDetails[0].business_email}</p>
               </>
             )}
 

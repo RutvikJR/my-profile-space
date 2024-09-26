@@ -41,7 +41,7 @@ const StandardMenuHeader = () => {
             >
               <img
                 src={userDetails[0]?.logo || "images/logo.png"}
-                style={{ height: "60px", width: "100px" }}
+                style={{ height: "60px"}}
                 alt="MyProfileSpace"
               />
             </Link>
