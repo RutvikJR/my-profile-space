@@ -8,7 +8,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {appliedConfig} from "./config/commonConfig";
+// import {appliedConfig} from "./config/commonConfig";
 import { Tooltip } from "./components/Tooltip";
 import CallToAction from "./components/CallToAction";
 import FAQs from "./components/FAQs";
@@ -17,7 +17,7 @@ import StandardMenuDefaultIntro from "./components/themes/StandardMenu/IntroDefa
 import userStore from "./store.js";
 
 function FullTemplet() {
-  const appliedIntro = appliedConfig.appliedIntro;
+  // const appliedIntro = appliedConfig.appliedIntro;
   const { slug } = useParams();
   const [userId, setUserId] = useState(null);
 
@@ -40,7 +40,7 @@ function FullTemplet() {
 
   useEffect(() => {
     loadUserSettings();
-  }, []);
+  }, [loadUserSettings]);
 
   useEffect(() => {
     if (userSettings && slug) {

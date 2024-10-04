@@ -6,63 +6,98 @@ import {
   Textarea,
   FileInput,
   rem,
+  Select,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import userStore from "../store/userStore";
 import { supabaseClient } from "../config/supabaseConfig";
-import { DatePickerInput } from "@mantine/dates";
+import { DateInput } from "@mantine/dates";
 import { showToast } from "../utils/toast";
 import { useEffect } from "react";
 import Heading from "../components/Heading";
 import { IconFileCv, IconPhotoUp } from "@tabler/icons-react";
 import { myBucket, S3_BUCKET } from "../config/awsConfig";
+import countryCodes from "../utils/countryCodes";
+
+// Define the types for the form values
+type UserDetailsFormValues = {
+  first_name: string;
+  last_name: string;
+  city: string;
+  state: string;
+  country: string;
+  designations: string;
+  description: string;
+  business_email: string;
+  date_of_birth: string | null;
+  years_of_experience: number | null;
+  country_code: string;
+  contact: number | null;
+  resume: string;
+  logo: string;
+};
 
 const UserDetailsForm = () => {
   const userId = userStore((store) => store.id);
-  // const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  // const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
-
   const { userDetails } = userStore();
 
-  const form = useForm({
+  const form = useForm<UserDetailsFormValues>({
     initialValues: {
       first_name: "",
       last_name: "",
-      location: "",
+      city: "",
+      state: "",
+      country: "",
       designations: "",
       description: "",
       business_email: "",
-      date_of_birth: "",
-      years_of_experience: null as number | null,
-      contact: null as number | null,
+      date_of_birth: null,
+      years_of_experience: null,
+      country_code: "",
+      contact: null,
       resume: "",
       logo: "",
     },
     validate: {
       first_name: (value) =>
         value.length > 0 ? null : "First name is required",
-      last_name: (value) => value.length > 0 ? null : "Last name is required",
+      last_name: (value) =>
+        value.length > 0 ? null : "Last name is required",
       business_email: (value) =>
         /^\S+@\S+$/.test(value) ? null : "Invalid email",
-      date_of_birth:(value)=>value==""&&"Date of birth required",
-      contact:(value)=>value==null||value<1000000000||value>9999999999?null:"Phone number is required with valid number"
+      date_of_birth: (value) => (value ? null : "Date of birth required"),
+      country_code: (value) =>
+        value.length > 0 ? null : "Please select a country code",
+      contact: (value) =>
+        value && value.toString().length >= 5 && value.toString().length <= 11
+          ? null
+          : "Enter a valid contact number",
+      city: (value) => (value.length > 0 ? null : "City is required"),
+      state: (value) => (value.length > 0 ? null : "State is required"),
+      country: (value) => (value.length > 0 ? null : "Country is required"),
     },
   });
 
+
+
+  // Prefill form values if `userDetails` is present
   useEffect(() => {
     if (userDetails) {
       form.setValues({
-        first_name: userDetails.first_name ?? undefined,
-        last_name: userDetails.last_name ?? undefined,
-        location: userDetails.location ?? undefined,
-        designations: userDetails.designations ?? undefined,
-        description: userDetails.description ?? undefined,
-        business_email: userDetails.business_email ?? undefined,
-        date_of_birth: userDetails.date_of_birth ?? undefined,
-        years_of_experience: userDetails.years_of_experience ?? undefined,
-        contact: userDetails.contact ?? undefined,
-        resume: userDetails.resume ?? undefined,
-        logo: userDetails.logo ?? undefined,
+        first_name: userDetails.first_name ?? "",
+        last_name: userDetails.last_name ?? "",
+        city: userDetails.city ?? "",
+        state: userDetails.state ?? "",
+        country: userDetails.country ?? "",
+        designations: userDetails.designations ?? "",
+        description: userDetails.description ?? "",
+        business_email: userDetails.business_email ?? "",
+        date_of_birth: userDetails.date_of_birth ?? null,
+        years_of_experience: userDetails.years_of_experience ?? null,
+        country_code: userDetails.country_code ?? "",
+        contact: userDetails.contact ?? null,
+        resume: userDetails.resume ?? "",
+        logo: userDetails.logo ?? "",
       });
     }
   }, [userDetails]);
@@ -72,9 +107,8 @@ const UserDetailsForm = () => {
     uploadPath: string,
     fileType: "image" | "pdf"
   ) => {
-    console.log("s3 bucket", S3_BUCKET);
     if (S3_BUCKET) {
-      const params: AWS.S3.Types.PutObjectRequest = {
+      const params: AWS.S3.PutObjectRequest = {
         ACL: "public-read",
         Body: file,
         Bucket: S3_BUCKET,
@@ -85,18 +119,18 @@ const UserDetailsForm = () => {
         .putObject(params)
         .on("httpUploadProgress", () => {
           if (fileType === "image") {
-            // setImageUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+            // Handle image progress
           } else {
-            // setFileUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+            // Handle PDF progress
           }
         })
-        .send((err) => {
-          if (err) console.log("s3 upload error", err);
-          else {
+        .send((err: Error) => {
+          if (err) {
+            console.error("S3 upload error", err);
+          } else {
             const fileURL = `https://${S3_BUCKET}.s3.amazonaws.com/${uploadPath}`;
             if (fileType === "pdf") form.setFieldValue("resume", fileURL);
             else if (fileType === "image") {
-              console.log("image upload success", typeof fileURL);
               form.setFieldValue("logo", fileURL);
             }
           }
@@ -104,70 +138,24 @@ const UserDetailsForm = () => {
     }
   };
 
-  const handleSave = async (valuess: typeof form.values) => {
+  const handleSave = async (values: UserDetailsFormValues) => {
     if (!userId) return;
 
-    const values = {
-      first_name: valuess.first_name,
-      last_name: valuess.last_name,
-      location: valuess.location,
-      designations: valuess.designations,
-      description: valuess.description,
-      business_email: valuess.business_email,
-      date_of_birth: valuess.date_of_birth,
-      years_of_experience: valuess.years_of_experience,
-      contact: valuess.contact,
-      resume: valuess.resume,
-      logo: valuess.logo,
-    };
-
-    // let resumePath = userDetails?.resume;
-    // let profileImagePath = userDetails?.profile_image;
-
-    // if (values.resume) {
-    //   const shortResumePath = `user_detail/${userId}/resume_${Date.now()}.pdf`;
-    //   resumePath = await handleFileUpload(values.resume, shortResumePath);
-    // }
-
-    // if (values.profile_image) {
-    //   const shortProfileImagePath = `user_detail/${userId}/profile_image_${Date.now()}.${values.profile_image.name.split(".").pop()}`;
-    //   profileImagePath = await handleFileUpload(
-    //     values.profile_image,
-    //     shortProfileImagePath
-    //   );
-    // }
-
-    const temp_date = valuess.date_of_birth
+    const temp_date = values.date_of_birth
       ? new Date(
-          new Date(valuess.date_of_birth).setDate(
-            new Date(valuess.date_of_birth).getDate() + 1
+          new Date(values.date_of_birth).setDate(
+            new Date(values.date_of_birth).getDate() + 1
           )
         ).toISOString()
       : null;
-    let temp_years = valuess.years_of_experience;
-    if (valuess.years_of_experience == 0) {
-      temp_years = null;
-    }
-    let temp_contact = valuess.contact;
-    if (valuess.contact == 0) {
-      temp_contact = null;
-    }
-    let tempresume = null;
-    if (valuess.resume) {
-      tempresume = valuess.resume;
-    }
-    let templogo = null;
-    if (valuess.logo) {
-      templogo = valuess.logo;
-    }
+    const temp_years = values.years_of_experience === 0 ? null : values.years_of_experience;
+    const temp_contact = values.contact === 0 ? null : values.contact;
 
     const payload = {
       ...values,
       years_of_experience: temp_years,
       contact: temp_contact ?? 0,
       date_of_birth: temp_date ?? "",
-      resume: tempresume,
-      logo: templogo,
       user_id: userId,
       created_at: userDetails?.created_at || new Date().toISOString(),
       id: userDetails?.id,
@@ -181,10 +169,8 @@ const UserDetailsForm = () => {
 
       if (error) {
         showToast("Failed to update User record, please try again!", "error");
-        console.log("Error updating user details", error);
       } else {
         showToast("User record updated successfully!", "updated");
-        console.log(payload);
       }
     } else {
       const { error } = await supabaseClient
@@ -193,10 +179,8 @@ const UserDetailsForm = () => {
 
       if (error) {
         showToast("Failed to add User record, please try again!", "error");
-        console.log("Error inserting user details", error);
       } else {
         showToast("User record added successfully!", "success");
-        // alert('User details saved successfully');
       }
     }
   };
@@ -222,9 +206,22 @@ const UserDetailsForm = () => {
           {...form.getInputProps("last_name")}
         />
         <TextInput
-          label="Location"
-          placeholder="Location"
-          {...form.getInputProps("location")}
+          withAsterisk
+          label="City"
+          placeholder="City"
+          {...form.getInputProps("city")}
+        />
+        <TextInput
+          withAsterisk
+          label="State"
+          placeholder="State"
+          {...form.getInputProps("state")}
+        />
+        <TextInput
+          withAsterisk
+          label="Country"
+          placeholder="Country"
+          {...form.getInputProps("country")}
         />
         <TextInput
           label="Designations"
@@ -242,9 +239,9 @@ const UserDetailsForm = () => {
           placeholder="Business Email"
           {...form.getInputProps("business_email")}
         />
-        <DatePickerInput
+        <DateInput
           label="Date of Birth"
-          placeholder="Select date"
+          placeholder="YYYY/MM/DD"
           value={
             form.values.date_of_birth
               ? new Date(form.values.date_of_birth)
@@ -252,21 +249,42 @@ const UserDetailsForm = () => {
           }
           onChange={(date) =>
             form.setFieldValue("date_of_birth", date ? date.toISOString() : "")
-          } // Custom onChange
+          }
           withAsterisk
         />
-
         <TextInput
           label="Years of Experience"
           placeholder="Years of Experience"
+          type="number"
           {...form.getInputProps("years_of_experience")}
         />
-        <TextInput
-          withAsterisk
-          label="Contact"
-          placeholder="Contact"
-          {...form.getInputProps("contact")}
-        />
+
+        {/* Country Code and Contact input side by side */}
+        <div style={{ display: "flex", gap: "1rem" }}>
+        <Select
+  label="Country Code"
+  placeholder="Select country code"
+  withAsterisk
+  data={countryCodes}
+  {...form.getInputProps("country_code")}
+  onChange={(value) => {
+    form.setFieldValue("country_code", value ?? ""); // Set the country_code to an empty string when deselected
+    // form.validateField("country_code");  // Trigger validation immediately when the value changes
+  }}
+  error={form.errors.country_code}  // Displays error message
+  style={{ flex: "1", minWidth: "50px" }} // Adjust width here
+/>
+
+          <TextInput
+            withAsterisk
+            label="Contact"
+            placeholder="Contact"
+            type="number"
+            {...form.getInputProps("contact")}
+            style={{ flex: "10" }} // Adjust width here
+          />
+        </div>
+
         <div>
           <Text>Resume (PDF only)</Text>
           <FileInput
@@ -278,7 +296,6 @@ const UserDetailsForm = () => {
             }
             accept="application/pdf"
             onChange={async (file) => {
-              console.log("pdf upload onchagne called");
               if (file) {
                 await handleFileUpload(
                   file,
@@ -288,38 +305,9 @@ const UserDetailsForm = () => {
               }
             }}
           />
-          {form.values.resume && (
-            <div>
-              {/* <Document
-                file={
-                  "https://rutvikjr-bucket.s3.ap-south-1.amazonaws.com/user_detail/4fdf2acb-cbe6-439c-a1b9-e8098c48b86a/resume_1724830733742.pdf"
-                }
-              >
-                <Page pageNumber={0}></Page>
-              </Document> */}
-              {/* <DocViewer
-                style={{ width: "30vw" }}
-                documents={[
-                  {
-                    uri: form.values.resume,
-                  },
-                ]}
-                config={{
-                  pdfZoom: {
-                    defaultZoom: 0.5,
-                    zoomJump: 0.2,
-                  },
-
-                  header: {
-                    disableHeader: true,
-                  },
-                }}
-              /> */}
-            </div>
-          )}
         </div>
         <div>
-          <Text>Logo Image(JPEG, JPG, PNG only)</Text>
+          <Text>Profile Image</Text>
           <FileInput
             leftSection={
               <IconPhotoUp
@@ -327,22 +315,21 @@ const UserDetailsForm = () => {
                 stroke={1.5}
               />
             }
-            accept="image/jpeg, image/jpg, image/png"
+            accept="image/png,image/jpeg,image/jpg"
             onChange={async (file) => {
-              console.log("image upload onchagne called");
               if (file) {
                 await handleFileUpload(
                   file,
-                  `user_detail/${userId}/logo_${Date.now()}.${file.type.split("/")[1]}`,
+                  `user_detail/${userId}/logo_${Date.now()}.jpg`,
                   "image"
                 );
               }
             }}
           />
-          {form.values.logo && (
+        </div>
+        {form.values.logo && (
             <img className="w-96 my-4" src={form.values.logo} alt="profile" />
           )}
-        </div>
         <Button type="submit">Save</Button>
       </form>
     </Box>

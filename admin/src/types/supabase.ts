@@ -320,7 +320,10 @@ export type Database = {
       user_details: {
         Row: {
           business_email: string
+          city: string | null
           contact: number
+          country: string | null
+          country_code: string | null
           created_at: string
           date_of_birth: string
           description: string | null
@@ -328,15 +331,18 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
-          location: string | null
           logo: string | null
           resume: string | null
+          state: string | null
           user_id: string | null
           years_of_experience: number | null
         }
         Insert: {
           business_email: string
+          city?: string | null
           contact: number
+          country?: string | null
+          country_code?: string | null
           created_at?: string
           date_of_birth: string
           description?: string | null
@@ -344,15 +350,18 @@ export type Database = {
           first_name: string
           id?: string
           last_name: string
-          location?: string | null
           logo?: string | null
           resume?: string | null
+          state?: string | null
           user_id?: string | null
           years_of_experience?: number | null
         }
         Update: {
           business_email?: string
+          city?: string | null
           contact?: number
+          country?: string | null
+          country_code?: string | null
           created_at?: string
           date_of_birth?: string
           description?: string | null
@@ -360,9 +369,9 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
-          location?: string | null
           logo?: string | null
           resume?: string | null
+          state?: string | null
           user_id?: string | null
           years_of_experience?: number | null
         }

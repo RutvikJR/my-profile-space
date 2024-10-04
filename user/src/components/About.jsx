@@ -104,7 +104,7 @@ const AboutUs = () => {
               </p>
             </div>
           )}
-          {user?.location && (
+          {user?.city && (
             <div
               className={`col-6 ${
                 hasExperience ? "col-lg-3" : "col-lg-4"
@@ -112,7 +112,7 @@ const AboutUs = () => {
               data-wow-delay="0.4s"
             >
               <p className="text-muted fw-500 mb-0">From:</p>
-              <p className="text-4 text-dark fw-600 mb-0">{user.location}</p>
+              <p className="text-4 text-dark fw-600 mb-0">{`${user.city}, ${user.state}, ${user.country}`}</p>
             </div>
           )}
         </div>
