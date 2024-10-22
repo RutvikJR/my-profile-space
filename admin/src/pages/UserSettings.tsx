@@ -154,8 +154,8 @@ function UserSettings() {
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
           disabled={slugAvailability}
-          label="Slug"
-          placeholder="Enter your slug"
+          label="Username"
+          placeholder="JohnDoe"
           {...form.getInputProps("slug")}
           error={
             slugError && (

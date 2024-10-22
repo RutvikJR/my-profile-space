@@ -197,13 +197,13 @@ const Services = () => {
           <TextInput
           
             label="Service Name"
-            placeholder="Enter service name"
+            placeholder="UI/UX developer"
             {...form.getInputProps("name")}
             withAsterisk
           />
           <Textarea
             label="Description"
-            placeholder="Enter description"
+            placeholder="As an UI/UX developer i can ...."
             {...form.getInputProps("description")}
             withAsterisk
           />

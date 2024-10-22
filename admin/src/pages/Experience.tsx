@@ -314,14 +314,14 @@ const Experience = () => {
           <TextInput
             withAsterisk
             label="Job Title"
-            placeholder="Job Title"
+            placeholder="Sr. Developer"
             {...form.getInputProps("position")}
             mb="md"
           />
           <TextInput
             withAsterisk
             label="Job Location/Company"
-            placeholder="Job Location/Company"
+            placeholder="Pune"
             {...form.getInputProps("company")}
             mb="md"
           />
@@ -357,7 +357,7 @@ const Experience = () => {
           <Textarea
             withAsterisk
             label="Description"
-            placeholder="Job Description"
+            placeholder="Worked with this ..."
             {...form.getInputProps("description")}
             mb="md"
           />

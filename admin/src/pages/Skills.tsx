@@ -139,7 +139,7 @@ const Skills = () => {
           <TextInput
             withAsterisk
             label="Skill Name"
-            placeholder="Skill Name"
+            placeholder="ReactJS"
             {...form.getInputProps("name")}
             mb="md"
           />

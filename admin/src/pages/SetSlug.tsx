@@ -68,12 +68,12 @@ const SetSkill = () => {
     };
     return (
         <>
-            <div>You need to set the slug first for creating your personal profile website!</div>
+            <div>You need to set the username first for creating your personal profile website!</div>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <TextInput
 
-                    label="Slug"
-                    placeholder="Enter your slug"
+                    label="Username"
+                    placeholder="JohnDoe"
                     {...form.getInputProps("slug")}
                     error={
                         slugError && (

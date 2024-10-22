@@ -143,10 +143,10 @@ const UserDetailsForm = () => {
 
     const temp_date = values.date_of_birth
       ? new Date(
-          new Date(values.date_of_birth).setDate(
-            new Date(values.date_of_birth).getDate() + 1
-          )
-        ).toISOString()
+        new Date(values.date_of_birth).setDate(
+          new Date(values.date_of_birth).getDate() + 1
+        )
+      ).toISOString()
       : null;
     const temp_years = values.years_of_experience === 0 ? null : values.years_of_experience;
     const temp_contact = values.contact === 0 ? null : values.contact;
@@ -188,56 +188,73 @@ const UserDetailsForm = () => {
   return (
     <Box>
       <Heading title="User Details" />
-      <form
+      <form style={{
+        width: "80%",
+        margin: "0 auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+      }}
         onSubmit={form.onSubmit((values) => {
           handleSave(values);
         })}
       >
         <TextInput
+
           withAsterisk
-          label="First Name"
+          label="John"
           placeholder="First Name"
           {...form.getInputProps("first_name")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <TextInput
           withAsterisk
-          label="Last Name"
+          label="Doe"
           placeholder="Last Name"
           {...form.getInputProps("last_name")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <TextInput
           withAsterisk
-          label="City"
+          label="Los Angeles"
           placeholder="City"
           {...form.getInputProps("city")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <TextInput
           withAsterisk
           label="State"
-          placeholder="State"
+          placeholder="California"
           {...form.getInputProps("state")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <TextInput
           withAsterisk
           label="Country"
-          placeholder="Country"
+          placeholder="USA"
           {...form.getInputProps("country")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <TextInput
           label="Designations"
-          placeholder="Designations"
+          placeholder="Junior Developer"
           {...form.getInputProps("designations")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <Textarea
           label="Description"
-          placeholder="Description"
+          placeholder="As a Jr. Developer ..."
           {...form.getInputProps("description")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <TextInput
           withAsterisk
           label="Business Email"
-          placeholder="Business Email"
+          placeholder="xyz@gmail.com"
           {...form.getInputProps("business_email")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <DateInput
           label="Date of Birth"
@@ -251,41 +268,43 @@ const UserDetailsForm = () => {
             form.setFieldValue("date_of_birth", date ? date.toISOString() : "")
           }
           withAsterisk
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
         <TextInput
           label="Years of Experience"
-          placeholder="Years of Experience"
+          placeholder="2"
           type="number"
           {...form.getInputProps("years_of_experience")}
+          style={{ width: "100%", marginBottom: "1rem" }}
         />
 
         {/* Country Code and Contact input side by side */}
-        <div style={{ display: "flex", gap: "1rem" }}>
-        <Select
-  label="Country Code"
-  placeholder="Select country code"
-  withAsterisk
-  data={countryCodes}
-  {...form.getInputProps("country_code")}
-  onChange={(value) => {
-    form.setFieldValue("country_code", value ?? ""); // Set the country_code to an empty string when deselected
-    // form.validateField("country_code");  // Trigger validation immediately when the value changes
-  }}
-  error={form.errors.country_code}  // Displays error message
-  style={{ flex: "1", minWidth: "50px" }} // Adjust width here
-/>
+        <div style={{ display: "flex", gap: "1rem", width:"100%"}}>
+          <Select
+            label="Country Code"
+            placeholder="Select country code"
+            withAsterisk
+            data={countryCodes}
+            {...form.getInputProps("country_code")}
+            onChange={(value) => {
+              form.setFieldValue("country_code", value ?? ""); // Set the country_code to an empty string when deselected
+              // form.validateField("country_code");  // Trigger validation immediately when the value changes
+            }}
+            error={form.errors.country_code}  // Displays error message
+            style={{ flex: "1" }} // Adjust width here
+          />
 
           <TextInput
             withAsterisk
             label="Contact"
-            placeholder="Contact"
+            placeholder="1111111111"
             type="number"
             {...form.getInputProps("contact")}
-            style={{ flex: "10" }} // Adjust width here
+            style={{ flex: "3" }} // Adjust width here
           />
         </div>
 
-        <div>
+        <div style={{ width: "100%", marginBottom: "1rem" }}>
           <Text>Resume (PDF only)</Text>
           <FileInput
             leftSection={
@@ -306,7 +325,7 @@ const UserDetailsForm = () => {
             }}
           />
         </div>
-        <div>
+        <div style={{ width: "100%", marginBottom: "1rem" }}>
           <Text>Profile Image</Text>
           <FileInput
             leftSection={
@@ -328,8 +347,8 @@ const UserDetailsForm = () => {
           />
         </div>
         {form.values.logo && (
-            <img className="w-96 my-4" src={form.values.logo} alt="profile" />
-          )}
+          <img className="w-96 my-4" src={form.values.logo} alt="profile" />
+        )}
         <Button type="submit">Save</Button>
       </form>
     </Box>
