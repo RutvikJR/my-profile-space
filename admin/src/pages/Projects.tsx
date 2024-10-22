@@ -360,23 +360,23 @@ const Projects = () => {
             <TextInput
             withAsterisk
               label="Project Title"
-              placeholder="Project Title"
+              placeholder="Transportation Management System"
               {...form.getInputProps("title")}
             />
             <Textarea
             withAsterisk
               label="Project Description"
-              placeholder="Project Description"
+              placeholder="Depending upon traffic it ..."
               {...form.getInputProps("description")}
             />
             <TextInput
               label="Client Name"
-              placeholder="Client Name"
+              placeholder="John Doe"
               {...form.getInputProps("client_name")}
             />
             <TextInput
               label="Industry"
-              placeholder="Industry"
+              placeholder="XYZ"
               {...form.getInputProps("industry")}
             />
             <MonthPickerInput
@@ -388,7 +388,7 @@ const Projects = () => {
             />
             <TextInput
               label="URL"
-              placeholder="URL"
+              placeholder="https://app.myprofilespace.com/"
               {...form.getInputProps("url")}
             />
             <div>
@@ -441,7 +441,7 @@ const Projects = () => {
               ))}
               <Group mt="xs">
                 <TextInput
-                  placeholder="Add Technology"
+                  placeholder="C++"
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
                       event.preventDefault();

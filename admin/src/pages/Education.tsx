@@ -301,19 +301,19 @@ const Education = () => {
         >
           <TextInput
             label="School/University Name"
-            placeholder="Enter name"
+            placeholder="Stanford University"
             {...form.getInputProps("schoolName")}
             withAsterisk
           />
           <TextInput
             label="Degree"
-            placeholder="Enter degree"
+            placeholder="Engineering"
             {...form.getInputProps("degree")}
             withAsterisk
           />
           <TextInput
             label="Field of Study"
-            placeholder="Enter field of study"
+            placeholder="Information Technology"
             {...form.getInputProps("fieldOfStudy")}
             withAsterisk
           />
@@ -341,7 +341,7 @@ const Education = () => {
           />
           <Textarea
             label="Description"
-            placeholder="Enter description"
+            placeholder="I had completed ....."
             {...form.getInputProps("description")}
             withAsterisk
           />
