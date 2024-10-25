@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import Heading from "../components/Heading";
 import { IconFileCv, IconPhotoUp } from "@tabler/icons-react";
 import { myBucket, S3_BUCKET } from "../config/awsConfig";
+import {phone} from 'phone';
 import countryCodes from "../utils/countryCodes";
 
 // Define the types for the form values
@@ -68,10 +69,18 @@ const UserDetailsForm = () => {
       date_of_birth: (value) => (value ? null : "Date of birth required"),
       country_code: (value) =>
         value.length > 0 ? null : "Please select a country code",
-      contact: (value) =>
-        value && value.toString().length >= 5 && value.toString().length <= 11
-          ? null
-          : "Enter a valid contact number",
+      contact: (value): string | null => {
+        if (value && value.toString().length >= 5 && value.toString().length <= 11) {
+          const { isValid} = phone(form.values.country_code.toString()+value.toString());
+    
+         
+          return isValid ? null : `Enter a valid contact number for country code ${form.values.country_code}`;
+        } else {
+          return "Enter a valid contact number";
+        }
+      },
+      
+        
       city: (value) => (value.length > 0 ? null : "City is required"),
       state: (value) => (value.length > 0 ? null : "State is required"),
       country: (value) => (value.length > 0 ? null : "Country is required"),

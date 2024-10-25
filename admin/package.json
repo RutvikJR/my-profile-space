@@ -32,6 +32,7 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.9.0",
     "eslint-plugin-react": "^7.35.0",
+    "phone": "^3.1.52",
     "prettier": "^3.3.3",
     "react": "^18.2.0",
     "react-doc-viewer": "^0.1.14",
