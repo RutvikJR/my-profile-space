@@ -250,7 +250,6 @@ const UserDetailsForm = () => {
           onChange={(date) =>
             form.setFieldValue("date_of_birth", date ? date.toISOString() : "")
           }
-          withAsterisk
         />
         <TextInput
           label="Years of Experience"
